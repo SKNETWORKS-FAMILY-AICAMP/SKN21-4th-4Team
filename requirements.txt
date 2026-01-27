@@ -1,0 +1,25 @@
+ipykernel
+python-dotenv
+pydantic
+huggingface_hub
+nbformat
+
+# llm
+openai
+langchain
+langgraph
+langchain_openai
+langchain_community
+langchain-tavily
+langchain_qdrant
+
+# evaluation
+ragas
+rapidfuzz
+
+# db
+qdrant-client
+fastembed
+
+# view
+flask
