@@ -20,6 +20,9 @@ RUN pip install gunicorn
 # 프로젝트 파일 복사
 COPY . .
 
+# PYTHONPATH 설정 (Django 모듈 인식용)
+ENV PYTHONPATH=/app
+
 # 포트 노출
 EXPOSE 8000
 

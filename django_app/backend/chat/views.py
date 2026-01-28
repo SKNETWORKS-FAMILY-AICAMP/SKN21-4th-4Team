@@ -12,7 +12,7 @@ import time
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # SKN21-4th-4Team 폴더
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # /app (main.py import용)
 sys.path.append(str(PROJECT_ROOT))
 
 # main.py의 main 함수 import

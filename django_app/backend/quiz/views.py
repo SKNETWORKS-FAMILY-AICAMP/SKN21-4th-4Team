@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 # 프로젝트 루트 경로 추가 (src 폴더 접근용)
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # SKN21-4th-4Team 폴더
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # /app (src import용)
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.quiz_service import QuizService
