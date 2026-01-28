@@ -12,9 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR는 프로젝트 루트 (/app)
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# BASE_DIR는 django_app 폴더
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,9 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # apps
-    "django_app.backend.accounts",
-    "django_app.backend.chat",
-    "django_app.backend.quiz",
+    "backend.accounts",
+    "backend.chat",
+    "backend.quiz",
 ]
 
 MIDDLEWARE = [
@@ -55,15 +54,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     
     # Custom middleware
-    "django_app.config.middleware.ErrorHandlerMiddleware",
+    "config.middleware.ErrorHandlerMiddleware",
 ]
 
-ROOT_URLCONF = "django_app.config.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "django_app" / "frontend" / "templates"],
+        "DIRS": [BASE_DIR / "frontend" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -75,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "django_app.config.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
@@ -84,7 +83,7 @@ WSGI_APPLICATION = "django_app.config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "django_app" / "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -124,7 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "django_app" / "frontend" / "static"]  # 개발 중 정적 파일 경로
+STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]  # 개발 중 정적 파일 경로
 STATIC_ROOT = BASE_DIR / "staticfiles"    # 배포 시 정적 파일 수집 경로 (/app/staticfiles)
 
 # 로그인 필수 설정

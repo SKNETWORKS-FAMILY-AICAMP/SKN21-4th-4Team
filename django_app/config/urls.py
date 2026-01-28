@@ -18,9 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
-from django_app.backend.chat import views as chat_views
-from django_app.backend.quiz import views as quiz_views
-from django_app.backend.accounts import views as accounts_views
+from backend.chat import views as chat_views
+from backend.quiz import views as quiz_views
+from backend.accounts import views as accounts_views
 
 urlpatterns = [
     path('', lambda request: redirect('login')),
@@ -34,7 +34,7 @@ urlpatterns = [
 
     # chat
     path('chat/', chat_views.chat_page, name = 'chat'),
-    path('api/chat/', include('django_app.backend.chat.urls')), # API 경로
+    path('api/chat/', include('backend.chat.urls')), # API 경로
 
     # quiz
     path('quiz/', quiz_views.quiz_page, name = 'quiz'),
