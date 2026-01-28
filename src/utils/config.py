@@ -11,7 +11,11 @@ from qdrant_client.models import Distance
 
 # .env 파일 로드 (파일이 없으면 무시됨)
 load_dotenv()
-login(os.getenv('HUGGINGFACE_API_KEY'))
+
+# HuggingFace 로그인 (토큰이 있을 때만)
+hf_token = os.getenv('HUGGINGFACE_API_KEY')
+if hf_token:
+    login(token=hf_token)
 
 class ConfigAPI:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -20,8 +24,8 @@ class ConfigAPI:
     TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 class ConfigDB:
-    HOST = "localhost"
-    PORT = "6333"
+    HOST = os.getenv("QDRANT_HOST", "localhost")  # Docker: qdrant, Local: localhost
+    PORT = os.getenv("QDRANT_PORT", "6333")
     COLLECTION_NAME = "learning_ai"
     EMBEDDING_MODEL = "text-embedding-3-large"
     

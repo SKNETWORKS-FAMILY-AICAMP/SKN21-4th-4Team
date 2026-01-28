@@ -1,5 +1,6 @@
 # chat/views.py
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -11,12 +12,13 @@ import time
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # SKN21-4th-4Team 폴더 (backend/chat/views.py에서 4단계 상위)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # /app (main.py import용)
 sys.path.append(str(PROJECT_ROOT))
 
 # main.py의 main 함수 import
 from main import main as rag_main
 
+@login_required
 def chat_page(request):
     """챗봇 페이지 렌더링"""
     return render(request, 'chat.html')

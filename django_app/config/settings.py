@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR는 django_app 폴더
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # apps
-    "backend.accounts",
-    "backend.chat",
-    "backend.quiz",
+    "django_app.backend.accounts",
+    "django_app.backend.chat",
+    "django_app.backend.quiz",
 ]
 
 MIDDLEWARE = [
@@ -54,10 +54,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     
     # Custom middleware
-    "config.middleware.ErrorHandlerMiddleware",
+    "django_app.config.middleware.ErrorHandlerMiddleware",
 ]
 
-ROOT_URLCONF = "config.urls"
+ROOT_URLCONF = "django_app.config.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+WSGI_APPLICATION = "django_app.config.wsgi.application"
 
 
 # Database
@@ -124,4 +124,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]  # 개발 중 정적 파일 경로
-STATIC_ROOT = BASE_DIR / "staticfiles"    # 배포 시 정적 파일 수집 경로
+STATIC_ROOT = BASE_DIR.parent / "staticfiles"    # 배포 시 정적 파일 수집 경로 (/app/staticfiles)
+
+# 로그인 필수 설정
+LOGIN_URL = 'login'

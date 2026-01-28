@@ -291,6 +291,14 @@ async function send(text) {
                         if (data.type === 'step') {
                             // 진행 단계 추가
                             addStep(thinkId, data.data.step, data.data.title, data.data.desc);
+                        } else if (data.type === 'message') {
+                            // 전체 메시지 수신 (한 번에 표시)
+                            if (!botDiv) {
+                                finishThinking(thinkId);
+                                botDiv = createBotMessage();
+                            }
+                            answer = data.data;
+                            updateBotMessage(botDiv, answer);
                         } else if (data.type === 'char') {
                             // 글자 수신
                             if (!botDiv) {
