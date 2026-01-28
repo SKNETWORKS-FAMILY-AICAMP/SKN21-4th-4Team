@@ -254,7 +254,9 @@ def chat_stream():
             yield f"data: {json.dumps({'type': 'suggestions', 'data': suggested})}\n\n"
         
         # 4단계: 참고 자료(카드) 전송 (질문 아래에 표시)
-        yield f"data: {json.dumps({'type': 'sources', 'data': response['sources']})}\n\n"
+        sources = response.get('sources', [])
+        if sources:
+            yield f"data: {json.dumps({'type': 'sources', 'data': sources})}\n\n"
 
         # 4.5단계: 외부 검색 결과 전송
         web_sources = response.get('web_sources', [])
