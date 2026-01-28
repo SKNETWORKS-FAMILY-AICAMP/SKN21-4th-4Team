@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 # 프로젝트 루트 경로 추가 (src 폴더 접근용)
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # backend/quiz/views.py에서 4단계 상위
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # /app (backend/quiz/views.py에서 3단계 상위)
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.quiz_service import QuizService
