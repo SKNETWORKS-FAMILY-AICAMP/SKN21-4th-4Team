@@ -124,7 +124,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]  # 개발 중 정적 파일 경로
-STATIC_ROOT = BASE_DIR / "staticfiles"    # 배포 시 정적 파일 수집 경로 (/app/staticfiles)
+STATIC_ROOT = BASE_DIR.parent / "staticfiles"    # 배포 시 정적 파일 수집 경로 (/app/staticfiles)
 
 # 로그인 필수 설정
 LOGIN_URL = 'login'
