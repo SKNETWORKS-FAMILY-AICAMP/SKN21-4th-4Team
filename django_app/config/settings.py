@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # apps
-    "backend.accounts",
-    "backend.chat",
-    "backend.quiz",
+    "django_app.backend.accounts",
+    "django_app.backend.chat",
+    "django_app.backend.quiz",
 ]
 
 MIDDLEWARE = [
@@ -54,10 +54,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     
     # Custom middleware
-    "config.middleware.ErrorHandlerMiddleware",
+    "django_app.config.middleware.ErrorHandlerMiddleware",
 ]
 
-ROOT_URLCONF = "config.urls"
+ROOT_URLCONF = "django_app.config.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+WSGI_APPLICATION = "django_app.config.wsgi.application"
 
 
 # Database
