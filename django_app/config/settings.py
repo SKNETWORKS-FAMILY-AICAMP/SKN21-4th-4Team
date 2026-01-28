@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-x=9q_gbry!$42tt=5y@agn6z%2k*!8qi$680*$a38eq#qjxblm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # 개발 중에는 모두 허용
 
 
 # Application definition
@@ -52,6 +52,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    
+    # Custom middleware
+    "config.middleware.ErrorHandlerMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -119,4 +122,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]  # 개발 중 정적 파일 경로
+STATIC_ROOT = BASE_DIR / "staticfiles"    # 배포 시 정적 파일 수집 경로

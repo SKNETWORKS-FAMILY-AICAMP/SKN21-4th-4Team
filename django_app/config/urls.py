@@ -34,6 +34,9 @@ urlpatterns = [
 
     # quiz
     path('quiz/', quiz_views.quiz_page, name = 'quiz'),
+    
+    # API endpoints
+    path('api/quiz/', quiz_views.get_quiz, name='api_quiz'),
 
     # main 일단 보류 구현 안할시 로그인페이지로
     # path('', main_views.main_page, name = 'main'),

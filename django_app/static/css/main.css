@@ -1,0 +1,845 @@
+/* ========================================
+📱 메인 콘텐츠 영역
+========================================
+사이드바 오른쪽의 메인 채팅 영역입니다.
+======================================== */
+.main {
+    margin-left: 280px;
+    /* 사이드바 너비만큼 띄움 */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.chat-area {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-content {
+    max-width: 800px;
+    /* 채팅 최대 너비 */
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+/* [추가] 상태 표시기 스타일 - 프리미엄 버전 */
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #6b7280;
+    margin-left: 6px;
+    margin-right: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 정상 (초록) - 화려한 글로우 */
+.status-ok {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    border-color: rgba(52, 211, 153, 0.5);
+    box-shadow:
+        0 0 8px rgba(52, 211, 153, 0.8),
+        0 0 16px rgba(52, 211, 153, 0.4);
+    animation: glow-green 2s ease-in-out infinite;
+}
+
+@keyframes glow-green {
+
+    0%,
+    100% {
+        box-shadow: 0 0 8px rgba(52, 211, 153, 0.8), 0 0 16px rgba(52, 211, 153, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 12px rgba(52, 211, 153, 1), 0 0 24px rgba(52, 211, 153, 0.6);
+    }
+}
+
+/* 오류 (빨강) - 깜빡임 글로우 */
+.status-error {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    border-color: rgba(248, 113, 113, 0.5);
+    box-shadow:
+        0 0 8px rgba(248, 113, 113, 0.8),
+        0 0 16px rgba(248, 113, 113, 0.4);
+    animation: glow-red 1s ease-in-out infinite;
+}
+
+@keyframes glow-red {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ========================================
+🧩 퀴즈 UI 스타일
+======================================== */
+.quiz-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+/* 퀴즈 설정 (시작 화면) */
+.quiz-setup-card {
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+}
+
+.quiz-setup-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--text-primary);
+}
+
+.quiz-option-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.quiz-option-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.quiz-radio-group {
+    display: flex;
+    gap: 15px;
+}
+
+.quiz-radio-label {
+    cursor: pointer;
+    padding: 10px 20px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.2s;
+    color: var(--text-primary);
+}
+
+.quiz-radio-input {
+    display: none;
+}
+
+.quiz-radio-input:checked+.quiz-radio-label {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+
+.quiz-input-number {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.quiz-start-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-top: 10px;
+}
+
+.quiz-start-btn:hover {
+    transform: scale(1.02);
+}
+
+/* 문제 풀이 화면 */
+.quiz-play-card {
+    background: var(--bg-secondary);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-progress {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: right;
+    font-weight: 600;
+}
+
+.quiz-question-text {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    color: var(--text-primary);
+    word-break: keep-all;
+}
+
+.quiz-ox-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.quiz-ox-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    font-size: 40px;
+    font-weight: 900;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.quiz-btn-o {
+    color: #10b981;
+    border-color: #10b981;
+}
+
+.quiz-btn-o:hover {
+    background: #10b981;
+    color: white;
+}
+
+.quiz-btn-x {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.quiz-btn-x:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* 결과/해설 표시 */
+.quiz-feedback {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.quiz-feedback.correct {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid #10b981;
+}
+
+.quiz-feedback.wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+}
+
+.feedback-result {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.feedback-explanation {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.feedback-source {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 8px;
+}
+
+.quiz-next-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    /* 검색 버튼과 동일한 스타일 적용 */
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quiz-next-btn:hover {
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 최종 결과 화면 */
+.quiz-final-score {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent-color);
+    margin: 20px 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* DB 상태 텍스트 (오른쪽 아래 고정) */
+.db-status-text {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: transparent;
+    z-index: 1000;
+    font-weight: 500;
+}
+
+.db-status-ok {
+    color: #10b981;
+}
+
+.db-status-error {
+    color: #ef4444;
+}
+
+/* ========================================
+👋 웰컴 화면 스타일
+========================================
+첫 화면에 표시되는 환영 메시지와 추천 질문 카드입니다.
+======================================== */
+.welcome {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.welcome-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border: 1px solid var(--accent);
+}
+
+.welcome-icon {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    margin: 0 auto 28px;
+    box-shadow: var(--shadow-lg);
+}
+
+.welcome h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.welcome p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 48px;
+}
+
+/* ========================================
+💡 추천 질문 카드 (Suggestions)
+========================================
+사용자가 클릭하면 해당 질문이 자동으로 전송됩니다.
+
+[질문 수정 방법]
+HTML의 suggestions 클래스 내부 또는
+showWelcome() 함수의 suggestions 부분을 수정하세요.
+
+[카드 구조]
+- suggestion-icon: 아이콘 (이모지)
+- suggestion-title: 제목
+- suggestion-desc: 설명
+======================================== */
+.suggestions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2열 그리드 */
+    gap: 16px;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.suggestion {
+    padding: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.suggestion:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.suggestion-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--accent-glow);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+}
+
+.suggestion-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.suggestion-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* ========================================
+💬 채팅 메시지 스타일
+========================================
+사용자(user)와 봇(bot) 메시지 스타일입니다.
+======================================== */
+.message {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    animation: fadeIn 0.4s ease;
+}
+
+.message:last-child {
+    border-bottom: none;
+}
+
+/* 메시지 등장 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.message-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* 사용자 메시지 아바타 */
+.message.user .message-avatar {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+}
+
+/* 봇 메시지 아바타 */
+.message.bot .message-avatar {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: white;
+}
+
+.message-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.message-content {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    padding-left: 48px;
+}
+
+.message.user .message-content {
+    color: var(--text-primary);
+}
+
+/* 코드 블록 스타일 */
+.message-content pre {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+/* 인라인 코드 스타일 */
+.message-content code {
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.message-content pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+/* ========================================
+⚙️ Thinking Process (진행 단계 표시)
+========================================
+AI가 답변을 생성하는 과정을 보여주는 UI입니다.
+======================================== */
+.thought-process {
+    margin: 16px 0 16px 48px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    font-size: 13px;
+}
+
+.thought-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.thought-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.status-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+}
+
+.thought-body {
+    padding: 0 16px 16px;
+    display: none;
+    border-top: 1px solid var(--border);
+}
+
+.thought-process.open .thought-body {
+    display: block;
+}
+
+/* 단계별 표시 */
+.thought-step {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    position: relative;
+}
+
+/* 단계 연결선 */
+.thought-step::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 26px;
+    bottom: -14px;
+    width: 2px;
+    background: var(--border);
+}
+
+.thought-step:last-child::before {
+    display: none;
+}
+
+.step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    z-index: 1;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: var(--text-primary);
+}
+
+.step-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* ========================================
+📚 참고 자료 (Sources) 카드
+========================================
+응답에 포함된 참고 자료를 표시합니다.
+======================================== */
+.sources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.source-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-size: 12px;
+    transition: var(--transition);
+}
+
+.source-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* Best Match 카드 스타일 (다크모드 호환) */
+.best-match-card {
+    background: var(--bg-secondary);
+    border: 1px solid #f9a8d4;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 16px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 220px;
+}
+
+.best-match-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.best-match-badge {
+    background: rgba(252, 231, 243, 0.2);
+    color: #ec4899;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.best-match-title {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 12px;
+}
+
+.best-match-content {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.best-match-score {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+.source-type {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    font-size: 10px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.source-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.source-cell {
+    color: var(--text-muted);
+}
+
+/* ========================================
+⌨️ 입력 영역 스타일
+========================================
+하단의 메시지 입력 영역입니다.
+======================================== */
+.input-area {
+    padding: 24px;
+    background: linear-gradient(to top, var(--bg-primary) 60%, transparent);
+}
+
+.input-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.input-box {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+/* 입력 포커스 시 강조 효과 */
+.input-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.input-box textarea {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 18px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    max-height: 160px;
+}
+
+.input-box textarea::placeholder {
+    color: var(--text-muted);
+}
+
+/* [다크 모드] 퀴즈 카드 배경 밝게 조정 */
+[data-theme="dark"] .quiz-play-card,
+[data-theme="dark"] .quiz-setup-card {
+    background: #1a1a2e;
+    /* 기존보다 밝은 색상 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 전송 버튼 */
+.send-btn {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.send-btn:hover {
+    transform: scale(1.05);
+}
+
+.send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.send-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* 입력 힌트 텍스트 */
+.input-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 14px;
+}
