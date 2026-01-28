@@ -21,5 +21,9 @@ rapidfuzz
 qdrant-client
 fastembed
 
-# view
+# web framework
+django
+djangorestframework
+
+# view (legacy)
 flask
