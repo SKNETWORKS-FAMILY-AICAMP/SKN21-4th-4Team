@@ -16,10 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from chat import views as chat_views
-from quiz import views as quiz_views
-from accounts import views as accounts_views
+from django.urls import path, include
+from backend.chat import views as chat_views
+from backend.quiz import views as quiz_views
+from backend.accounts import views as accounts_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,9 +28,11 @@ urlpatterns = [
     path('login/', accounts_views.login_page, name='login'),
     path('signup/', accounts_views.signup_page, name = 'signup'),
     path('mypage/', accounts_views.mypage_page, name = 'mypage'),
+    path('logout/',accounts_views.logout_view, name='logout'),
 
     # chat
     path('chat/', chat_views.chat_page, name = 'chat'),
+    path('api/chat/', include('backend.chat.urls')), # API 경로
 
     # quiz
     path('quiz/', quiz_views.quiz_page, name = 'quiz'),

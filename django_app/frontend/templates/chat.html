@@ -58,8 +58,32 @@
         <!-- 모드 선택 영역 (JavaScript로 동적 생성) -->
         <div class="sections-container" id="sectionsContainer"></div>
 
-        <!-- 푸터: 초기화 버튼 -->
+        <!-- 푸터: 유저 정보 + 버튼 -->
         <div class="sidebar-footer">
+            {% if user.is_authenticated %}
+            <div
+                style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: var(--bg-tertiary); border-radius: var(--radius-sm);">
+                <span style="font-size: 20px;">👤</span>
+                <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">{{ user.username }}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted);">로그인됨</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <a href="{% url 'mypage' %}"
+                    style="flex: 1; padding: 8px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 12px;">마이페이지</a>
+                <a href="{% url 'logout' %}"
+                    style="flex: 1; padding: 8px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 12px;">로그아웃</a>
+            </div>
+            {% else %}
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <a href="{% url 'login' %}"
+                    style="flex: 1; padding: 10px; text-align: center; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border-radius: var(--radius-sm); color: white; text-decoration: none; font-size: 13px; font-weight: 600;">로그인</a>
+                <a href="{% url 'signup' %}"
+                    style="flex: 1; padding: 10px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); text-decoration: none; font-size: 13px;">회원가입</a>
+            </div>
+            {% endif %}
             <button class="reset-btn" onclick="resetAll()">전체 초기화</button>
         </div>
     </aside>
