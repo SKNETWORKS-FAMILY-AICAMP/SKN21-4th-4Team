@@ -24,8 +24,8 @@ class ConfigAPI:
     TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
 
 class ConfigDB:
-    HOST = "localhost"
-    PORT = "6333"
+    HOST = os.getenv("QDRANT_HOST", "localhost")  # Docker: qdrant, Local: localhost
+    PORT = os.getenv("QDRANT_PORT", "6333")
     COLLECTION_NAME = "learning_ai"
     EMBEDDING_MODEL = "text-embedding-3-large"
     
