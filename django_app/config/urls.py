@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from chat import views as chat_views
 from quiz import views as quiz_views
 from accounts import views as accounts_views
@@ -31,6 +31,7 @@ urlpatterns = [
 
     # chat
     path('chat/', chat_views.chat_page, name = 'chat'),
+    path('api/chat/', include('chat.urls')), # API 경로
 
     # quiz
     path('quiz/', quiz_views.quiz_page, name = 'quiz'),
