@@ -17,9 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from chat import views as chat_views
-from quiz import views as quiz_views
-from accounts import views as accounts_views
+from backend.chat import views as chat_views
+from backend.quiz import views as quiz_views
+from backend.accounts import views as accounts_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,13 +28,17 @@ urlpatterns = [
     path('login/', accounts_views.login_page, name='login'),
     path('signup/', accounts_views.signup_page, name = 'signup'),
     path('mypage/', accounts_views.mypage_page, name = 'mypage'),
+    path('logout/',accounts_views.logout_view, name='logout'),
 
     # chat
     path('chat/', chat_views.chat_page, name = 'chat'),
-    path('api/chat/', include('chat.urls')), # API 경로
+    path('api/chat/', include('backend.chat.urls')), # API 경로
 
     # quiz
     path('quiz/', quiz_views.quiz_page, name = 'quiz'),
+    
+    # API endpoints
+    path('api/quiz/', quiz_views.get_quiz, name='api_quiz'),
 
     # main 일단 보류 구현 안할시 로그인페이지로
     # path('', main_views.main_page, name = 'main'),

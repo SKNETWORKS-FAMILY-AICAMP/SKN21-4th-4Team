@@ -20,7 +20,7 @@ class SignUpForm(UserCreationForm):
     )
     
     # 이름: 최대 50글자
-    name = forms.CharField(min_length=4, max_length=50, required=True)
+    name = forms.CharField(max_length=50, required=True)
     
     # 이메일
     email = forms.EmailField(required=True)
