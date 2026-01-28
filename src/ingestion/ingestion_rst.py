@@ -153,8 +153,7 @@ class RSTIngestor:
     # -------------------------
     # 0) RST 정제 및 파싱 유틸
     # -------------------------
-    @staticmethod
-    def _guess_vector_size(embedding_model_name: str) -> int:
+    def _guess_vector_size(self, embedding_model_name: str) -> int:
         """
         OpenAI 임베딩 모델별 벡터 차원 추정값.
         필요 시 컬렉션을 새로 만들 때 사용.
@@ -166,8 +165,7 @@ class RSTIngestor:
         }
         return known.get(embedding_model_name, 1536)
 
-    @staticmethod
-    def _clean_inline_markup(text: str) -> str:
+    def _clean_inline_markup(self, text: str) -> str:
         """
         제목/헤더 등에 들어가는 RST 인라인 마크업을 최소한으로 정리.
         - :role:`...` -> ...
@@ -186,8 +184,7 @@ class RSTIngestor:
         text = re.sub(r"`([^`]+)`_", r"\1", text)
         return text.strip()
 
-    @staticmethod
-    def _clean_rst_noise(text: str) -> str:
+    def _clean_rst_noise(self, text: str) -> str:
         """
         RST 문법 노이즈를 강력하게 제거
         라인 단위로 처리하여 directive를 통째로 제거
@@ -347,8 +344,7 @@ class RSTIngestor:
         # 시작/끝 공백 제거
         return result.strip()
     
-    @staticmethod
-    def _parse_rst_sections(text: str) -> List[Tuple[str, str, str]]:
+    def _parse_rst_sections(self, text: str) -> List[Tuple[str, str, str]]:
         """
         RST 섹션을 계층적으로 파싱
         반환: [(h1_title, h2_title, content), ...]
@@ -381,7 +377,7 @@ class RSTIngestor:
                         # H1: ===== (최상위)
                         if char == '=':
                             flush()
-                            current_h1 = RSTIngestor._clean_inline_markup(line.strip()) or current_h1
+                            current_h1 = self._clean_inline_markup(line.strip()) or current_h1
                             current_h2 = ""
                             i += 2
                             continue
@@ -389,7 +385,7 @@ class RSTIngestor:
                         # H2: ----- (하위)
                         elif char == '-':
                             flush()
-                            current_h2 = RSTIngestor._clean_inline_markup(line.strip())
+                            current_h2 = self._clean_inline_markup(line.strip())
                             i += 2
                             continue
                         
@@ -767,7 +763,7 @@ if __name__ == "__main__":
     import argparse
     
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir.parent.parent
     rst_dir = project_root / "data" / "raw" / "python_rst"
     
     parser = argparse.ArgumentParser(description="RST Ingestion")

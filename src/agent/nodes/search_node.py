@@ -53,12 +53,22 @@ def build_context(state: AgentState):
     
     for i, res in enumerate(results, 1): # 번호는 1번부터
         source = res['metadata'].get('source', 'Unknown')
+        code_snippet = res['metadata'].get('code_snippet')
+
         score = round(res['score'], 2)
         content = res['content'].strip()
         
         part = f"[Original {i}] 출처: {source} (유사도: {score})\n{content}"
+        if code_snippet:
+            part += f"\n\n코드 예제:\n```python\n{code_snippet}\n```"
+            
+            print("===== code_snippet =====")
+            print(code_snippet)
+            print("===== code_snippet =====")
+
         context_parts.append(part)
         
     context = "\n\n---\n\n".join(context_parts)
+
 
     return {"context": context}

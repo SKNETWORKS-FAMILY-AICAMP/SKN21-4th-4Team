@@ -61,7 +61,24 @@ def analyst_node(state: AgentState):
     print(">>>> analyst_node : tool_calls", tool_calls)
 
     if tool_calls:
-        response_text = str(tool_calls[0]['args'])
+        args = tool_calls[0]['args']
+        
+        # 답변 포맷팅
+        response_text = f"""## 📚 요약
+{args.get('summary', '')}
+
+## 💻 코드 설명
+{args.get('code_explanation', '')}
+
+## 💡 실습 팁
+{args.get('practice_tips', '')}
+
+## 📌 한 줄 정리
+{args.get('one_liner', '')}
+"""
+        # 관련 코드가 있으면 추가
+        if args.get('relevant_code'):
+            response_text += f"\n\n## 📝 관련 코드\n```python\n{args.get('relevant_code')}\n```"
         # tool_calls에서 suggested_questions 추출
         questions = tool_calls[0]['args'].get('suggested_questions', [])
         print(f"💡 [analyst_node] 연관 질문: {questions}")

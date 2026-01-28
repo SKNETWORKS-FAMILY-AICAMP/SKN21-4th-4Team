@@ -103,6 +103,7 @@ def prepare_documents_from_cells(file_name: str, cells: List[dict]):
             if heading:
                 meta['heading'] = heading
             meta['text_snippet'] = str(part)[:500]
+            meta['code_snippet'] = str(part)
             docs.append({'text': str(part), 'metadata': meta})
     return docs
 

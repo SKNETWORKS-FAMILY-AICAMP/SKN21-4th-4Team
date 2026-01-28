@@ -30,7 +30,7 @@ from langchain_text_splitters import (
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance
-from utils.config import ConfigDB
+from src.utils.config import ConfigDB
 from langchain_qdrant import QdrantVectorStore
 from langchain_openai import OpenAIEmbeddings
 
@@ -227,9 +227,19 @@ class Ingestor:
                 # code는 fenced block으로 감싸면 검색 시 문맥이 좋아짐
                 code_block = f"```python\n{code}\n```"
                 if code.strip():
-                    cells.append(
-                        {"cell_type": "code", "text": code_block, "cell_index": idx}
-                    )
+                    if len(cells) > 0:
+                        last_cell = cells[-1]
+                        if last_cell["cell_type"] == "markdown":
+                            default_code = (last_cell["code"] + "\n\n") if "code" in last_cell.keys() else ""
+                            cells[-1]["code"] = default_code + code_block
+                        else:
+                            cells.append(
+                                {"cell_type": "code", "text": code_block, "cell_index": idx}
+                            )
+                    else:
+                        cells.append(
+                            {"cell_type": "code", "text": code_block, "cell_index": idx}
+                        )
 
         return {
             "cells": cells,
@@ -280,7 +290,8 @@ class Ingestor:
             cell_type = cell["cell_type"]
             cell_text = cell["text"]
             cell_index = cell["cell_index"]
-
+            cell_code = cell["code"] if "code" in cell.keys() else ""
+            
             # 공통 메타
             cell_meta = {
                 **base_meta,
@@ -312,7 +323,8 @@ class Ingestor:
                                 page_content=enriched_chunk,
                                 metadata={
                                     **meta,
-                                    "text_snippet": chunk[:200],  # 원본 청크 스니펫 유지
+                                    # "text_snippet": chunk[:200],  # 원본 청크 스니펫 유지
+                                    "code_snippet": cell_code
                                 },
                             )
                         )
@@ -328,7 +340,8 @@ class Ingestor:
                             page_content=enriched_chunk,
                             metadata={
                                 **cell_meta,
-                                "text_snippet": chunk[:200],  # 원본 청크 스니펫 유지
+                                # "text_snippet": chunk[:200],  # 원본 청크 스니펫 유지
+                                "code_snippet": cell_code
                             },
                         )
                     )
@@ -376,8 +389,9 @@ class Ingestor:
 if __name__ == "__main__":
     # 프로젝트 루트 기준: data/raw/lectures
     script_dir = Path(__file__).parent      # src/
-    project_root = script_dir.parent        # 프로젝트 루트
+    project_root = script_dir.parent.parent        # 프로젝트 루트
     lectures_path = project_root / "data" / "raw" / "lectures"
+    print("lectures path : ", lectures_path)
 
     ingestor = Ingestor(
         docs_root=str(lectures_path),

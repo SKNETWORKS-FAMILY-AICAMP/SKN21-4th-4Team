@@ -11,11 +11,12 @@ class AnalystOutputSchema(BaseModel):
     confidence_score: int = Field(description="답변 확신도 (0-100)")
     references: List[str] = Field(description="참고한 파일명 리스트")
     suggested_questions: List[str] = Field(description="[5] 사용자가 이어서 질문할 만한 연관 질문 3개")
+    relevant_code: str = Field(description="[Optional] Context에 있는 코드 예제 원본 (없으면 빈 문자열)", default="")
 
 
 # args_schema를 지정하여 LLM에게 입력 형식을 알려줍니다.
 @tool(args_schema=AnalystOutputSchema)
-def submit_analysis(summary: str, code_explanation: str, practice_tips: str, one_liner: str, confidence_score: int, references: List[str], suggested_questions: List[str]):
+def submit_analysis(summary: str, code_explanation: str, practice_tips: str, one_liner: str, confidence_score: int, references: List[str], suggested_questions: List[str], relevant_code: str = ""):
     """
     최종 분석 결과를 제출할 때 사용하는 도구입니다.
     LLM은 답변을 텍스트로 바로 뱉는 대신, 이 도구를 호출하여 구조화된 답변을 전달해야 합니다.
@@ -28,5 +29,7 @@ def submit_analysis(summary: str, code_explanation: str, practice_tips: str, one
         "one_liner": one_liner,
         "confidence_score": confidence_score,
         "references": references,
-        "suggested_questions": suggested_questions
+        "references": references,
+        "suggested_questions": suggested_questions,
+        "relevant_code": relevant_code
     }
