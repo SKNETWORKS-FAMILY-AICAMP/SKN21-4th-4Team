@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 8000
 
 # Gunicorn으로 Django 실행
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "config.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "django_app.config.wsgi:application"]
