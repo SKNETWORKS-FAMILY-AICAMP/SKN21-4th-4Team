@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import JsonResponse
 import sys
@@ -12,8 +13,7 @@ from src.quiz_service import QuizService
 # QuizService 인스턴스 생성
 quiz_service = QuizService()
 
-# Create your views here.
-
+@login_required
 def quiz_page(request):
     """퀴즈 페이지 렌더링"""
     return render(request, 'quiz.html')

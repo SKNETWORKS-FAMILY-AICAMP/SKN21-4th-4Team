@@ -1,5 +1,6 @@
 # chat/views.py
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +18,7 @@ sys.path.append(str(PROJECT_ROOT))
 # main.py의 main 함수 import
 from main import main as rag_main
 
+@login_required
 def chat_page(request):
     """챗봇 페이지 렌더링"""
     return render(request, 'chat.html')

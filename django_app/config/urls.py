@@ -16,12 +16,14 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
 from backend.chat import views as chat_views
 from backend.quiz import views as quiz_views
 from backend.accounts import views as accounts_views
 
 urlpatterns = [
+    path('', lambda request: redirect('login')),
     path('admin/', admin.site.urls),
 
     # accounts
