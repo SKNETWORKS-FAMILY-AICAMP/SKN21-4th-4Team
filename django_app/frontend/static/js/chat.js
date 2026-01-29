@@ -166,7 +166,7 @@ function showWelcome() {
         document.getElementById('chatContent').innerHTML = `
             <div class="quiz-container">
                 <div class="quiz-setup-card">
-                    <div class="quiz-setup-title">오늘의 퀴즈 도전! 🧩</div>
+                    <div class="quiz-setup-title">오늘의 퀴즈 도전!</div>
                     
                     <div class="quiz-option-group">
                         <label class="quiz-option-label">카테고리 선택</label>
@@ -203,22 +203,22 @@ function showWelcome() {
             <p>부트캠프 학습 자료를 기반으로 한 AI 튜터입니다.</p>
             <div class="suggestions">
                 <div class="suggestion" onclick="send('과적합이 뭐고 어떻게 방지해?')">
-                    <div class="suggestion-icon">🎯</div>
+                    <div class="suggestion-icon">Q1</div>
                     <div class="suggestion-title">과적합이 뭐고 어떻게 방지해?</div>
                     <div class="suggestion-desc">Overfitting 개념과 해결법</div>
                 </div>
                 <div class="suggestion" onclick="send('결정트리와 랜덤포레스트 차이가 뭐야?')">
-                    <div class="suggestion-icon">🌳</div>
+                    <div class="suggestion-icon">Q2</div>
                     <div class="suggestion-title">결정트리와 랜덤포레스트 차이가 뭐야?</div>
                     <div class="suggestion-desc">트리 기반 알고리즘 비교</div>
                 </div>
                 <div class="suggestion" onclick="send('train_test_split은 왜 하는 거야?')">
-                    <div class="suggestion-icon">📊</div>
+                    <div class="suggestion-icon">Q3</div>
                     <div class="suggestion-title">train_test_split은 왜 하는 거야?</div>
                     <div class="suggestion-desc">데이터 분할의 필요성</div>
                 </div>
                 <div class="suggestion" onclick="send('정확도와 정밀도 차이 설명해줘')">
-                    <div class="suggestion-icon">📈</div>
+                    <div class="suggestion-icon">Q4</div>
                     <div class="suggestion-title">정확도와 정밀도 차이 설명해줘</div>
                     <div class="suggestion-desc">평가 지표 비교</div>
                 </div>
@@ -366,7 +366,7 @@ async function send(text) {
         }
     } catch (e) {
         finishThinking(thinkId);
-        addMessage('bot', '⚠️ 서버 연결 오류');
+        addMessage('bot', '서버 연결 오류');
     }
 
     // 상태 복원
@@ -387,7 +387,7 @@ function createBotMessage() {
                 <img src="/static/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">
             </div>
             <div class="message-name">AI Tutor</div>
-            <button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장">★</button>
+            <button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
         </div>
         <div class="message-content"></div>
     `;
@@ -401,7 +401,20 @@ function createBotMessage() {
  * @param {string} text - 마크다운 텍스트
  */
 function updateBotMessage(div, text) {
-    div.querySelector('.message-content').innerHTML = marked.parse(text);
+    const content = div.querySelector('.message-content');
+    content.innerHTML = marked.parse(text);
+
+    // 빈 코드 블록 제거
+    content.querySelectorAll('pre').forEach(pre => {
+        const code = pre.querySelector('code');
+        if (!code || !code.textContent.trim()) {
+            pre.remove();
+        }
+    });
+
+    // 코드 하이라이팅
+    content.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+
     // 자동 스크롤
     document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
 }
@@ -444,6 +457,7 @@ function appendSources(div, sources) {
         let content = source.content;
         let scorePercent = source.score || 0;
 
+
         // 태그 결정 (백엔드 type 우선, 없으면 title 기반 추론)
         let tag = source.type || 'DOC';
         if (tag === 'DOC') { // 기본값이면 다시 한번 체크
@@ -467,10 +481,10 @@ function appendSources(div, sources) {
                 transition: transform 0.2s;
                 display: flex;
                 flex-direction: column;
+                position: relative;
             " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                      <span style="
-                        align-self: flex-start;
                         font-size: 10px; 
                         font-weight: 700; 
                         color: #fff; 
@@ -478,38 +492,32 @@ function appendSources(div, sources) {
                         padding: 3px 6px; 
                         border-radius: 4px;
                     ">${tag}</span>
-                    <span style="
-                        font-size: 13px; 
-                        font-weight: 600; 
-                        color: var(--accent); 
-                        line-height: 1.4; 
-                        display: -webkit-box; 
-                        -webkit-line-clamp: 2; 
-                        -webkit-box-orient: vertical; 
-                        overflow: hidden;
-                        height: 2.8em;
-                    " title="${title}">
-                        ${displayTitle}
-                    </span>
                 </div>
+                <span style="
+                    font-size: 13px; 
+                    font-weight: 600; 
+                    color: var(--accent); 
+                    line-height: 1.4; 
+                    display: -webkit-box; 
+                    -webkit-line-clamp: 2; 
+                    -webkit-box-orient: vertical; 
+                    overflow: hidden;
+                    margin-bottom: 8px;
+                " title="${title}">
+                    ${displayTitle}
+                </span>
                 
                 <div style="
                     font-size: 12px; 
                     color: var(--text-secondary); 
                     line-height: 1.6; 
-                    margin-bottom: auto;
                     display: -webkit-box;
                     -webkit-line-clamp: 4;
                     -webkit-box-orient: vertical;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    height: 6.4em;
                 ">
                     ${content}
-                </div>
-                
-                <div style="text-align: right; font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 10px;">
-                    유사도: ${scorePercent}%
                 </div>
             </div>
         `;
@@ -525,7 +533,7 @@ function appendWebSources(div, webSources) {
 
     const html = `
         <div class="web-sources-container" style="margin-top: 12px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
-            <div style="font-size: 13px; font-weight: 600; color: #3b82f6; margin-bottom: 8px;">🌐 외부 참고 자료 (Web Search)</div>
+            <div style="font-size: 13px; font-weight: 600; color: #3b82f6; margin-bottom: 8px;">외부 참고 자료 (Web Search)</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 ${webSources.map(s => `
                     <a href="${s.url}" target="_blank" style="text-decoration: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e5e7eb; transition: transform 0.2s;">
@@ -571,7 +579,7 @@ function appendSuggestions(div, suggestions) {
                     onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
                     onmouseout="this.style.background='var(--bg-tertiary)'; this.style.color='var(--accent)';"
                 >
-                    <span style="font-size: 14px;">💬</span> ${q}
+                    <span style="font-size: 14px;">Q</span> ${q}
                 </button>
             `).join('')}
         </div>
@@ -630,7 +638,7 @@ function addMessage(sender, text, sources = null) {
         <div class="message-header">
             <div class="message-avatar">${avatar}</div>
             <div class="message-name">${sender === 'bot' ? 'AI Tutor' : 'Student'}</div>
-            ${sender === 'bot' ? '<button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장">★</button>' : ''}
+            ${sender === 'bot' ? '<button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>' : ''}
         </div>
         <div class="message-content">${marked.parse(text)}${srcHtml}</div>
     `;
@@ -657,7 +665,7 @@ function showThinking(id) {
     div.innerHTML = `
         <div class="thought-header" onclick="this.parentElement.classList.toggle('open')">
             <div class="thought-title">
-                ⚙️ Thinking Process 
+                Thinking Process 
                 <span class="status-badge" id="${id}-status">Processing...</span>
             </div>
             <span style="font-size:12px;opacity:0.5">▼</span>
@@ -978,7 +986,7 @@ async function requestAIReview() {
     const contentDiv = document.getElementById('aiReviewContent');
     if (container && contentDiv) {
         container.style.display = 'block';
-        contentDiv.innerHTML = 'AI 선생님이 코드를 분석하고 있어요... 🧠';
+        contentDiv.innerHTML = 'AI 선생님이 코드를 분석하고 있어요...';
         // 터미널 스크롤 맨 아래로
         const terminalPanel = document.querySelector('.terminal-panel');
         if (terminalPanel) terminalPanel.scrollTop = terminalPanel.scrollHeight;
@@ -1120,7 +1128,7 @@ function renderBookmarks() {
     list.innerHTML = bookmarks.map(b => `
         <div class="bookmark-item">
             <div style="flex:1; cursor:pointer;" onclick="location.href='/mypage/#bookmark-card-${b.id}'">
-                📌 ${b.query ? b.query.slice(0, 20) : '제목 없음'}...
+                ${b.query ? b.query.slice(0, 20) : '제목 없음'}...
             </div>
             <button onclick="deleteBookmark(${b.id})" style="background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer;" title="삭제">✕</button>
         </div>
@@ -1206,7 +1214,7 @@ function showQuizPanel() {
     rightPanel.innerHTML = `
         <div class="quiz-panel">
             <div class="sidebar-right-header">
-                <h3>🧩 오늘의 퀴즈</h3>
+                <h3>오늘의 퀴즈</h3>
                 <button onclick="closeQuizPanel()" style="background:none;border:none;font-size:18px;cursor:pointer;">✕</button>
             </div>
             <div id="quizPanelContent">
@@ -1325,7 +1333,7 @@ function saveToNotebook(btn) {
 
     // 버튼 상태 변경
     btn.classList.add('saved');
-    btn.innerHTML = '📌 저장됨';
+    btn.innerHTML = '저장됨';
 
     // 카드에 saved 표시 (Notebook 모드에서 사용)
     card.dataset.saved = 'true';
@@ -1582,7 +1590,7 @@ function renderQuizUI(container, result, resultDiv) {
                     padding: 16px;
                     margin-bottom: 12px;
                 ">
-                    <div style="font-weight: 600; margin-bottom: 12px; color: #333;">🧩 ${q.question}</div>
+                    <div style="font-weight: 600; margin-bottom: 12px; color: #333;">${q.question}</div>
                     <div class="quiz-buttons" style="display: flex; gap: 10px;">
                         <button class="quiz-btn-o" data-answer="true"
                             style="flex:1; padding:12px; border:2px solid #e91e8c; background:#fff5f8; border-radius:8px; cursor:pointer; font-weight:600; color:#e91e8c; transition:all 0.2s;">
@@ -1725,7 +1733,7 @@ function renderFlashcardUI(container, result) {
             `;
         });
         html += '</div>';
-        html += '<p style="font-size:11px; color:var(--text-muted, #999); margin-top:8px;">💡 카드를 클릭하면 뒤집어집니다</p>';
+        html += '<p style="font-size:11px; color:var(--text-muted, #999); margin-top:8px;">카드를 클릭하면 뒤집어집니다</p>';
         container.innerHTML = html;
 
     } catch (e) {
@@ -1913,5 +1921,52 @@ async function takeScreenshot() {
     } catch (error) {
         console.error('Screenshot error:', error);
         alert('스크린샷 저장에 실패했습니다.');
+    }
+}
+// ========================================
+// ?? ����� UI ����
+// ========================================
+
+/**
+ * ����� ���̵�� ���
+ */
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        // ���̵�ٰ� ���������� ��ũ�� ����
+        if (sidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+// �������� Ŭ�� �� ���̵�� �ݱ�
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+             const sidebar = document.querySelector('.sidebar');
+             if (sidebar) sidebar.classList.remove('active');
+             overlay.classList.remove('active');
+             document.body.style.overflow = '';
+        });
+    }
+});
+
+
+/**
+ * ����� ��Ʃ��� ���̵�� ���
+ */
+function toggleStudio() {
+    const studio = document.querySelector('.sidebar-right');
+    if (studio) {
+        studio.classList.toggle('active');
     }
 }

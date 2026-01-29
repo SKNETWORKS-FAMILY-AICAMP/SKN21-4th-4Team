@@ -90,7 +90,8 @@ def chat_stream(request):
                 yield f"data: {json.dumps({'type': 'questions', 'data': suggested_questions})}\n\n"
 
             # 4단계: 참고 자료 (Sources) 전송
-            search_results = response.get('search_results', [])
+            # 4단계: 참고 자료 (Sources) 전송 - 상위 3개만
+            search_results = response.get('search_results', [])[:3]
             if search_results:
                 # 불필요한 필드 제거 및 포맷팅 (정규식 활용 정제)
                 formatted_sources = []
@@ -114,11 +115,15 @@ def chat_stream(request):
                     if not clean_content:
                         continue
 
+                    # 유사도 계산
+                    raw_score = r.get('score', 0)
+                    score_percent = round(raw_score * 100, 1) if raw_score <= 1 else round(raw_score, 1)
+
                     source_data = {
                         'type': r.get('metadata', {}).get('source', 'DOC').upper(),
-                        'title': clean_title,
+                        'title': f"{clean_title} ({score_percent}%)",
                         'content': clean_content[:300] + "..." if len(clean_content) > 300 else clean_content,
-                        'score': round(r.get('score', 0) * 100, 1),
+                        'score': score_percent,
                         'metadata': r.get('metadata', {})
                     }
                     formatted_sources.append(source_data)
