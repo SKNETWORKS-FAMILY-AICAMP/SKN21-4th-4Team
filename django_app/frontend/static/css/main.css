@@ -4,12 +4,88 @@
 사이드바 오른쪽의 메인 채팅 영역입니다.
 ======================================== */
 .main {
-    margin-left: 280px;
-    /* 사이드바 너비만큼 띄움 */
+    /* margin-left: 280px; 제거 - grid 레이아웃 사용 */
     flex: 1;
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
+}
+
+/* Chat/Notebook 모드 토글 + 유저 액션 */
+.mode-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    min-height: 48px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+}
+
+.mode-toggle {
+    display: flex;
+    gap: 8px;
+}
+
+/* 헤더 유저 액션 (마이페이지/로그아웃) */
+.header-user-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-user-name {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-right: 4px;
+}
+
+.header-user-btn {
+    padding: 5px 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 11px;
+    transition: var(--transition);
+}
+
+.header-user-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.header-user-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mode-btn:hover {
+    background: var(--bg-hover);
+}
+
+.mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
 }
 
 .chat-area {
@@ -22,6 +98,103 @@
     /* 채팅 최대 너비 */
     margin: 0 auto;
     padding: 40px 24px;
+}
+
+/* ========================================
+🎴 답변 카드 스타일 (NotebookLM 스타일)
+======================================== */
+.answer-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--accent);
+}
+
+/* 출처 배지 (상단 표시) */
+.source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+/* 유사도 표시 */
+.similarity-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.similarity-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.similarity-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.similarity-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.similarity-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* ========================================
+🔘 액션 버튼 (노트저장, 쉬운설명, 퀴즈)
+======================================== */
+.answer-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.action-btn.saved {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 /* [추가] 상태 표시기 스타일 - 프리미엄 버전 */

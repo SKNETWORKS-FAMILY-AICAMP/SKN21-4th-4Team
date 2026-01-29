@@ -66,7 +66,18 @@ code .env.local     # VSCode 사용 시
 ```
 
 > [!TIP]
-> OpenAI API 키 발급: https://platform.openai.com/api-keys
+> **API 키 발급 방법:**
+> - **OpenAI API 키**: https://platform.openai.com/api-keys
+> - **Django SECRET_KEY 생성** (로컬 개발용은 예제 값 사용 가능, 프로덕션은 직접 생성 필수):
+>   ```bash
+>   # Python으로 생성
+>   python -c "import secrets; print(secrets.token_urlsafe(50))"
+>   ```
+>   또는
+>   ```bash
+>   # Django로 생성
+>   python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+>   ```
 
 ### Step 3: 실행!
 
@@ -100,15 +111,15 @@ docker compose -f deploy/docker-compose.local.yml --env-file .env.local up -d
 
 ### 🔄 로컬 vs EC2 배포 차이
 
-| 항목 | 로컬 개발 | EC2 배포 |
-|------|-----------|----------|
-| **파일** | `docker-compose.local.yml` | `docker-compose.yml` |
-| **환경변수** | `.env.local` | `.env` |
-| **실행 위치** | 내 컴퓨터 | AWS 클라우드 |
-| **접속** | `localhost:8000` | `http://<EC2-IP>` |
-| **Django 모드** | DEBUG=True (개발) | DEBUG=False (프로덕션) |
-| **서버** | `runserver` (hot-reload) | Gunicorn + Nginx |
-| **용도** | 개발 & 테스트 | 실제 서비스 제공 |
+| 항목            | 로컬 개발                  | EC2 배포               |
+| --------------- | -------------------------- | ---------------------- |
+| **파일**        | `docker-compose.local.yml` | `docker-compose.yml`   |
+| **환경변수**    | `.env.local`               | `.env`                 |
+| **실행 위치**   | 내 컴퓨터                  | AWS 클라우드           |
+| **접속**        | `localhost:8000`           | `http://<EC2-IP>`      |
+| **Django 모드** | DEBUG=True (개발)          | DEBUG=False (프로덕션) |
+| **서버**        | `runserver` (hot-reload)   | Gunicorn + Nginx       |
+| **용도**        | 개발 & 테스트              | 실제 서비스 제공       |
 
 ### 📁 파일 구조
 

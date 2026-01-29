@@ -44,3 +44,25 @@ class LoginForm(forms.Form):
     """로그인 폼"""
     username = forms.CharField(max_length=20)
     password = forms.CharField(widget=forms.PasswordInput)
+
+from .models import UserProfile
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].disabled = True # 아이디는 수정 불가
+        self.fields['username'].help_text = None
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['nickname']
+        labels = {
+            'nickname': '닉네임'
+        }

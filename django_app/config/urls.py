@@ -31,16 +31,16 @@ urlpatterns = [
     path('signup/', accounts_views.signup_page, name = 'signup'),
     path('mypage/', accounts_views.mypage_page, name = 'mypage'),
     path('logout/',accounts_views.logout_view, name='logout'),
+    path('mypage/update/', accounts_views.update_profile, name='update_profile'),
+    path('mypage/password/', accounts_views.change_password, name='change_password'),
+    path('mypage/delete/', accounts_views.delete_user, name='delete_user'),
 
     # chat
     path('chat/', chat_views.chat_page, name = 'chat'),
     path('api/chat/', include('django_app.backend.chat.urls')), # API 경로
 
     # quiz
-    path('quiz/', quiz_views.quiz_page, name = 'quiz'),
-    
-    # API endpoints
-    path('api/quiz/', quiz_views.get_quiz, name='api_quiz'),
+    path('quiz/', include('django_app.backend.quiz.urls')),
 
     # main 일단 보류 구현 안할시 로그인페이지로
     # path('', main_views.main_page, name = 'main'),
