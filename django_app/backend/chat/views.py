@@ -8,6 +8,8 @@ from django.views.decorators.http import require_http_methods
 import json
 import time
 import sys
+import re
+import os
 from pathlib import Path
 
 # RAG 시스템 경로 설정
@@ -18,6 +20,10 @@ sys.path.append(str(PROJECT_ROOT))
 from main import main as rag_main
 from .models import ChatBookmark
 from django_app.backend.quiz.models import QuizBookmark
+
+# OpenAI 직접 호출을 위한 import
+import os
+from openai import OpenAI
 
 @login_required
 def chat_page(request):
@@ -64,15 +70,147 @@ def chat_stream(request):
                 yield f"data: {json.dumps({'type': 'step', 'data': step})}\n\n"
                 time.sleep(0.3)
 
-            # 2단계: 답변 텍스트
-            answer = str(response.get('analyst_results', ['응답 없음'])[-1])
+            # 2단계: 답변 텍스트 추출
+            # LangChain 메시지 객체에서 content만 추출
+            raw_answer = response.get('analyst_results', ['응답 없음'])[-1]
+            
+            # content 속성이 있으면 추출, 없으면 문자열 변환
+            if hasattr(raw_answer, 'content'):
+                answer = raw_answer.content
+            elif isinstance(raw_answer, dict) and 'content' in raw_answer:
+                answer = raw_answer['content']
+            else:
+                answer = str(raw_answer)
 
             yield f"data: {json.dumps({'type': 'message', 'data': answer})}\n\n"
+
+            # 3단계: 연계 질문 (Suggested Questions) 전송
+            suggested_questions = response.get('suggested_questions', [])
+            if suggested_questions:
+                yield f"data: {json.dumps({'type': 'questions', 'data': suggested_questions})}\n\n"
+
+            # 4단계: 참고 자료 (Sources) 전송
+            search_results = response.get('search_results', [])
+            if search_results:
+                # 불필요한 필드 제거 및 포맷팅 (정규식 활용 정제)
+                formatted_sources = []
+                for r in search_results:
+                    # 1. 제목 처리
+                    # metadata에 lecture_title이 있으면 최우선, 없으면 source, 그것도 없으면 '문서'
+                    raw_title = r.get('metadata', {}).get('lecture_title', r.get('metadata', {}).get('source', '문서'))
+                    # undefined 문자열 처리 및 ==[내부자료(origin)]== 제거
+                    clean_title = str(raw_title).replace('undefined', '').strip()
+                    clean_title = re.sub(r'==\[내부자료\(origin\)\]==', '', clean_title, flags=re.IGNORECASE).strip()
+                    if not clean_title:
+                        clean_title = '참고 자료'
+
+                    # 2. 내용 처리
+                    raw_content = r.get('content', '')
+                    # === [내부 자료 (Original)] === 문구 제거
+                    clean_content = re.sub(r'={2,}\s*\[내부\s*자료\s*\(Original\)\]\s*={2,}', '', raw_content, flags=re.IGNORECASE).strip()
+                    clean_content = clean_content.replace('\n', ' ').strip()
+                    
+                    # 내용이 비어있으면 건너뛰기
+                    if not clean_content:
+                        continue
+
+                    source_data = {
+                        'type': r.get('metadata', {}).get('source', 'DOC').upper(),
+                        'title': clean_title,
+                        'content': clean_content[:300] + "..." if len(clean_content) > 300 else clean_content,
+                        'score': round(r.get('score', 0) * 100, 1),
+                        'metadata': r.get('metadata', {})
+                    }
+                    formatted_sources.append(source_data)
+                
+                if formatted_sources:
+                    yield f"data: {json.dumps({'type': 'sources', 'data': formatted_sources}, ensure_ascii=False)}\n\n"
 
             # 완료 신호
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
         return StreamingHttpResponse(generate(), content_type='text/event-stream')
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def studio_stream(request):
+    """
+    스튜디오 전용 API - RAG 없이 순수 LLM만 호출
+    요약, 퀴즈, 플래시카드, 표 등 생성에 사용
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST만 허용'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        prompt = data.get('prompt', '')
+        tool_type = data.get('type', 'default')  # summarize, quiz, flashcard, table, etc.
+
+        if not prompt:
+            return JsonResponse({'error': '프롬프트가 없습니다.'}, status=400)
+
+        # OpenAI 클라이언트 초기화
+        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+        # 타입별 시스템 프롬프트
+        system_prompts = {
+            'summarize': '당신은 교육 콘텐츠를 간결하게 요약하는 전문가입니다. 핵심 내용을 3줄 이내로 요약해주세요.',
+            'stepByStep': '당신은 복잡한 개념을 단계별로 설명하는 교육 전문가입니다. 1, 2, 3 단계로 나눠서 설명해주세요.',
+            'table': '''당신은 정보를 표로 정리하는 전문가입니다.
+반드시 마크다운 표 형식으로 정리해주세요.
+예시:
+| 항목 | 설명 |
+|------|------|
+| 개념1 | 설명1 |
+
+열은 2-3개만 사용하고, 각 셀 내용은 20자 이내로 간결하게 작성하세요.''',
+            'example': '당신은 다양한 예시를 들어 설명하는 교육 전문가입니다. 새로운 예시를 들어 설명해주세요.',
+            'quiz': '''당신은 O/X 퀴즈를 만드는 전문가입니다. 
+퀴즈는 반드시 1개만 만들어주세요.
+반드시 다음 JSON 형식으로만 응답하세요:
+{"quizzes": [{"question": "질문내용", "answer": true, "explanation": "해설"}]}
+answer는 정답이 O이면 true, X이면 false입니다.''',
+            'flashcard': '''당신은 플래시카드를 만드는 전문가입니다.
+반드시 다음 JSON 형식으로만 응답하세요:
+{"cards": [{"front": "질문/개념", "back": "답변/설명"}]}''',
+            'default': '당신은 친절한 AI 튜터입니다. 학생의 학습을 도와주세요.'
+        }
+
+        system_prompt = system_prompts.get(tool_type, system_prompts['default'])
+
+        def generate():
+            try:
+                # OpenAI API 스트리밍 호출
+                stream = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": prompt}
+                    ],
+                    stream=True,
+                    max_tokens=1500,
+                    temperature=0.7
+                )
+
+                full_response = ""
+                for chunk in stream:
+                    if chunk.choices[0].delta.content:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        # 스트리밍으로 전송
+                        yield f"data: {json.dumps({'type': 'chunk', 'data': content})}\n\n"
+
+                # 최종 완료
+                yield f"data: {json.dumps({'type': 'message', 'data': full_response})}\n\n"
+                yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+            except Exception as e:
+                yield f"data: {json.dumps({'type': 'error', 'data': str(e)})}\n\n"
+
+        return StreamingHttpResponse(generate(), content_type='text/event-stream')
+
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 

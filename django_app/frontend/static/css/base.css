@@ -982,3 +982,56 @@ JavaScript의 SECTIONS 배열에 추가하면 자동 생성됩니다.
     padding-top: 16px;
     border-top: 1px solid var(--border);
 }
+
+/* ========================================
+   플래시카드 뒤집기 효과
+======================================== */
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s;
+}
+
+/* 퀴즈 버튼 호버 효과 */
+.inline-quiz button:hover:not(:disabled) {
+    opacity: 0.8;
+    transform: scale(1.02);
+}
+
+.inline-quiz button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   스튜디오 결과 영역 - 표 스타일
+======================================== */
+.studio-result table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+.studio-result th,
+.studio-result td {
+    border: 1px solid var(--border, #e9ecef);
+    padding: 8px 10px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.studio-result th {
+    background: var(--bg-tertiary, #fff5f8);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.studio-result td {
+    background: var(--bg-secondary, #fff);
+}
