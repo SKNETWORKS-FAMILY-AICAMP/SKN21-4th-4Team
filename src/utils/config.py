@@ -28,6 +28,9 @@ class ConfigDB:
     PORT = os.getenv("QDRANT_PORT", "6333")
     COLLECTION_NAME = "learning_ai"
     EMBEDDING_MODEL = "text-embedding-3-large"
+    RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+    USE_RERANKER = True
+
     
     # 모델별 벡터 크기 자동 매핑
     VECTOR_SIZE_MAP = {
