@@ -853,35 +853,55 @@ function renderBookmarks() {
 // ========================================
 
 const CHALLENGES = {
-    'basic': `# 1. 기초 예제: 변수와 출력
-name = "PyMate"
-age = 3
-print(f"안녕! 나는 {name}이고, {age}살이야.")
-print("반가워! 코딩 공부 화이팅!")`,
-    'loop': `# 2. 중급 예제: 반복문 (Loop)
-# 리스트에 있는 과일들을 하나씩 출력해봅시다.
-fruits = ["Apple", "Banana", "Cherry", "Date"]
+    'basic': `# [문제 1] 변수와 출력
+# 목표: 이름(name)과 나이(age) 변수를 채워서 자기소개를 완성하세요.
 
-print("=== 과일 목록 ===")
-for fruit in fruits:
-    print(f"맛있는 {fruit}")`,
-    'function': `# 3. 고급 예제: 함수와 클래스
-class Dog:
-    def __init__(self, name):
-        self.name = name
-    
-    def bark(self):
-        return f"{self.name}: 멍멍!"
+name = "______"  # 여기에 본인의 별명을 넣어보세요 (예: "파이메이트")
+age = __       # 여기에 나이를 숫자로 넣어보세요 (예: 25)
 
-my_dog = Dog("바둑이")
-print(my_dog.bark())`,
-    'error': `# 4. 디버깅 예제: 에러를 찾아보세요!
-def divide(a, b):
-    return a / b
+# 아래 코드는 수정하지 마세요!
+print(f"안녕! 내 이름은 {name}이고, {age}살이야.")
+print("반가워! 오늘부터 코딩 마스터가 될 거야! 🚀")`,
 
-# 0으로 나누면 어떻게 될까요?
-result = divide(10, 0)
-print(result)`
+    'loop': `# [문제 2] 반복문 (Loop)
+# 목표: for문을 사용하여 1부터 5까지 숫자를 출력하는 코드를 완성하세요.
+
+print("=== 숫자 카운트 시작! ===")
+
+# TODO: range() 안에 알맞은 숫자를 채워보세요.
+# 힌트: range(시작, 끝)에서 '끝' 숫자는 포함되지 않습니다.
+for i in range(__, __):
+    print(f"카운트: {i}")
+
+print("=== 카운트 종료! ===")`,
+
+    'function': `# [문제 3] 함수 만들기
+# 목표: 두 숫자를 더하는 add 함수를 완성하세요.
+
+def add(a, b):
+    # TODO: 두 수 a와 b를 더한 값을 반환(return) 하세요.
+    return ______
+
+# 테스트 코드
+result = add(10, 20)
+print(f"10 + 20 = {result}")
+
+if result == 30:
+    print("🎉 정답입니다! 함수를 완벽하게 이해하셨네요.")
+else:
+    print("😢 결과가 틀렸습니다. 다시 시도해보세요!")`,
+
+    'error': `# [문제 4] 디버깅 챌린지
+# 목표: 아래 코드에는 치명적인 에러가 숨어있습니다.
+# 코드를 실행해보고, 에러를 수정해서 정상적으로 과일이 출력되게 하세요.
+
+fruits = ["Apple", "Banana", "Grape"]
+
+# 앗, 리스트의 마지막 요소를 가져오려고 했는데 에러가 나네요..
+# 인덱스는 0부터 시작한다는 점을 기억하세요!
+last_fruit = fruits[3]
+
+print(f"가장 좋아하는 과일은 {last_fruit} 입니다!")`
 };
 
 /**
