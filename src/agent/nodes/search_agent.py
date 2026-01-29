@@ -42,7 +42,14 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 from typing import List, Dict, Any, Optional
 
 
-def search_by_source(query: str, source: str, top_k: int, keywords: Optional[List[str]] = None) -> list:
+def search_by_source(
+    query: str, 
+    source: str, 
+    top_k: int, 
+    keywords: Optional[List[str]] = None,
+    filters: Optional[Dict[str, Any]] = None,      # [Restored] 메타데이터 필터
+    weights: Optional[Dict[str, float]] = None     # [NEW] 동적 검색 가중치
+) -> list:
     """
     특정 소스에서만 검색 (Qdrant 필터 사용)
     하이브리드 검색(벡터 + 키워드 매칭 + BM25)을 사용합니다.
@@ -52,6 +59,8 @@ def search_by_source(query: str, source: str, top_k: int, keywords: Optional[Lis
         source: 소스 필터 ("lecture" 또는 "python_doc")
         top_k: 반환할 결과 수
         keywords: 명시적으로 지정된 키워드 리스트 (None이면 query에서 단순 추출)
+        filters: 추가 메타데이터 필터 (router에서 생성)
+        weights: 동적 검색 가중치 (router에서 생성)
     """
     client = QdrantClient(
         host=ConfigDB.HOST,
@@ -68,17 +77,42 @@ def search_by_source(query: str, source: str, top_k: int, keywords: Optional[Lis
     candidate_k = min(top_k * 6, 30) if is_single_word else min(top_k * 4, 20)
     query_vector = embeddings.embed_query(query)
     
+
+    # [Restored] 동적 필터 적용 (chapter, has_code)
+    # router의 filters dict: {'chapter': 'ch1...', 'has_code': True}
+    if filters:
+        # 1. 챕터 필터 (lecture용)
+        if filters.get('chapter'):
+            # 실제 DB 필드명에 맞게 조건 추가 (예: metadata.lecture_title 등)
+            # 현재는 매핑 없이 넘어가거나, 필요 시 구현
+            pass 
+
+        # 2. 코드 포함 여부 (has_code)
+        if filters.get('has_code') is not None:
+             # query_filter의 must 조건에 추가해야 하는데, 이미 query_points가 호출됨
+             # 수정: query_points 호출 전에 조건을 완성해야 함.
+             pass 
+    
+    # (위의 query_points 호출 방식으로는 동적 필터가 적용 안됨. 
+    #  올바른 방식: must_conditions 리스트를 만들고 Filter에 전달)
+    
+    must_conditions = [
+        FieldCondition(
+            key="metadata.source",
+            match=MatchValue(value=source)
+        )
+    ]
+    if filters:
+        if filters.get('has_code') is not None:
+            must_conditions.append(FieldCondition(
+                key="metadata.has_code",
+                match=MatchValue(value=filters['has_code'])
+            ))
+            
     vector_result = client.query_points(
         collection_name=ConfigDB.COLLECTION_NAME,
         query=query_vector,
-        query_filter=Filter(
-            must=[
-                FieldCondition(
-                    key="metadata.source",
-                    match=MatchValue(value=source)
-                )
-            ]
-        ),
+        query_filter=Filter(must=must_conditions),
         limit=candidate_k
     )
     
@@ -160,17 +194,21 @@ def search_by_source(query: str, source: str, top_k: int, keywords: Optional[Lis
     
     # 하이브리드 점수 계산 (벡터 + 키워드 + BM25)
     # 단일 단어 쿼리일 때는 키워드/BM25 가중치를 높여서 정확한 매칭 강조
-    if is_single_word:
+    vector_weight = 0.6
+    keyword_weight = 0.2
+    bm25_weight = 0.2
+
+    if weights:
+        # 동적 가중치 적용
+        vector_weight = weights.get('vector', 0.6)
+        keyword_weight = weights.get('keyword', 0.2)
+        bm25_weight = weights.get('bm25', 0.2)
+    elif is_single_word:
         # 단일 단어: 키워드 매칭과 BM25가 더 중요 (벡터는 보조)
         vector_weight = 0.4
         keyword_weight = 0.3
         bm25_weight = 0.3
-    else:
-        # 일반 쿼리: vector 0.6, keyword 0.2, bm25 0.2 (vector_search.py와 동일)
-        vector_weight = 0.6
-        keyword_weight = 0.2
-        bm25_weight = 0.2
-    
+        
     for candidate in candidates:
         hybrid_score = (
             candidate['vector_score'] * vector_weight +
@@ -190,7 +228,7 @@ def search_by_source(query: str, source: str, top_k: int, keywords: Optional[Lis
     return candidates[:top_k]
 
 
-def execute_dual_query_search(query: str) -> tuple:
+def execute_dual_query_search(query: str, config: Optional[Dict[str, Any]] = None) -> tuple:
     """
     소스별 듀얼 쿼리 검색
     
@@ -206,9 +244,25 @@ def execute_dual_query_search(query: str) -> tuple:
     query_info = {"original": query, "translated": None, "queries_used": []}
     
     # LLM이 top_k / sources 결정
-    config = build_search_config(query)
-    top_k = config.get('top_k', 5)
-    sources = config.get("sources", ["lecture", "python_doc"])
+    # 외부에서 config를 주입받으면 재사용 (search_node 등에서 호출 시)
+    if config is None:
+        config = build_search_config(query)
+        
+    # [Fixed] Safe extraction of nested config
+    # search_router now returns nested 'config' dict
+    router_config = config.get('config', {})
+    
+    top_k = router_config.get('top_k', 5)
+    
+    # Extract filters and weights safely
+    router_filters = router_config.get('filters', {})
+    router_weights = router_config.get('weights', {})
+    
+    # Sources handling
+    sources = router_config.get('sources')
+    if not sources: 
+        sources = ["lecture", "python_doc"]
+
     analysis = config.get('_analysis', {})
     topic_keywords = analysis.get('topic_keywords', [])
     
@@ -219,7 +273,12 @@ def execute_dual_query_search(query: str) -> tuple:
     PYDOC_FALLBACK_SCORE_THRESHOLD = 0.45
 
     # 1) lecture는 원문으로만 검색
-    lecture_results = search_by_source(query, "lecture", top_k, keywords=topic_keywords) if "lecture" in sources else []
+    lecture_results = search_by_source(
+        query, "lecture", top_k,
+        keywords=topic_keywords,
+        filters=router_filters,
+        weights=router_weights
+    ) if "lecture" in sources else []
 
     # 2) python_doc 검색
     python_results = []
@@ -229,7 +288,11 @@ def execute_dual_query_search(query: str) -> tuple:
             english_query = translate_to_english(query)
             query_info["translated"] = english_query
             # python_doc(영어 번역 검색)은 영어 키워드이므로 topic_keywords(한글) 대신 쿼리에서 자동 추출하도록 None 전달
-            python_results_en = search_by_source(english_query, "python_doc", top_k)
+            python_results_en = search_by_source(
+                english_query, "python_doc", top_k,
+                filters=router_filters,
+                weights=router_weights
+            )
             for r in python_results_en:
                 r["query_type"] = "translated"
             all_results.extend(python_results_en)
@@ -238,10 +301,19 @@ def execute_dual_query_search(query: str) -> tuple:
             # 2-2) fallback: 번역 결과가 약하면 한글 원문으로도 한 번 더 검색
             best_score = python_results_en[0]["score"] if python_results_en else 0
             if (not python_results_en) or (best_score < PYDOC_FALLBACK_SCORE_THRESHOLD):
-                python_results = search_by_source(query, "python_doc", top_k, keywords=topic_keywords)
+                python_results = search_by_source(
+                    query, "python_doc", top_k,
+                    keywords=topic_keywords,
+                    filters=router_filters,
+                    weights=router_weights
+                )
         else:
             # 영어 질문이면 원문(영어) 그대로
-            python_results = search_by_source(query, "python_doc", top_k)
+            python_results = search_by_source(
+                query, "python_doc", top_k,
+                filters=router_filters,
+                weights=router_weights
+            )
     else:
         python_results = []
     

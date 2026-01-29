@@ -22,7 +22,8 @@ def search_node(state: AgentState):
         }
     
     # 검색 설정 및 실행 (하이브리드 검색 기본 적용)
-    results, query_info = execute_dual_query_search(query)
+    # [Mod] config 전달하여 중복 분석 방지 + 동적 필터 적용
+    results, query_info = execute_dual_query_search(query, config=config)
     
     # 결과 포맷팅
     search_results = [

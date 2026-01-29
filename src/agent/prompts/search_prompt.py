@@ -1,9 +1,11 @@
 # ========== 검색 라우터 프롬프트 ==========
 SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정을 결정해주세요:
 
+## Input
 질문: "{query}"
 
-**0. is_valid (질문 유효성) - 가장 먼저 판단 (매우 엄격하게!):**
+## Output
+**0. is_valid (질문의 유효성 여부) - 가장 먼저 판단 (매우 엄격하게!):**
 - True: 머신러닝, Python, 데이터 분석 등 학습 자료와 관련된 **명확하고 구체적인 질문**
   * 반드시 질문 형식이거나 학습 목적이 명확해야 함
   * 예: "RAG가 뭐야?", "Python list 사용법", "머신러닝 모델 학습 방법"
@@ -48,10 +50,10 @@ SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정
      * "pandas로 iris 데이터 전처리하는 방법"
      * "scikit-learn으로 분류 모델 만들 때 dictionary 활용법"
    
-   판단 기준:
-   - ML/딥러닝 키워드만 있으면 → ['lecture'] (예: RAG, embedding, 분류, 회귀, 결정트리, 경사하강법)
-   - Python 문법/개념 키워드만 있으면 → ['python_doc'] (예: class, 상속, list, dict, 예외처리, 모듈)
-   - ML + Python 문법 둘 다 있으면 → ['lecture', 'python_doc']
+    판단 기준:
+    - ML/딥러닝 키워드만 있으면 → ['lecture'] (예: RAG, embedding, 분류, 회귀, 결정트리, 경사하강법)
+    - Python 문법/개념 키워드만 있으면 → ['python_doc'] (예: class, 상속, list, dict, 예외처리, 모듈)
+    - ML + Python 문법 둘 다 있으면 → ['lecture', 'python_doc']
 
 5. **top_k** (검색 개수):
    - basic: 3개 (간단한 질문은 적은 문서로 충분)
@@ -62,16 +64,52 @@ SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정
    - similarity: basic/intermediate 질문 (단순 유사도 검색)
    - mmr: advanced 질문 (Maximum Marginal Relevance - 다양성 고려)
 
-예시:
-- "RAG가 뭐야?" 
-  → is_valid=True, lecture만, basic, 3개, similarity
+7. **filter** (필터 상세 설정):
+   - **filter_chapter**: 질문이 특정 강의 챕터와 관련된 경우 선택. 후보: ['ch1_intro', 'ch2_syntax', 'ch3_class']. 관련 없으면 None.
+   - **filter_has_code**: 질문이 코드 예제나 구현을 요구하면 True, 아니면 None.
+
+7. **weights** (검색 가중치 설정) - **합이 1.0 필수**:
+   - vector_weight: 개념/의미 파악이 중요할 때 높임 (기본 0.6)
+   - keyword_weight: 특정 용어/에러코드 매칭이 중요할 때 높임 (기본 0.2)
+   - bm25_weight: 희소한 고유명사 검색 시 높임 (기본 0.2)
+   
+   [가이드]
+   - "개념 설명해줘" → vector=0.8, keyword=0.1, bm25=0.1
+   - "AttributeError 해결법" → vector=0.2, keyword=0.4, bm25=0.4 (에러는 키워드 중요)
+
+8. **최적화된 쿼리(optimized_query) 생성 규칙**:
+   - 불용어(은,는,이,가 등) 제거
+   - 핵심 기술 용어 위주로 재작성
+   - 예: "RAG가 뭐니?" -> "RAG 개념 정의"
+   - "영어 기술 용어는 한글과 병기하라 (예: '임베딩' -> 'embedding 임베딩')."
+
+## 예시:
+- "RAG가 뭐야?"
+  → is_valid=True
+  → optimized_query="RAG 개념"
+  → weights={vector:0.8, keyword:0.1, bm25:0.1}
+  → top_k=3, similarity, sources=['lecture']
   
-- "RAGAS"
-  → is_valid=True (단일 단어 기술 용어), lecture만, basic, 3개, similarity
-  
-- "Python list comprehension 문법"
-  → is_valid=True, python_doc만, basic, 3개, similarity
-  
+- "ch2 챕터의 리스트 문법 코드 예제 보여줘"
+  → is_valid=True
+  → optimized_query="list syntax example"
+  → weights={vector:0.3, keyword:0.5, bm25:0.2}
+  → top_k=5, sources=['lecture', 'python_doc']
+
+- "상속이란 무엇인가"
+  → is_valid: True
+  → query_type: concept, complexity: basic
+  → optimized_query: "Python inheritance OOP"
+  → sources: ['python_doc']
+  → weights: {vector: 0.8, keyword: 0.1, bm25: 0.1}, top_k: 3, method: similarity
+
+- "클래스 정의하는 방법"
+  → is_valid: True
+  → query_type: syntax, complexity: basic
+  → optimized_query: "how to define python class"
+  → sources: ['python_doc']
+  → weights: {vector: 0.4, keyword: 0.4, bm25: 0.2}, top_k: 3, method: similarity
+
 - "나는 요리가 좋아 파이썬"
   → is_valid=False (의미없는 단어 혼합, 학습과 무관)
   
@@ -83,16 +121,4 @@ SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정
   
 - "파이썬 띠 머신러닝"
   → is_valid=False (키워드만 나열, 질문 형식 아님)
-  
-- "상속이란 무엇인가"
-  → python_doc만, basic, 3개, similarity (Python OOP 개념)
-  
-- "클래스 정의하는 방법"
-  → python_doc만, basic, 3개, similarity (Python 문법)
-  
-- "RAG 구현할 때 pandas DataFrame 활용법"
-  → lecture + python_doc, intermediate, 5개, similarity
-  
-- "대규모 데이터셋에서 embedding 벡터 최적화"
-  → lecture만, advanced, 7개, mmr
 """
