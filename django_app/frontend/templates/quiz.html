@@ -1,15 +1,23 @@
+<!--
+================================================================================
+📚 Bootcamp AI Tutor - 퀴즈 페이지 (3단 레이아웃)
+================================================================================
+작성일: 2026-01-29
+설명: Chat 페이지와 동일한 3단 구조의 퀴즈 페이지
+================================================================================
+-->
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
+    <!-- 기본 메타 태그 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bootcamp AI Tutor - Quiz</title>
 
     <!-- 외부 라이브러리 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
 
     <!-- 정적 CSS 파일 연결 -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -17,28 +25,194 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>🎯 퀴즈 시스템</h1>
-
-        <div class="quiz-settings">
-            <label>카테고리 선택:</label>
-            <select id="categorySelect">
-                <option value="all">전체</option>
-                <option value="python">Python</option>
-                <option value="lecture">강의노트</option>
-            </select>
-
-            <label>출제 개수:</label>
-            <input type="number" id="quizCount" min="1" max="20" value="5">
-
-            <button onclick="loadQuizzes()">퀴즈 불러오기</button>
+    <!-- ========================================
+    📌 좌측 사이드바
+    ======================================== -->
+    <aside class="sidebar">
+        <!-- 헤더: 로고 + 테마 토글 -->
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="brand-icon">🥧</div>
+                <span class="brand-text">Py_Mate</span>
+            </div>
+            <!-- 다크/라이트 모드 토글 버튼 -->
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <path
+                        d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+            </button>
         </div>
 
-        <div id="quizContainer"></div>
-    </div>
+        <!-- 퀴즈 설정 -->
+        <div class="sidebar-section">
+            <h3 class="section-title">🎯 퀴즈 설정</h3>
+            <div class="filter-list">
+                <label class="filter-item">
+                    <span>카테고리:</span>
+                </label>
+                <select id="categorySelect" class="quiz-select">
+                    <option value="all">전체</option>
+                    <option value="python">Python</option>
+                    <option value="lecture">강의노트</option>
+                </select>
+
+                <label class="filter-item" style="margin-top: 12px;">
+                    <span>출제 개수:</span>
+                </label>
+                <input type="number" id="quizCount" min="1" max="20" value="5" class="quiz-input">
+
+                <button class="start-quiz-btn" onclick="loadQuizzes()">🚀 퀴즈 시작</button>
+            </div>
+        </div>
+
+        <!-- 퀴즈 진행 상황 -->
+        <div class="sidebar-section">
+            <h3 class="section-title">📊 진행 상황</h3>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label">현재 문제</span>
+                    <span class="stat-value" id="currentQuestion">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">정답 수</span>
+                    <span class="stat-value" id="correctCount">0</span>
+                </div>
+            </div>
+        </div>
+
+
+    </aside>
+
+    <!-- ========================================
+    📌 중앙 메인 콘텐츠 영역
+    ======================================== -->
+    <main class="main-content">
+        <!-- 상단 헤더: 페이지 제목 + 유저 액션 -->
+        <div class="mode-toggle-container">
+            <div class="mode-toggle">
+                <span class="mode-btn active" style="cursor: default;">🧩 Quiz Mode</span>
+            </div>
+
+            <!-- 유저 액션 (마이페이지/로그아웃) -->
+            {% if user.is_authenticated %}
+            <div class="header-user-actions">
+                <span class="header-user-name">👤 {{ user.username }}</span>
+                <a href="{% url 'mypage' %}" class="header-user-btn">마이페이지</a>
+                <a href="{% url 'logout' %}" class="header-user-btn">로그아웃</a>
+            </div>
+            {% else %}
+            <div class="header-user-actions">
+                <a href="{% url 'login' %}" class="header-user-btn primary">로그인</a>
+                <a href="{% url 'signup' %}" class="header-user-btn">회원가입</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 퀴즈 영역 -->
+        <div class="chat-area" id="quizArea">
+            <div class="chat-content" id="quizContent">
+                <!-- 웰컴 화면 -->
+                <div class="welcome" id="quizWelcome">
+                    <img src="/image/pymate_logo.png" alt="PyMate"
+                        style="width: 120px; height: auto; margin-bottom: 20px; border-radius: 16px;">
+                    <h1>퀴즈에 도전하세요! 🧩</h1>
+                    <p>부트캠프 학습 자료를 기반으로 한 O/X 퀴즈입니다.</p>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 16px;">
+                        좌측에서 카테고리와 문항 수를 선택한 후<br>"퀴즈 시작" 버튼을 클릭하세요!
+                    </p>
+                </div>
+
+                <!-- 퀴즈 문제 영역 (JS로 렌더링) -->
+                <div id="quizContainer" style="display: none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================
+    🧠 우측 스튜디오 패널
+    ======================================== -->
+    <aside class="sidebar-right">
+        <!-- 헤더 -->
+        <div class="sidebar-right-header">
+            <h3>📈 퀴즈 통계</h3>
+        </div>
+
+        <!-- 통계 정보 -->
+        <div class="quiz-stats-panel">
+            <div class="stat-big">
+                <span class="stat-big-label">현재 점수</span>
+                <span class="stat-big-value" id="scoreDisplay">0 / 0</span>
+            </div>
+            <div class="stat-big" style="margin-top: 16px;">
+                <span class="stat-big-label">정답률</span>
+                <span class="stat-big-value" id="accuracyDisplay">-</span>
+            </div>
+        </div>
+
+        <!-- 학습 팁 -->
+        <div class="sidebar-section" style="margin-top: 24px;">
+            <h3 class="section-title" style="font-size: 13px;">💡 학습 팁</h3>
+            <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                틀린 문제는 해설을 잘 읽어보세요!<br>
+                반복 학습이 기억력 향상에 도움됩니다.
+            </p>
+        </div>
+
+        <!-- 채팅으로 돌아가기 -->
+        <div class="memo-section">
+            <a href="/chat" class="note-btn" style="text-align: center; display: block; text-decoration: none;">
+                💬 채팅으로 돌아가기
+            </a>
+        </div>
+    </aside>
 
     <!-- JavaScript 연결 -->
     <script src="{% static 'js/quiz.js' %}"></script>
+    <script>
+        // 테마 토글 함수
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            updateThemeIcon(newTheme === 'dark');
+        }
+
+        // 아이콘 업데이트 함수
+        function updateThemeIcon(isDark) {
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.innerHTML = isDark
+                    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+                    : '<circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />';
+            }
+        }
+
+        // 페이지 로드 시 테마 복원 및 아이콘 설정
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme === 'dark');
+        });
+
+        // 통계 업데이트 함수
+        function updateQuizStats() {
+            document.getElementById('currentQuestion').textContent =
+                currentQuizData.length > 0 ? `${currentQuizIndex + 1} / ${currentQuizData.length}` : '-';
+            document.getElementById('correctCount').textContent = quizScore;
+            document.getElementById('scoreDisplay').textContent =
+                currentQuizData.length > 0 ? `${quizScore} / ${currentQuizData.length}` : '0 / 0';
+
+            const accuracy = currentQuizIndex > 0
+                ? Math.round((quizScore / currentQuizIndex) * 100) + '%'
+                : '-';
+            document.getElementById('accuracyDisplay').textContent = accuracy;
+        }
+    </script>
 </body>
 
 </html>

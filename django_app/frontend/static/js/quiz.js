@@ -6,6 +6,118 @@ let currentQuizIndex = 0;
 let quizScore = 0;
 
 /**
+ * 퀴즈 불러오기 (quiz.html 전용)
+ * 카테고리와 개수를 선택하고 퀴즈를 불러옴
+ */
+async function loadQuizzes() {
+    const category = document.getElementById('categorySelect').value;
+    const count = document.getElementById('quizCount').value;
+    const container = document.getElementById('quizContainer');
+    const welcome = document.getElementById('quizWelcome');
+
+    // 웰컴 화면 숨기고 퀴즈 컨테이너 표시
+    if (welcome) welcome.style.display = 'none';
+    container.style.display = 'block';
+    container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">퀴즈를 불러오는 중...</p>';
+
+    try {
+        const res = await fetch(`/api/quiz/?category=${category}&count=${count}`);
+        const data = await res.json();
+
+        if (data.success && data.quizzes.length > 0) {
+            currentQuizData = data.quizzes;
+            currentQuizIndex = 0;
+            quizScore = 0;
+            renderQuizPage();
+            if (typeof updateQuizStats === 'function') updateQuizStats();
+        } else {
+            container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">퀴즈를 불러올 수 없습니다.</p>';
+        }
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p style="color: red; text-align: center; padding: 40px;">서버 통신 오류가 발생했습니다.</p>';
+    }
+}
+
+/**
+ * 퀴즈 문제 렌더링 (quiz.html 전용)
+ */
+function renderQuizPage() {
+    const container = document.getElementById('quizContainer');
+    const quiz = currentQuizData[currentQuizIndex];
+
+    container.innerHTML = `
+        <div class="quiz-card">
+            <div class="quiz-progress">문제 ${currentQuizIndex + 1} / ${currentQuizData.length}</div>
+            <div class="quiz-question">${quiz.question}</div>
+            
+            <div class="quiz-buttons">
+                <button class="quiz-answer-btn btn-o" onclick="checkQuizAnswer('O')">O</button>
+                <button class="quiz-answer-btn btn-x" onclick="checkQuizAnswer('X')">X</button>
+            </div>
+            
+            <div id="quizFeedbackPage"></div>
+        </div>
+    `;
+}
+
+/**
+ * 답변 체크 (quiz.html 전용)
+ */
+function checkQuizAnswer(userChoice) {
+    const quiz = currentQuizData[currentQuizIndex];
+    const feedback = document.getElementById('quizFeedbackPage');
+    const buttons = document.querySelector('.quiz-buttons');
+
+    buttons.style.pointerEvents = 'none';
+    buttons.style.opacity = '0.6';
+
+    const isCorrect = userChoice === quiz.answer;
+    if (isCorrect) quizScore++;
+
+    const resultClass = isCorrect ? 'correct' : 'wrong';
+    const resultText = isCorrect ? '정답입니다! 🎉' : `틀렸습니다 😅 (정답: ${quiz.answer})`;
+
+    feedback.innerHTML = `
+        <div class="quiz-feedback-page ${resultClass}">
+            <div class="result-text">${resultText}</div>
+            <div class="explanation">${quiz.explanation}</div>
+            <div class="source">출처: ${quiz.source}</div>
+            <button class="next-btn" onclick="nextQuizPage()">
+                ${currentQuizIndex < currentQuizData.length - 1 ? '다음 문제' : '결과 보기'}
+            </button>
+        </div>
+    `;
+}
+
+/**
+ * 다음 문제 (quiz.html 전용)
+ */
+function nextQuizPage() {
+    currentQuizIndex++;
+    if (currentQuizIndex < currentQuizData.length) {
+        renderQuizPage();
+    } else {
+        showQuizResultPage();
+    }
+}
+
+/**
+ * 최종 결과 (quiz.html 전용)
+ */
+function showQuizResultPage() {
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = `
+        <div class="quiz-result">
+            <h2>퀴즈 종료! 🏁</h2>
+            <div class="final-score">${quizScore} / ${currentQuizData.length}</div>
+            <p>수고하셨습니다!</p>
+            <button class="restart-btn" onclick="loadQuizzes()">다시 하기</button>
+        </div>
+    `;
+}
+
+/**
  * 퀴즈 시작 함수
  * 선택된 카테고리와 문항 수로 퀴즈 데이터를 가져옴
  */

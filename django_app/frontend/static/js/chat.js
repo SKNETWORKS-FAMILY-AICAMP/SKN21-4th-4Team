@@ -14,8 +14,13 @@ const SECTIONS = [
 ];
 
 // 현재 상태 변수들
-let currentMode = 'learning';  // 현재 선택된 모드
+let currentMode = 'learning';  // 현재 선택된 모드 (learning/quiz)
 let isProcessing = false;      // 메시지 처리 중 여부
+let notebookMode = false;      // Chat/Notebook 모드 (false: Chat, true: Notebook)
+
+// 북마크 및 학습현황 데이터
+let bookmarks = JSON.parse(localStorage.getItem('pymate_bookmarks') || '[]');
+let studyStats = JSON.parse(localStorage.getItem('pymate_stats') || '{"quiz": 0, "notes": 0}');
 
 // 모드별 chatContent 캐시 (모드 전환 시 상태 유지용)
 const modeContentCache = {};
@@ -596,9 +601,267 @@ checkServerStatus();
 setInterval(checkServerStatus, 5000);
 
 // ========================================
+// 🔄 Chat/Notebook 모드 전환 (작업 5)
+// ========================================
+
+/**
+ * Chat/Notebook 모드 전환
+ * @param {string} mode - 'chat' 또는 'notebook'
+ */
+function switchMode(mode) {
+    notebookMode = (mode === 'notebook');
+
+    // 버튼 상태 업데이트
+    document.getElementById('chatModeBtn').classList.toggle('active', !notebookMode);
+    document.getElementById('notebookModeBtn').classList.toggle('active', notebookMode);
+
+    if (notebookMode) {
+        // Notebook 모드: 저장된 답변만 표시
+        document.querySelectorAll('.message.user').forEach(el =>
+            el.style.display = 'none'
+        );
+        document.querySelectorAll('.message.bot').forEach(card => {
+            // saved 속성이 있는 것만 표시
+            card.style.display = card.dataset.saved ? 'block' : 'none';
+        });
+        // 입력 영역 숨기기
+        const inputArea = document.querySelector('.input-area');
+        if (inputArea) inputArea.style.display = 'none';
+    } else {
+        // Chat 모드: 전체 표시
+        document.querySelectorAll('.message').forEach(el =>
+            el.style.display = 'block'
+        );
+        const inputArea = document.querySelector('.input-area');
+        if (inputArea) inputArea.style.display = 'block';
+    }
+}
+
+// ========================================
+// 📌 북마크 기능
+// ========================================
+
+/**
+ * 북마크 저장
+ * @param {string} title - 북마크 제목
+ * @param {string} content - 북마크 내용 (짧게)
+ */
+function addBookmark(title, content) {
+    const bookmark = {
+        id: Date.now(),
+        title: title.slice(0, 30),
+        content: content.slice(0, 50),
+        timestamp: new Date().toLocaleString('ko-KR')
+    };
+    bookmarks.unshift(bookmark);
+    if (bookmarks.length > 10) bookmarks.pop(); // 최대 10개
+    localStorage.setItem('pymate_bookmarks', JSON.stringify(bookmarks));
+    renderBookmarks();
+    updateStats('notes', 1);
+}
+
+/**
+ * 북마크 목록 렌더링
+ */
+function renderBookmarks() {
+    const list = document.getElementById('bookmarkList');
+    if (!list) return;
+
+    if (bookmarks.length === 0) {
+        list.innerHTML = '<div class="bookmark-empty">저장된 북마크가 없습니다</div>';
+        return;
+    }
+
+    list.innerHTML = bookmarks.map(b => `
+        <div class="bookmark-item" onclick="scrollToBookmark('${b.id}')">
+            📌 ${b.title}
+        </div>
+    `).join('');
+}
+
+/**
+ * 북마크로 스크롤
+ */
+function scrollToBookmark(id) {
+    // 해당 북마크 요소로 스크롤 (구현 예정)
+    console.log('Scroll to bookmark:', id);
+}
+
+// ========================================
+// 📊 학습현황 업데이트
+// ========================================
+
+/**
+ * 학습현황 업데이트
+ * @param {string} type - 'quiz' 또는 'notes'
+ * @param {number} delta - 증가량 (기본 1)
+ */
+function updateStats(type, delta = 1) {
+    studyStats[type] = (studyStats[type] || 0) + delta;
+    localStorage.setItem('pymate_stats', JSON.stringify(studyStats));
+    renderStats();
+}
+
+/**
+ * 학습현황 렌더링
+ */
+function renderStats() {
+    const quizEl = document.getElementById('quizCount');
+    const noteEl = document.getElementById('noteCount');
+    if (quizEl) quizEl.textContent = `${studyStats.quiz || 0}개`;
+    if (noteEl) noteEl.textContent = `${studyStats.notes || 0}개`;
+}
+
+// ========================================
+// 🧩 퀴즈 패널 (작업 6)
+// ========================================
+
+/**
+ * 우측 패널에 퀴즈 UI 표시
+ */
+function showQuizPanel() {
+    const rightPanel = document.querySelector('.sidebar-right');
+    if (!rightPanel) return;
+
+    // 기존 내용 저장
+    if (!rightPanel.dataset.originalContent) {
+        rightPanel.dataset.originalContent = rightPanel.innerHTML;
+    }
+
+    rightPanel.innerHTML = `
+        <div class="quiz-panel">
+            <div class="sidebar-right-header">
+                <h3>🧩 오늘의 퀴즈</h3>
+                <button onclick="closeQuizPanel()" style="background:none;border:none;font-size:18px;cursor:pointer;">✕</button>
+            </div>
+            <div id="quizPanelContent">
+                <p style="text-align:center;color:var(--text-muted);padding:20px;">
+                    퀴즈를 불러오는 중...
+                </p>
+            </div>
+        </div>
+    `;
+
+    // 퀴즈 데이터 로드 (기존 퀴즈 기능 연동)
+    loadQuizToPanel();
+}
+
+/**
+ * 퀴즈 패널 닫기
+ */
+function closeQuizPanel() {
+    const rightPanel = document.querySelector('.sidebar-right');
+    if (!rightPanel || !rightPanel.dataset.originalContent) return;
+
+    rightPanel.innerHTML = rightPanel.dataset.originalContent;
+    delete rightPanel.dataset.originalContent;
+}
+
+/**
+ * 퀴즈 패널에 퀴즈 로드
+ */
+function loadQuizToPanel() {
+    const container = document.getElementById('quizPanelContent');
+    if (!container) return;
+
+    // 간단한 퀴즈 예시 (실제로는 서버에서 가져옴)
+    container.innerHTML = `
+        <div style="padding:16px;">
+            <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Q. 과적합(Overfitting)이란?</div>
+            <button class="action-btn" onclick="submitQuizAnswer(true)" style="width:100%;margin-bottom:8px;">⭕ 모델이 훈련 데이터에 너무 맞춰진 것</button>
+            <button class="action-btn" onclick="submitQuizAnswer(false)" style="width:100%;">❌ 모델이 훈련 데이터를 잘 학습하지 못한 것</button>
+        </div>
+    `;
+}
+
+/**
+ * 퀴즈 답변 제출
+ */
+function submitQuizAnswer(isCorrect) {
+    const container = document.getElementById('quizPanelContent');
+    if (!container) return;
+
+    if (isCorrect) {
+        container.innerHTML = `
+            <div style="padding:20px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+                <div style="font-size:16px;font-weight:600;color:var(--accent);">정답입니다!</div>
+                <button class="quiz-btn" onclick="loadQuizToPanel()" style="margin-top:16px;">다음 문제</button>
+            </div>
+        `;
+        updateStats('quiz', 1);
+    } else {
+        container.innerHTML = `
+            <div style="padding:20px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:12px;">😢</div>
+                <div style="font-size:16px;font-weight:600;color:var(--danger);">틀렸습니다</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">과적합은 모델이 훈련 데이터에 너무 맞춰져서 새로운 데이터에 대한 일반화 능력이 떨어지는 현상입니다.</p>
+                <button class="quiz-btn" onclick="loadQuizToPanel()" style="margin-top:16px;">다음 문제</button>
+            </div>
+        `;
+    }
+}
+
+/**
+ * 노트 패널 표시
+ */
+function showNotePanel() {
+    const rightPanel = document.querySelector('.sidebar-right');
+    if (!rightPanel) return;
+
+    // 기존 내용 저장
+    if (!rightPanel.dataset.originalContent) {
+        rightPanel.dataset.originalContent = rightPanel.innerHTML;
+    }
+
+    rightPanel.innerHTML = `
+        <div class="note-panel">
+            <div class="sidebar-right-header">
+                <h3>📝 저장한 노트</h3>
+                <button onclick="closeQuizPanel()" style="background:none;border:none;font-size:18px;cursor:pointer;">✕</button>
+            </div>
+            <div id="notePanelContent">
+                ${bookmarks.length === 0
+            ? '<p style="text-align:center;color:var(--text-muted);padding:20px;">저장된 노트가 없습니다</p>'
+            : bookmarks.map(b => `
+                        <div class="bookmark-item">
+                            <strong>${b.title}</strong>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${b.timestamp}</div>
+                        </div>
+                    `).join('')
+        }
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * 답변 저장 (노트에 추가)
+ * @param {HTMLElement} btn - 클릭된 버튼
+ */
+function saveToNotebook(btn) {
+    const card = btn.closest('.message.bot, .answer-card');
+    if (!card) return;
+
+    const content = card.querySelector('.message-content')?.innerText || '';
+    const title = content.slice(0, 30) + '...';
+
+    addBookmark(title, content);
+
+    // 버튼 상태 변경
+    btn.classList.add('saved');
+    btn.innerHTML = '📌 저장됨';
+
+    // 카드에 saved 표시 (Notebook 모드에서 사용)
+    card.dataset.saved = 'true';
+}
+
+// ========================================
 // 🚀 초기화
 // ========================================
 
 // 페이지 로드 시 사이드바 렌더링 및 웰컴 화면 표시
 renderSections();
 showWelcome();
+renderBookmarks();
+renderStats();

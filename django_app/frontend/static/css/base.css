@@ -33,6 +33,8 @@
     --accent-light: #fbcfe8;
     --accent-dark: #f472b6;
     --accent-glow: rgba(249, 168, 212, 0.15);
+    --accent-green: #f9a8d4;
+    --accent-green-light: #fbcfe8;
 
     /* 텍스트 색상 */
     --text-primary: #1f1f1f;
@@ -41,13 +43,15 @@
     --text-white: #ffffff;
 
     /* 기타 */
-    --border: rgba(249, 168, 212, 0.2);
+    --border: rgba(249, 168, 212, 0.3);
+    --border-light: rgba(249, 168, 212, 0.15);
     --shadow: 0 2px 8px rgba(249, 168, 212, 0.1);
     --shadow-lg: 0 8px 32px rgba(249, 168, 212, 0.18);
     --radius-sm: 8px;
     --radius-md: 12px;
-    --radius-lg: 20px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+    --transition: all 0.2s ease;
     --danger: #ef4444;
 }
 
@@ -55,21 +59,24 @@
 🌙 다크 모드 색상 정의
 ========================================
 data-theme="dark" 속성이 <html>에 추가되면 적용됩니다.
-보라색 계열로 변경됨
+보라색 계열
 ======================================== */
 [data-theme="dark"] {
     --bg-primary: #09071a;
     --bg-secondary: #0f0c24;
     --bg-tertiary: #161231;
     --bg-hover: #1e1940;
-    --accent: #6d28d9;
-    --accent-light: #7c3aed;
-    --accent-dark: #3b0764;
-    --accent-glow: rgba(109, 40, 217, 0.2);
+    --accent: #a78bfa;
+    --accent-light: #c4b5fd;
+    --accent-dark: #7c3aed;
+    --accent-glow: rgba(167, 139, 250, 0.2);
+    --accent-green: #a78bfa;
+    --accent-green-light: #c4b5fd;
     --text-primary: #f3f0ff;
     --text-secondary: #c4b5fd;
-    --text-muted: #6d28d9;
-    --border: rgba(76, 29, 149, 0.35);
+    --text-muted: #8b7ec8;
+    --border: rgba(167, 139, 250, 0.3);
+    --border-light: rgba(167, 139, 250, 0.15);
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 8px 32px rgba(76, 29, 149, 0.35);
 }
@@ -88,8 +95,310 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     min-height: 100vh;
-    display: flex;
+    display: grid;
+    /* 3열 레이아웃 */
+    grid-template-columns: 280px 1fr 240px;
     transition: var(--transition);
+}
+
+/* 퀴즈 페이지 전용 스타일 (grid 레이아웃 비활성화) */
+body.quiz-page {
+    display: block;
+    padding: 40px;
+}
+
+.quiz-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow);
+}
+
+.quiz-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.quiz-header h1 {
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-top: 12px;
+}
+
+.back-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.quiz-settings {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.quiz-settings label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.quiz-settings select,
+.quiz-settings input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.quiz-settings button {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quiz-settings button:hover {
+    opacity: 0.9;
+}
+
+/* 퀴즈 카드 스타일 */
+.quiz-card {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-top: 16px;
+}
+
+.quiz-progress {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.quiz-question {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+/* OX 버튼 스타일 */
+.quiz-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.quiz-answer-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 32px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 3px solid;
+}
+
+.quiz-answer-btn.btn-o {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: #22c55e;
+    color: #22c55e;
+}
+
+.quiz-answer-btn.btn-o:hover {
+    background: rgba(34, 197, 94, 0.2);
+    transform: scale(1.1);
+}
+
+.quiz-answer-btn.btn-x {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.quiz-answer-btn.btn-x:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+/* 피드백 스타일 */
+.quiz-feedback-page {
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-top: 16px;
+}
+
+.quiz-feedback-page.correct {
+    background: rgba(34, 197, 94, 0.1);
+    border-left: 4px solid #22c55e;
+}
+
+.quiz-feedback-page.wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+}
+
+.quiz-feedback-page .result-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.quiz-feedback-page .explanation {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.quiz-feedback-page .source {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.quiz-feedback-page .next-btn {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.quiz-feedback-page .next-btn:hover {
+    opacity: 0.9;
+}
+
+/* 결과 화면 */
+.quiz-result {
+    text-align: center;
+    padding: 40px;
+}
+
+.quiz-result h2 {
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.quiz-result .final-score {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+
+.quiz-result .restart-btn {
+    padding: 12px 32px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 16px;
+}
+
+.quiz-result .restart-btn:hover {
+    opacity: 0.9;
+}
+
+/* 퀴즈 페이지 전용 추가 스타일 */
+.quiz-select,
+.quiz-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.start-quiz-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: var(--transition);
+}
+
+.start-quiz-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.back-to-chat-btn {
+    display: block;
+    padding: 10px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.back-to-chat-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.quiz-stats-panel {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.stat-big {
+    text-align: center;
+}
+
+.stat-big-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stat-big-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
 }
 
 /* ========================================
@@ -104,43 +413,44 @@ body {
 ======================================== */
 .sidebar {
     width: 280px;
-    /* 사이드바 너비 - 필요시 조정 */
     background: var(--bg-secondary);
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     height: 100vh;
-    position: fixed;
+    overflow-y: auto;
 }
 
-/* 사이드바 헤더 (로고 영역) */
+/* 사이드바 헤더 (로고 영역) - NotebookLM 스타일 */
 .sidebar-header {
-    padding: 24px 20px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    padding: 12px 16px;
+    min-height: 48px;
+    box-sizing: border-box;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-/* 브랜드 로고 */
+/* 브랜드 로고 - NotebookLM 스타일 */
 .brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text-white);
-    margin-left: auto;
-    margin-right: auto;
+    color: var(--text-primary);
 }
 
 .brand-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-sm);
+    width: 32px;
+    height: 32px;
+    background: var(--accent-green);
+    border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 16px;
+    color: white;
 }
 
 /* [수정 포인트] 브랜드명 변경 시 여기 + HTML의 brand-text 클래스 내용 수정 */
@@ -151,12 +461,12 @@ body {
 
 /* 테마 토글 버튼 (라이트/다크 모드 전환) */
 .theme-toggle {
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    color: white;
+    color: var(--text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -165,7 +475,8 @@ body {
 }
 
 .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--bg-hover);
+    color: var(--accent);
     transform: rotate(15deg);
 }
 
@@ -267,4 +578,357 @@ JavaScript의 SECTIONS 배열에 추가하면 자동 생성됩니다.
     .main {
         margin-left: 0;
     }
+}
+
+/* ========================================
+📌 좌측 사이드바 섹션 스타일
+======================================== */
+.sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 자료 필터링 */
+.filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.filter-item:hover {
+    background: var(--bg-hover);
+}
+
+.filter-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+}
+
+/* 북마크 리스트 */
+.bookmark-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.bookmark-empty {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 16px;
+}
+
+.bookmark-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    font-size: 12px;
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.bookmark-item:hover {
+    background: var(--bg-hover);
+}
+
+/* 학습 현황 */
+.stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* 유저 정보 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+
+.user-avatar {
+    font-size: 24px;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.user-status {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    border-radius: var(--radius-sm);
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 12px;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+/* ========================================
+🧠 우측 사이드바 (AI 도구) - 새로 추가!
+======================================== */
+.sidebar-right {
+    width: 240px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+/* 우측 상단 유저 액션 버튼 (마이페이지/로그아웃) */
+.right-user-actions {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.right-user-btn {
+    flex: 1;
+    padding: 6px 8px;
+    text-align: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 11px;
+    transition: var(--transition);
+}
+
+.right-user-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.right-user-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.right-user-btn.primary:hover {
+    opacity: 0.9;
+}
+
+.tool-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+}
+
+.tool-btn:hover {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+}
+
+.quiz-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--accent-green);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 16px;
+    text-decoration: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.quiz-btn:hover {
+    background: var(--accent-green-light);
+    box-shadow: var(--shadow);
+}
+
+.note-btn {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.note-btn:hover {
+    background: var(--bg-hover);
+}
+
+/* NotebookLM 스타일 격자형 도구 버튼 */
+.ai-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tool-btn-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    text-align: center;
+    gap: 6px;
+}
+
+.tool-btn-grid:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.tool-btn-grid .icon {
+    font-size: 20px;
+}
+
+.tool-btn-grid .label {
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+/* 우측 사이드바 헤더 */
+.sidebar-right-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    box-sizing: border-box;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.sidebar-right-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 메모 추가 영역 */
+.memo-section {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
 }

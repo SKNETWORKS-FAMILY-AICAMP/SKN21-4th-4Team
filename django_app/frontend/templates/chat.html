@@ -35,14 +35,13 @@
 
 <body>
     <!-- ========================================
-    📌 사이드바 영역
+    📌 좌측 사이드바 (목표 레이아웃)
     ======================================== -->
     <aside class="sidebar">
         <!-- 헤더: 로고 + 테마 토글 -->
         <div class="sidebar-header">
-            <!-- 로고 아이콘 (왼쪽 고정) -->
-            <div class="brand-icon">🥧</div>
             <div class="brand">
+                <div class="brand-icon">🥧</div>
                 <span class="brand-text">Py_Mate</span>
             </div>
             <!-- 다크/라이트 모드 토글 버튼 -->
@@ -55,49 +54,85 @@
             </button>
         </div>
 
-        <!-- 모드 선택 영역 (JavaScript로 동적 생성) -->
-        <div class="sections-container" id="sectionsContainer"></div>
+        <!-- ① 자료 필터링 -->
+        <div class="sidebar-section">
+            <h3 class="section-title">🔍 자료 필터링</h3>
+            <div class="filter-list">
+                <label class="filter-item">
+                    <input type="checkbox" checked id="filterPython">
+                    <span>파이썬 공식자료</span>
+                </label>
+                <label class="filter-item">
+                    <input type="checkbox" checked id="filterLecture">
+                    <span>강의자료</span>
+                </label>
+                <label class="filter-item">
+                    <input type="checkbox" id="filterCode">
+                    <span>Code</span>
+                </label>
+            </div>
+        </div>
 
-        <!-- 푸터: 유저 정보 + 버튼 -->
-        <div class="sidebar-footer">
-            {% if user.is_authenticated %}
-            <div
-                style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px; background: var(--bg-tertiary); border-radius: var(--radius-sm);">
-                <span style="font-size: 20px;">👤</span>
-                <div style="flex: 1;">
-                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">{{ user.username }}
-                    </div>
-                    <div style="font-size: 11px; color: var(--text-muted);">로그인됨</div>
+        <!-- ② 북마크 기능 -->
+        <div class="sidebar-section">
+            <h3 class="section-title">📌 북마크</h3>
+            <div class="bookmark-list" id="bookmarkList">
+                <div class="bookmark-empty">저장된 북마크가 없습니다</div>
+            </div>
+        </div>
+
+        <!-- ③ 학습 현황 (사용자별) -->
+        <div class="sidebar-section">
+            <h3 class="section-title">📊 학습현황</h3>
+            <div class="stats-list">
+                <div class="stat-item">
+                    <span class="stat-label">퀴즈</span>
+                    <span class="stat-value" id="quizCount">0개</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">노트</span>
+                    <span class="stat-value" id="noteCount">0개</span>
                 </div>
             </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <a href="{% url 'mypage' %}"
-                    style="flex: 1; padding: 8px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 12px;">마이페이지</a>
-                <a href="{% url 'logout' %}"
-                    style="flex: 1; padding: 8px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 12px;">로그아웃</a>
-            </div>
-            {% else %}
-            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <a href="{% url 'login' %}"
-                    style="flex: 1; padding: 10px; text-align: center; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border-radius: var(--radius-sm); color: white; text-decoration: none; font-size: 13px; font-weight: 600;">로그인</a>
-                <a href="{% url 'signup' %}"
-                    style="flex: 1; padding: 10px; text-align: center; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); text-decoration: none; font-size: 13px;">회원가입</a>
-            </div>
-            {% endif %}
-            <button class="reset-btn" onclick="resetAll()">전체 초기화</button>
         </div>
+
     </aside>
 
     <!-- ========================================
     📱 메인 콘텐츠 영역
     ======================================== -->
     <main class="main">
+        <!-- Chat/Notebook 모드 토글 + 유저 정보 -->
+        <div class="mode-toggle-container">
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="chatModeBtn" onclick="switchMode('chat')">
+                    💬 Chat Mode
+                </button>
+                <button class="mode-btn" id="notebookModeBtn" onclick="switchMode('notebook')">
+                    📘 Notebook Mode
+                </button>
+            </div>
+
+            <!-- 유저 액션 (마이페이지/로그아웃) -->
+            {% if user.is_authenticated %}
+            <div class="header-user-actions">
+                <span class="header-user-name">👤 {{ user.username }}</span>
+                <a href="{% url 'mypage' %}" class="header-user-btn">마이페이지</a>
+                <a href="{% url 'logout' %}" class="header-user-btn">로그아웃</a>
+            </div>
+            {% else %}
+            <div class="header-user-actions">
+                <a href="{% url 'login' %}" class="header-user-btn primary">로그인</a>
+                <a href="{% url 'signup' %}" class="header-user-btn">회원가입</a>
+            </div>
+            {% endif %}
+        </div>
+
         <!-- 채팅 메시지 표시 영역 -->
         <div class="chat-area" id="chatArea">
             <div class="chat-content" id="chatContent">
                 <!-- 웰컴 화면 -->
                 <div class="welcome" id="welcome">
-                    <div class="welcome-badge" id="modeBadge">학습 모드</div>
                     <img src="/image/pymate_logo.png" alt="PyMate"
                         style="width: 120px; height: auto; margin-bottom: 20px; border-radius: 16px;">
                     <h1>무엇을 배우고 싶으세요?</h1>
@@ -146,9 +181,50 @@
             </div>
         </div>
     </main>
+    <!-- ========================================
+    🧠 우측 스튜디오 패널 (NotebookLM 스타일)
+    ======================================== -->
+    <aside class="sidebar-right">
+        <!-- 헤더 -->
+        <div class="sidebar-right-header">
+            <h3>🎨 스튜디오</h3>
+        </div>
 
-    <!-- DB 상태 텍스트 (오른쪽 아래 고정) -->
-    <div id="dbStatusText" class="db-status-text">Checking database...</div>
+        <!-- AI 도구 격자형 버튼 -->
+        <div class="ai-tools-grid">
+            <button class="tool-btn-grid">
+                <span class="icon">🧠</span>
+                <span class="label">개념 요약</span>
+            </button>
+            <button class="tool-btn-grid">
+                <span class="icon">✍️</span>
+                <span class="label">단계별 설명</span>
+            </button>
+            <button class="tool-btn-grid">
+                <span class="icon">🎴</span>
+                <span class="label">플래시카드</span>
+            </button>
+            <button class="tool-btn-grid">
+                <span class="icon">🧩</span>
+                <span class="label">퀴즈</span>
+            </button>
+            <button class="tool-btn-grid">
+                <span class="icon">📊</span>
+                <span class="label">표로 정리</span>
+            </button>
+            <button class="tool-btn-grid">
+                <span class="icon">🔄</span>
+                <span class="label">다른 예시</span>
+            </button>
+        </div>
+
+        <!-- 메모 추가 영역 -->
+        <div class="memo-section">
+            <a href="/quiz" class="quiz-btn">🧩 퀴즈풀래용</a>
+            <button class="note-btn" style="margin-top: 8px;">📝 메모 추가</button>
+        </div>
+    </aside>
+
 
     <!-- ========================================
     [정적 JavaScript 파일 연결]
