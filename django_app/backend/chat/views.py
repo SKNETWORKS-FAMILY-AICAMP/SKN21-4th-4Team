@@ -57,3 +57,31 @@ def chat_stream(request):
         yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingHttpResponse(generate(), content_type='text/event-stream')
+
+from .models import ChatBookmark
+from django.views.decorators.http import require_http_methods
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_bookmark(request):
+    """채팅 북마크 토글 API"""
+    try:
+        data = json.loads(request.body)
+        query = data.get('query')
+        answer = data.get('answer')
+        
+        if not query or not answer:
+            return JsonResponse({'success': False, 'message': '내용이 없습니다.'}, status=400)
+
+        # 내용으로 중복 확인
+        bookmark = ChatBookmark.objects.filter(user=request.user, query=query, answer=answer).first()
+        
+        if bookmark:
+            bookmark.delete()
+            return JsonResponse({'success': True, 'bookmarked': False})
+        else:
+            ChatBookmark.objects.create(user=request.user, query=query, answer=answer)
+            return JsonResponse({'success': True, 'bookmarked': True})
+            
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

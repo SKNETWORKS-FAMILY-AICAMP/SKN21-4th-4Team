@@ -50,7 +50,12 @@ class QuizService:
                 with_payload=True
             )
             
-            quizzes = [point.payload for point in results]
+            quizzes = []
+            for point in results:
+                quiz_data = point.payload
+                # Qdrant Point ID를 id 필드로 추가 (북마크 식별용)
+                quiz_data['id'] = point.id
+                quizzes.append(quiz_data)
             
             # 랜덤 샘플링
             if len(quizzes) <= count:

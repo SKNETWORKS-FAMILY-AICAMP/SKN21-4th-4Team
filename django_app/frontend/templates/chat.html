@@ -116,7 +116,7 @@
             <!-- 유저 액션 (마이페이지/로그아웃) -->
             {% if user.is_authenticated %}
             <div class="header-user-actions">
-                <span class="header-user-name">👤 {{ user.username }}</span>
+                <span class="header-user-name">👤 {{ user.profile.nickname|default:user.username }}</span>
                 <a href="{% url 'mypage' %}" class="header-user-btn">마이페이지</a>
                 <a href="{% url 'logout' %}" class="header-user-btn">로그아웃</a>
             </div>

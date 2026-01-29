@@ -1,8 +1,3 @@
-<!--
-================================================================================
-👤 PyMate 마이페이지 (Django Integrated)
-================================================================================
--->
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
@@ -11,200 +6,726 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - PyMate</title>
-
-    <!-- 외부 라이브러리 -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- 정적 CSS 파일 연결 -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
     <style>
-        /* 마이페이지 전용 스타일 */
-        .mypage-wrapper {
+        /* Base CSS 충돌 방지 */
+        body {
+            display: block !important;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .mypage-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* 좌측 사이드바 */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg-primary);
-            padding: 20px;
+            font-size: 20px;
+            color: white;
         }
 
-        .mypage-card {
-            background: var(--bg-secondary);
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: var(--shadow-lg);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
         }
 
-        .mypage-header {
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .profile-section {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
             text-align: center;
-            margin-bottom: 32px;
         }
 
-        .mypage-avatar {
-            width: 100px;
-            height: 100px;
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            margin: 0 auto 16px;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .mypage-title {
+        .username {
             font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 4px;
         }
 
-        .mypage-subtitle {
+        .user-id {
             font-size: 14px;
             color: var(--text-secondary);
-        }
-
-        .info-section {
             margin-bottom: 24px;
         }
 
-        .info-item {
+        .user-meta-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
             display: flex;
-            justify-content: space-between;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
+            justify-content: space-around;
         }
 
-        .info-item:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .info-value {
-            font-size: 14px;
-            font-weight: 600;
+        .meta-item div:first-child {
+            font-size: 16px;
+            font-weight: 700;
             color: var(--text-primary);
+            margin-bottom: 4px;
         }
 
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px;
+        .meta-item div:last-child {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .btn {
+        .nav-btn {
+            display: block;
+            width: 100%;
             padding: 14px;
-            border-radius: var(--radius-md);
+            margin-bottom: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
             text-decoration: none;
+            transition: all 0.2s;
+            box-sizing: border-box;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+        .nav-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .nav-btn.logout {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+            border-color: transparent;
+            margin-top: 20px;
+        }
+
+        .nav-btn.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .nav-btn.delete-account {
+            color: #ef4444;
+            background: transparent;
+            border: 1px dashed rgba(239, 68, 68, 0.3);
+            margin-top: 30px;
+            /* 로그아웃과 간격 분리 */
+        }
+
+        .nav-btn.delete-account:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        /* 우측 메인 컨텐츠 */
+        .main-content {
+            flex-grow: 1;
+            padding: 50px;
+            background: var(--bg-primary);
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 24px;
+        }
+
+        .tab-btn {
+            padding: 16px 8px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: none;
             border: none;
+            cursor: pointer;
+            position: relative;
+            bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .tab-btn:hover {
+            color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .action-link {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .action-link.primary {
+            background: var(--accent);
             color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-primary:hover {
+        .action-link.primary:hover {
+            opacity: 0.9;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
         }
 
-        .btn-secondary {
+        .action-link.secondary {
             background: var(--bg-tertiary);
-            border: 1px solid var(--border);
             color: var(--text-primary);
+            border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
+        .action-link.secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* 데이터 그리드 */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .grid-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
             border-color: var(--accent);
         }
 
-        .btn-danger {
-            background: transparent;
-            border: 1px solid #ef4444;
-            color: #ef4444;
-        }
-
-        .btn-danger:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        /* 메시지 스타일 */
-        .alert {
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
             margin-bottom: 16px;
-            font-size: 14px;
+            width: fit-content;
         }
 
-        .alert.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid #10b981;
-            color: #10b981;
+        .badge.chat {
+            background: var(--bg-tertiary);
+            color: var(--accent);
         }
 
-        .alert.info {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid #3b82f6;
-            color: #3b82f6;
+        .badge.quiz {
+            background: rgba(236, 72, 153, 0.1);
+            color: #ec4899;
+        }
+
+        .item-content {
+            flex-grow: 1;
+        }
+
+        .item-q {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .item-a-box {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .item-meta {
+            margin-top: 16px;
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 탭 컨텐츠 */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 100px;
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* 다크모드 아이콘 */
+        .icon-sun,
+        .icon-moon {
+            display: none;
+        }
+
+        [data-theme="light"] .icon-sun {
+            display: block;
+        }
+
+        [data-theme="dark"] .icon-moon {
+            display: block;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.open {
+            display: flex;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            width: 450px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 14px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .mypage-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .main-content {
+                padding: 30px;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="mypage-wrapper">
-        <div class="mypage-card">
-            <div class="mypage-header">
-                <div class="mypage-avatar">👤</div>
-                <h1 class="mypage-title">{{ user.username }}</h1>
-                <p class="mypage-subtitle">안녕하세요! 오늘도 열심히 공부해요 🔥</p>
+    {% if messages %}
+    <div
+        style="position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; width:90%; max-width:400px;">
+        {% for message in messages %}
+        <div
+            style="padding:16px; background:#10b981; color:white; border-radius:10px; margin-bottom:10px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); font-weight:600;">
+            {{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="mypage-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'chat' %}" class="brand">
+                    <div class="brand-icon">🥧</div>
+                    <span class="brand-text">Py_Mate</span>
+                </a>
+                <button class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
+                    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
             </div>
 
-            <!-- 메시지 표시 -->
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
+            <div class="profile-section">
+                <!-- 수정된 템플릿 태그 (멀티라인 적용) -->
+                <div class="avatar-circle">
+                    {% if profile.nickname %}
+                    {{ profile.nickname|slice:":1" }}
+                    {% else %}
+                    {{ user.username|slice:":1" }}
+                    {% endif %}
+                </div>
+                <!-- 닉네임이 없으면 유저이름을 default로 -->
+                <h2 class="username">{{ profile.nickname|default:user.username }}</h2>
+                <div class="user-id">@{{ user.username }}</div>
 
-            <div class="info-section">
-                <div class="info-item">
-                    <span class="info-label">아이디</span>
-                    <span class="info-value">{{ user.username }}</span>
+                <div class="user-meta-card">
+                    <div class="meta-item">
+                        <div>{{ user.date_joined|date:"Y.m.d" }}</div>
+                        <div>가입일</div>
+                    </div>
+                    <div style="width:1px; background:var(--border);"></div>
+                    <div class="meta-item">
+                        <div style="color:var(--accent);">Active</div>
+                        <div>Status</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">이메일</span>
-                    <span class="info-value">{{ user.email|default:"미등록" }}</span>
+
+                <div class="profile-actions">
+                    <button onclick="openModal('editProfileModal')" class="nav-btn">⚙️ 내 정보 수정</button>
+                    <button onclick="openModal('changePwModal')" class="nav-btn">🔒 비밀번호 변경</button>
+                    <a href="{% url 'logout' %}" class="nav-btn logout">로그아웃</a>
+                    <button onclick="openModal('deleteUserModal')" class="nav-btn delete-account">👻 회원 탈퇴</button>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">가입일</span>
-                    <span class="info-value">{{ user.date_joined|date:"Y년 m월 d일" }}</span>
+            </div>
+        </aside>
+
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="showTab('chat')">💬 채팅 북마크</button>
+                    <button class="tab-btn" onclick="showTab('quiz')">📝 퀴즈 북마크</button>
+                </div>
+                <div class="header-actions">
+                    <a href="{% url 'chat' %}" class="action-link primary">💬 학습하러 가기</a>
+                    <a href="{% url 'quiz' %}" class="action-link secondary">📝 퀴즈 풀기</a>
                 </div>
             </div>
 
-            <div class="btn-group">
-                <a href="{% url 'chat' %}" class="btn btn-primary">💬 학습하러 가기</a>
-                <a href="{% url 'quiz' %}" class="btn btn-secondary">📝 퀴즈 풀기</a>
-                <a href="{% url 'logout' %}" class="btn btn-danger">로그아웃</a>
+            <div id="tab-chat" class="tab-content active">
+                {% if chat_bookmarks %}
+                <div class="data-grid">
+                    {% for item in chat_bookmarks %}
+                    <div class="grid-item">
+                        <div class="item-content">
+                            <span class="badge chat">Question</span>
+                            <div class="item-q">{{ item.query }}</div>
+                            <div class="item-a-box">{{ item.answer }}</div>
+                        </div>
+                        <div class="item-meta">{{ item.created_at|date:"Y.m.d H:i" }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-data">저장된 채팅 내용이 없습니다.</div>
+                {% endif %}
             </div>
+
+            <div id="tab-quiz" class="tab-content">
+                {% if quiz_bookmarks %}
+                <div class="data-grid">
+                    {% for item in quiz_bookmarks %}
+                    <div class="grid-item">
+                        <div class="item-content">
+                            <span class="badge quiz">Quiz</span>
+                            <div class="item-q">{{ item.question }}</div>
+                            <div class="item-a-box" style="border-left:4px solid var(--accent); border-radius:4px;">
+                                <strong>정답: {{ item.answer }}</strong><br><br>
+                                {{ item.explanation }}
+                            </div>
+                        </div>
+                        <div class="item-meta">{{ item.created_at|date:"Y.m.d H:i" }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-data">저장된 틀린 문제가 없습니다.</div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-box">
+            <h3 style="text-align:center; margin-bottom:20px; color:var(--text-primary);">내 정보 수정</h3>
+            <form method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <label class="form-label">아이디</label>
+                {{ u_form.username.as_widget }}
+                <label class="form-label" style="margin-top:10px;">닉네임</label>
+                {{ p_form.nickname.as_widget }}
+                <label class="form-label" style="margin-top:10px;">이메일</label>
+                {{ u_form.email.as_widget }}
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal('editProfileModal')" class="btn-cancel">취소</button>
+                    <button type="submit" class="btn-submit">저장</button>
+                </div>
+            </form>
         </div>
     </div>
+
+    <div id="changePwModal" class="modal">
+        <div class="modal-box">
+            <h3 style="text-align:center; margin-bottom:20px; color:var(--text-primary);">비밀번호 변경</h3>
+            <form method="post" action="{% url 'change_password' %}">
+                {% csrf_token %}
+                {% for field in pw_form %}
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% endfor %}
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal('changePwModal')" class="btn-cancel">취소</button>
+                    <button type="submit" class="btn-submit">변경</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteUserModal" class="modal">
+        <div class="modal-box">
+            <h3 style="text-align:center; margin-bottom:20px; color:#ef4444;">회원 탈퇴</h3>
+            <p style="text-align:center; color:var(--text-primary); margin-bottom:30px; line-height:1.5;">
+                정말로 탈퇴하시겠습니까?<br>
+                <span style="font-size:13px; color:var(--text-muted);">탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.</span>
+            </p>
+            <form method="post" action="{% url 'delete_user' %}">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal('deleteUserModal')" class="btn-cancel">취소</button>
+                    <button type="submit" class="btn-submit" style="background:#ef4444;">탈퇴하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.modal-box input').forEach(input => input.classList.add('form-input'));
+        });
+
+        (function () {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
+
+        function showTab(name) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.innerText.includes(name === 'chat' ? '채팅' : '퀴즈')) btn.classList.add('active');
+            });
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        window.onclick = function (e) { if (e.target.classList.contains('modal')) e.target.classList.remove('open'); }
+
+        setTimeout(() => {
+            const alertBox = document.querySelector('div[style*="position:fixed; top:20px;"]');
+            if (alertBox) alertBox.style.display = 'none';
+        }, 5000);
+    </script>
 </body>
 
 </html>

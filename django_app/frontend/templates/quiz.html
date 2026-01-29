@@ -98,7 +98,7 @@
             <!-- 유저 액션 (마이페이지/로그아웃) -->
             {% if user.is_authenticated %}
             <div class="header-user-actions">
-                <span class="header-user-name">👤 {{ user.username }}</span>
+                <span class="header-user-name">👤 {{ user.profile.nickname|default:user.username }}</span>
                 <a href="{% url 'mypage' %}" class="header-user-btn">마이페이지</a>
                 <a href="{% url 'logout' %}" class="header-user-btn">로그아웃</a>
             </div>
@@ -199,19 +199,7 @@
             updateThemeIcon(savedTheme === 'dark');
         });
 
-        // 통계 업데이트 함수
-        function updateQuizStats() {
-            document.getElementById('currentQuestion').textContent =
-                currentQuizData.length > 0 ? `${currentQuizIndex + 1} / ${currentQuizData.length}` : '-';
-            document.getElementById('correctCount').textContent = quizScore;
-            document.getElementById('scoreDisplay').textContent =
-                currentQuizData.length > 0 ? `${quizScore} / ${currentQuizData.length}` : '0 / 0';
 
-            const accuracy = currentQuizIndex > 0
-                ? Math.round((quizScore / currentQuizIndex) * 100) + '%'
-                : '-';
-            document.getElementById('accuracyDisplay').textContent = accuracy;
-        }
     </script>
 </body>
 

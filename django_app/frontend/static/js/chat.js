@@ -355,6 +355,7 @@ function createBotMessage() {
                 <img src="/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">
             </div>
             <div class="message-name">AI Tutor</div>
+            <button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장">★</button>
         </div>
         <div class="message-content"></div>
     `;
@@ -492,6 +493,7 @@ function addMessage(sender, text, sources = null) {
         <div class="message-header">
             <div class="message-avatar">${avatar}</div>
             <div class="message-name">${sender === 'bot' ? 'AI Tutor' : 'Student'}</div>
+            ${sender === 'bot' ? '<button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장">★</button>' : ''}
         </div>
         <div class="message-content">${marked.parse(text)}${srcHtml}</div>
     `;
@@ -865,3 +867,67 @@ renderSections();
 showWelcome();
 renderBookmarks();
 renderStats();
+
+/**
+ * 채팅 북마크 저장 (DB 연동)
+ */
+async function requestChatBookmark(btn) {
+    const botMsgDiv = btn.closest('.message.bot');
+    if (!botMsgDiv) return;
+
+    const contentDiv = botMsgDiv.querySelector('.message-content');
+    const answer = contentDiv.innerText.trim();
+
+    // 직전 사용자 질문 찾기
+    let prev = botMsgDiv.previousElementSibling;
+    while (prev && !prev.classList.contains('user')) {
+        prev = prev.previousElementSibling;
+    }
+
+    if (!prev) {
+        alert('질문을 찾을 수 없어 북마크할 수 없습니다. (대화 흐름이 끊겼을 수 있습니다)');
+        return;
+    }
+
+    const query = prev.querySelector('.message-content').innerText.trim();
+
+    // API 호출
+    try {
+        const res = await fetch('/api/chat/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ query, answer })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            if (data.bookmarked) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        } else {
+            console.error('북마크 실패:', data.message);
+        }
+    } catch (e) {
+        console.error('서버 통신 오류:', e);
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

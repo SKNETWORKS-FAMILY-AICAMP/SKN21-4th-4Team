@@ -29,7 +29,7 @@ async function loadQuizzes() {
             currentQuizIndex = 0;
             quizScore = 0;
             renderQuizPage();
-            if (typeof updateQuizStats === 'function') updateQuizStats();
+            updateQuizStats(); // 통계 초기화
         } else {
             container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">퀴즈를 불러올 수 없습니다.</p>';
         }
@@ -46,9 +46,16 @@ function renderQuizPage() {
     const container = document.getElementById('quizContainer');
     const quiz = currentQuizData[currentQuizIndex];
 
+    // 북마크 상태 확인
+    const bookmarkClass = quiz.bookmarked ? 'active' : '';
+
     container.innerHTML = `
         <div class="quiz-card">
-            <div class="quiz-progress">문제 ${currentQuizIndex + 1} / ${currentQuizData.length}</div>
+            <div class="quiz-header-row">
+                <div class="quiz-progress">문제 ${currentQuizIndex + 1} / ${currentQuizData.length}</div>
+                <button class="quiz-bookmark-btn ${bookmarkClass}" onclick="toggleQuizBookmark(this)" title="북마크 저장">★</button>
+            </div>
+            
             <div class="quiz-question">${quiz.question}</div>
             
             <div class="quiz-buttons">
@@ -59,6 +66,73 @@ function renderQuizPage() {
             <div id="quizFeedbackPage"></div>
         </div>
     `;
+    updateQuizStats();
+}
+
+/**
+ * 퀴즈 북마크 토글
+ */
+async function toggleQuizBookmark(btn) {
+    const quiz = currentQuizData[currentQuizIndex];
+    if (!quiz) return;
+
+    // 비로그인 사용자 체크 (보통 API에서 에러나지만 미리 체크하면 좋음)
+    // 여기서는 API 403 에러 핸들링으로 하거나, 그냥 보냄
+
+    try {
+        const res = await fetch('/api/quiz/bookmark/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                quiz_id: quiz.id,
+                question: quiz.question,
+                answer: quiz.answer,
+                explanation: quiz.explanation,
+                source: quiz.source
+            })
+        });
+
+        if (res.status === 403) {
+            alert('로그인이 필요한 기능입니다.');
+            return;
+        }
+
+        const data = await res.json();
+
+        if (data.success) {
+            if (data.bookmarked) {
+                btn.classList.add('active');
+                quiz.bookmarked = true; // 상태 저장
+                // alert('북마크에 저장되었습니다.'); // 너무 방해될 수 있으니 생략하거나 toast 사용
+            } else {
+                btn.classList.remove('active');
+                quiz.bookmarked = false;
+            }
+        } else {
+            console.error(data.message || data.error);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('서버 통신 중 오류가 발생했습니다.');
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 /**
@@ -74,6 +148,8 @@ function checkQuizAnswer(userChoice) {
 
     const isCorrect = userChoice === quiz.answer;
     if (isCorrect) quizScore++;
+
+    updateQuizStats(); // 점수 업데이트
 
     const resultClass = isCorrect ? 'correct' : 'wrong';
     const resultText = isCorrect ? '정답입니다! 🎉' : `틀렸습니다 😅 (정답: ${quiz.answer})`;
@@ -115,6 +191,44 @@ function showQuizResultPage() {
             <button class="restart-btn" onclick="loadQuizzes()">다시 하기</button>
         </div>
     `;
+    updateQuizStats();
+}
+
+/**
+ * 퀴즈 통계 업데이트 (quiz.html 전용)
+ */
+function updateQuizStats() {
+    // 좌측 사이드바
+    const currentQ = document.getElementById('currentQuestion');
+    const correctC = document.getElementById('correctCount');
+
+    if (currentQ) currentQ.textContent = currentQuizData.length > 0
+        ? `${currentQuizIndex + 1} / ${currentQuizData.length}` : '-';
+    if (correctC) correctC.textContent = quizScore;
+
+    // 우측 사이드바
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const accuracyDisplay = document.getElementById('accuracyDisplay');
+
+    if (scoreDisplay) scoreDisplay.textContent = currentQuizData.length > 0
+        ? `${quizScore} / ${currentQuizData.length}` : '0 / 0';
+
+    if (accuracyDisplay) {
+        // 아직 문제를 풀지 않았거나 첫 문제인 경우 처리
+        // 버튼이 비활성화(정답 체크 후) 상태면 현재 문제도 시도한 것으로 간주
+        const isAnswered = document.querySelector('.quiz-buttons') &&
+            document.querySelector('.quiz-buttons').style.pointerEvents === 'none';
+        const attempted = currentQuizIndex + (isAnswered ? 1 : 0);
+
+        // 결과 페이지인 경우 모든 문제 시도 간주
+        const isResultPage = document.querySelector('.quiz-result');
+        const denominator = isResultPage ? currentQuizData.length : attempted;
+
+        const accuracy = denominator > 0
+            ? Math.round((quizScore / denominator) * 100) + '%'
+            : '-';
+        accuracyDisplay.textContent = accuracy;
+    }
 }
 
 /**
