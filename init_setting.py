@@ -37,7 +37,7 @@ def recover_snapshots():
     '''     
     # Hugging Face Snapshot URL (Raw/Resolve URL 사용)
     # blob -> resolve 로 변경하여 직접 다운로드 가능한 링크로 설정
-    snapshot_url = "https://huggingface.co/datasets/lucymoon/skn21_3rd_4team/resolve/main/" + "learning_ai-5440725894880113-2026-01-07-08-14-04.snapshot"
+    snapshot_url = "https://huggingface.co/datasets/lucymoon/skn21_3rd_4team/resolve/main/" + "learning_ai-6068352061420509-2026-01-29-00-58-56.snapshot"
 
     print(f"URL: {snapshot_url}")
 

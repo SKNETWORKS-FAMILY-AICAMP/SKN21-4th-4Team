@@ -50,7 +50,9 @@ def build_context(state: AgentState):
     if not results:
         return {"context": "검색된 관련 자료가 없습니다."}
     
-    context_parts = []
+    context_parts = [
+        "IMPORTANT: You must use the following content to answer the user's question. If the answer is not here, say you don't know.\n"
+    ]
     
     for i, res in enumerate(results, 1): # 번호는 1번부터
         source = res['metadata'].get('source', 'Unknown')

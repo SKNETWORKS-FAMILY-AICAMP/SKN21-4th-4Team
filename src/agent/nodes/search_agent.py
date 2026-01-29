@@ -103,11 +103,13 @@ def search_by_source(
         )
     ]
     if filters:
-        if filters.get('has_code') is not None:
-            must_conditions.append(FieldCondition(
-                key="metadata.has_code",
-                match=MatchValue(value=filters['has_code'])
-            ))
+        pass
+        # [Emergency Disable] Hard Filter가 Recall을 떨어뜨려서 잠시 비활성화
+        # if filters.get('has_code') is not None:
+        #     must_conditions.append(FieldCondition(
+        #         key="metadata.has_code",
+        #         match=MatchValue(value=filters['has_code'])
+        #     ))
             
     vector_result = client.query_points(
         collection_name=ConfigDB.COLLECTION_NAME,

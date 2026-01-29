@@ -4,7 +4,7 @@ from typing import List
 
 # 답변 구조 정의 (Schema)
 class AnalystOutputSchema(BaseModel):
-    summary: str = Field(description="[1] 핵심 개념 요약 (3~5줄)")
+    summary: str = Field(description="[1] 검색된 Context 내용을 기반으로 한 핵심 요약 (3~5줄, Context에 없는 내용은 제외)")
     code_explanation: str = Field(description="[2] 수업 코드 기준 설명")
     practice_tips: str = Field(description="[3] 실습 관점 팁")
     one_liner: str = Field(description="[4] 한 줄 정리")

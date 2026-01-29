@@ -40,7 +40,13 @@ docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant
 python init_setting.py
 ```
 
-## 실행
+## Local docker 실행
+# 1. 빌드
 ```bash
-python app.py
+docker compose -f deploy/docker-compose.local.yml up -d --build
+```
+
+# 2. 마이그레이션 (처음 한 번만)
+```bash
+docker exec django_local python django_app/manage.py migrate
 ```
