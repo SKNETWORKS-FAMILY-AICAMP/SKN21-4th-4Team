@@ -113,7 +113,6 @@ def build_search_config(query: str) -> Dict:
         },
         'is_valid': result.is_valid,
         'optimized_query': result.optimized_query,
-        # 'weights': normalized_weights, # config 안에 포함시킴
         '_analysis': {
             'query_type': result.query_type,
             'topic_keywords': result.topic_keywords,
