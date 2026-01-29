@@ -2,6 +2,55 @@ from src.schema.state import AgentState
 from src.agent.nodes.search_agent import execute_dual_query_search
 from src.agent.nodes.search_router import build_search_config
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from src.utils.config import ConfigLLM
+from src.agent.prompts.search_prompt import CONDENSE_QUESTION_PROMPT
+
+
+
+def rewrite_query(original_query: str, messages: list) -> str:
+    """
+    대화 기록이 있는 경우, 이전 맥락을 반영하여 질문을 재작성합니다.
+    """
+    if not messages or len(messages) <= 1:
+        return original_query
+
+    # 대화 기록 포맷팅 (최근 3개 턴만 사용하거나 전체 사용)
+    # LangGraph의 messages는 (type, content) 튜플 리스트일 수도 있고, BaseMessage 객체 리스트일 수도 있음.
+    # 안전하게 처리
+    formatted_history = []
+    
+    # 마지막 메시지는 현재 쿼리이므로 제외하고 이전 기록만 사용
+    history_messages = messages[:-1] 
+    
+    for msg in history_messages[-6:]: # 최근 6개 메시지 (3턴) 참조
+        if hasattr(msg, 'content'):
+            role = "Human" if msg.type == 'human' else "Assistant"
+            formatted_history.append(f"{role}: {msg.content}")
+        elif isinstance(msg, tuple):
+            role = "Human" if msg[0] == 'human' else "Assistant"
+            formatted_history.append(f"{role}: {msg[1]}")
+            
+    history_str = "\n".join(formatted_history)
+
+    # LLM 설정
+    llm = ChatOpenAI(model=ConfigLLM.OPENAI_MODEL, temperature=0)
+    prompt = ChatPromptTemplate.from_template(CONDENSE_QUESTION_PROMPT)
+    chain = prompt | llm | StrOutputParser()
+    
+    try:
+        rewritten_query = chain.invoke({
+            "chat_history": history_str,
+            "question": original_query
+        })
+        print(f"🔄 [Rewrite Query] Original: '{original_query}' -> Rewritten: '{rewritten_query}'")
+        return rewritten_query
+    except Exception as e:
+        print(f"⚠️ Query Rewrite Failed: {e}")
+        return original_query
+
 
 def search_node(state: AgentState):
     """
@@ -9,7 +58,11 @@ def search_node(state: AgentState):
     state에서 query를 읽고, 검색 결과를 반환
     """
     
-    query = state['query']
+    original_query = state['query']
+    messages = state.get('messages', [])
+    
+    # 1. 질문 재작성 (History가 있는 경우)
+    query = rewrite_query(original_query, messages)
     
     # 검색 설정 결정
     config = build_search_config(query)

@@ -96,3 +96,14 @@ SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정
 - "대규모 데이터셋에서 embedding 벡터 최적화"
   → lecture만, advanced, 7개, mmr
 """
+
+# ========== 질문 재작성(Condense Question) 프롬프트 ==========
+CONDENSE_QUESTION_PROMPT = """Given the following conversation and a follow up question, rephrase the follow up question to be a concise standalone question, in its original language.
+The rewritten question should be suitable for a search engine query (keywords + intent).
+
+Chat History:
+{chat_history}
+
+Follow Up Input: {question}
+Standalone question:"""
+
