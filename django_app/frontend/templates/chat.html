@@ -31,6 +31,7 @@
     ======================================== -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -108,9 +109,7 @@
                 <button class="mode-btn active" id="chatModeBtn" onclick="switchMode('chat')">
                     💬 Chat Mode
                 </button>
-                <button class="mode-btn" id="notebookModeBtn" onclick="switchMode('notebook')">
-                    📘 Notebook Mode
-                </button>
+                <button class="mode-btn" id="notebookMode" onclick="openDrawing()">📘 Note</button>
             </div>
 
             <!-- 유저 액션 (마이페이지/로그아웃) -->
@@ -192,27 +191,27 @@
 
         <!-- AI 도구 격자형 버튼 -->
         <div class="ai-tools-grid">
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('summarize')">
                 <span class="icon">🧠</span>
                 <span class="label">개념 요약</span>
             </button>
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('stepByStep')">
                 <span class="icon">✍️</span>
                 <span class="label">단계별 설명</span>
             </button>
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('flashcard')">
                 <span class="icon">🎴</span>
                 <span class="label">플래시카드</span>
             </button>
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('quiz')">
                 <span class="icon">🧩</span>
                 <span class="label">퀴즈</span>
             </button>
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('table')">
                 <span class="icon">📊</span>
                 <span class="label">표로 정리</span>
             </button>
-            <button class="tool-btn-grid">
+            <button class="tool-btn-grid" onclick="requestAI('example')">
                 <span class="icon">🔄</span>
                 <span class="label">다른 예시</span>
             </button>
@@ -221,7 +220,7 @@
         <!-- 메모 추가 영역 -->
         <div class="memo-section">
             <a href="{% url 'quiz:quiz_page' %}" class="quiz-btn">🧩 퀴즈풀래용</a>
-            <button class="note-btn" style="margin-top: 8px;">📝 메모 추가</button>
+
         </div>
     </aside>
 
@@ -231,6 +230,51 @@
     ======================================== -->
     <script src="{% static 'js/chat.js' %}"></script>
     <script src="{% static 'js/quiz.js' %}"></script>
+
+    <!-- 드로잉 캔버스 오버레이 -->
+    <div id="drawingOverlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; pointer-events:none;">
+        <canvas id="drawingCanvas"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:auto;"></canvas>
+
+        <!-- 드로잉 도구 패널 -->
+        <div id="drawingTools" style="
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: auto;
+        ">
+            <div style="font-weight:600; font-size:12px; margin-bottom:4px;">🎨 펜 색상</div>
+            <div style="display:flex; gap:6px;">
+                <button class="pen-color" data-color="#000000"
+                    style="width:28px; height:28px; border-radius:50%; background:#000000; border:2px solid #ddd; cursor:pointer;"></button>
+                <button class="pen-color" data-color="#dc3545"
+                    style="width:28px; height:28px; border-radius:50%; background:#dc3545; border:2px solid #ddd; cursor:pointer;"></button>
+                <button class="pen-color" data-color="#007bff"
+                    style="width:28px; height:28px; border-radius:50%; background:#007bff; border:2px solid #ddd; cursor:pointer;"></button>
+                <button class="pen-color" data-color="#ffc107"
+                    style="width:28px; height:28px; border-radius:50%; background:#ffc107; border:2px solid #ddd; cursor:pointer;"></button>
+            </div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+                <button onclick="clearDrawing()"
+                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#f8f9fa; cursor:pointer; font-size:12px;">🗑️
+                    지우기</button>
+                <button onclick="takeScreenshot()"
+                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#e91e8c; color:white; cursor:pointer; font-size:12px;">📷
+                    캡처</button>
+            </div>
+            <button onclick="closeDrawing()"
+                style="padding:8px; border:1px solid #ddd; border-radius:6px; background:#fff; cursor:pointer; font-size:12px;">✖️
+                닫기</button>
+        </div>
+    </div>
 </body>
 
 </html>

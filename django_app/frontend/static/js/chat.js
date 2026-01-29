@@ -66,7 +66,10 @@ function updateThemeIcon() {
  * SECTIONS 배열을 기반으로 동적 생성
  */
 function renderSections() {
-    document.getElementById('sectionsContainer').innerHTML = SECTIONS.map(s => `
+    const container = document.getElementById('sectionsContainer');
+    if (!container) return;  // 요소 없으면 그냥 리턴
+
+    container.innerHTML = SECTIONS.map(s => `
         <div class="section ${s.id === currentMode ? 'active' : ''}" data-mode="${s.id}">
             <div class="section-header" onclick="selectMode('${s.id}')">
                 <div class="section-info">
@@ -273,7 +276,14 @@ async function send(text) {
         const response = await fetch('/api/chat/stream/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg })
+            body: JSON.stringify({
+                message: msg,
+                filters: {
+                    python: document.getElementById('filterPython')?.checked ?? true,
+                    lecture: document.getElementById('filterLecture')?.checked ?? true,
+                    code: document.getElementById('filterCode')?.checked ?? false
+                }
+            })
         });
 
         const reader = response.body.getReader();
@@ -316,14 +326,15 @@ async function send(text) {
                         } else if (data.type === 'sources') {
                             sources = data.data;
                             if (botDiv && sources.length > 0) {
-                                appendBestMatch(botDiv, sources[0]);
+                                // 소스 일괄 렌더링 함수 호출
+                                appendSources(botDiv, sources);
                             }
                         } else if (data.type === 'web_sources') {
                             const webSources = data.data;
                             if (botDiv && webSources.length > 0) {
                                 appendWebSources(botDiv, webSources);
                             }
-                        } else if (data.type === 'suggestions') {
+                        } else if (data.type === 'questions') {  // suggestions -> questions
                             if (botDiv && data.data && data.data.length > 0) {
                                 appendSuggestions(botDiv, data.data);
                             }
@@ -376,24 +387,114 @@ function updateBotMessage(div, text) {
 }
 
 /**
- * Best Match 카드 추가 (답변 아래에 표시)
+ * 참고 자료 카드 리스트 추가 (최대 3개)
  */
-function appendBestMatch(div, source) {
-    if (div.querySelector('.best-match-card')) return;
-    const scorePercent = (source.score * 100).toFixed(1);
-    const html = `
-        <div class="best-match-card">
-    <div class="best-match-header">
-        <span class="best-match-badge">${source.type}</span>
-        <div class="best-match-title">${source.title}</div>
-    </div>
-    <div style="font-size: 13px; color: #4b5563; margin: 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-        ${source.content || '내용 미리보기가 없습니다.'}
-    </div>
-    <div class="best-match-score">유사도: ${scorePercent}%</div>
-</div>
-    `;
-    div.querySelector('.message-content').insertAdjacentHTML('beforeend', html);
+function appendSources(div, sources) {
+    // 컨테이너가 없으면 생성
+    let container = div.querySelector('.best-match-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'best-match-container';
+        container.style.marginTop = '12px';
+        container.style.display = 'flex';
+        container.style.gap = '10px';
+        container.style.overflowX = 'auto'; // 가로 스크롤
+        container.style.paddingBottom = '8px'; // 스크롤바 공간 확보
+        container.style.scrollBehavior = 'smooth';
+        // 스크롤바 스타일링
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .best-match-container::-webkit-scrollbar { height: 6px; }
+            .best-match-container::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+            .best-match-container::-webkit-scrollbar-track { background: transparent; }
+        `;
+        div.appendChild(style);
+        div.querySelector('.message-content').appendChild(container); // 마지막에 추가
+    }
+
+    // 최대 3개까지만 표시
+    sources.slice(0, 3).forEach(source => {
+        // 중복 방지
+        const contentKey = source.content.substring(0, 30);
+        const existing = container.querySelector(`[data-content-key="${contentKey}"]`);
+        if (existing) return;
+
+        // 백엔드에서 이미 정제된 데이터 사용
+        let title = source.title || source.metadata?.source || '참고 자료';
+        let content = source.content;
+        let scorePercent = source.score || 0;
+
+        // 태그 결정 (백엔드 type 우선, 없으면 title 기반 추론)
+        let tag = source.type || 'DOC';
+        if (tag === 'DOC') { // 기본값이면 다시 한번 체크
+            if (title.includes('강의') || title.toLowerCase().includes('lecture')) tag = 'LECTURE';
+            else if (title.includes('코드') || title.toLowerCase().includes('code') || title.endsWith('.ipynb')) tag = 'CODE';
+        }
+
+        // 화면 표시용 제목 (접두어 제거)
+        const displayTitle = title.replace(/^강의:\s*/, '').replace(/^코드:\s*/, '');
+
+        const html = `
+            <div class="best-match-card" data-content-key="${contentKey}" style="
+                min-width: 260px; 
+                max-width: 260px;
+                padding: 14px;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                background: linear-gradient(135deg, var(--bg-tertiary) 0%, #fff 100%);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                flex-shrink: 0;
+                transition: transform 0.2s;
+                display: flex;
+                flex-direction: column;
+            " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+                     <span style="
+                        align-self: flex-start;
+                        font-size: 10px; 
+                        font-weight: 700; 
+                        color: #fff; 
+                        background: var(--accent, #e91e8c); 
+                        padding: 3px 6px; 
+                        border-radius: 4px;
+                    ">${tag}</span>
+                    <span style="
+                        font-size: 13px; 
+                        font-weight: 600; 
+                        color: var(--accent); 
+                        line-height: 1.4; 
+                        display: -webkit-box; 
+                        -webkit-line-clamp: 2; 
+                        -webkit-box-orient: vertical; 
+                        overflow: hidden;
+                        height: 2.8em;
+                    " title="${title}">
+                        ${displayTitle}
+                    </span>
+                </div>
+                
+                <div style="
+                    font-size: 12px; 
+                    color: var(--text-secondary); 
+                    line-height: 1.6; 
+                    margin-bottom: auto;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 4;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    height: 6.4em;
+                ">
+                    ${content}
+                </div>
+                
+                <div style="text-align: right; font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 10px;">
+                    유사도: ${scorePercent}%
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
 }
 
 /**
@@ -428,19 +529,34 @@ function appendWebSources(div, webSources) {
  * 추천 질문 버튼 추가 (답변 아래에 표시)
  */
 function appendSuggestions(div, suggestions) {
+    if (div.querySelector('.suggestion-btn-container')) return;
+
     const html = `
-        <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;">
+        <div class="suggestion-btn-container" style="margin-top: 16px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
             ${suggestions.map(q => `
                 <button onclick="send('${q.replace(/'/g, "\\'")}')"
-                    style="padding: 8px 14px; border-radius: 20px; border: 1px solid var(--accent); 
-                           background: var(--bg-tertiary); color: var(--accent); font-size: 13px;
-                           cursor: pointer;">
-                    🔗 ${q}
+                    style="
+                        padding: 8px 16px; 
+                        border-radius: 20px; 
+                        border: 1px solid var(--accent); 
+                        background: var(--bg-tertiary); 
+                        color: var(--accent); 
+                        font-size: 13px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                    "
+                    onmouseover="this.style.background='var(--accent)'; this.style.color='white';"
+                    onmouseout="this.style.background='var(--bg-tertiary)'; this.style.color='var(--accent)';"
+                >
+                    <span style="font-size: 14px;">💬</span> ${q}
                 </button>
             `).join('')}
         </div>
     `;
-    div.querySelector('.message-content').innerHTML += html;
+    div.querySelector('.message-content').insertAdjacentHTML('beforeend', html);
 }
 
 /**
@@ -976,4 +1092,527 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+// ========================================
+// 🎨 스튜디오 AI 도구 함수
+// ========================================
+
+/**
+ * 마지막 AI 답변 내용을 가져오는 함수
+ */
+function getLastAnswer() {
+    // AI Tutor 답변 영역 찾기 (실제 클래스에 맞게 수정)
+    const answers = document.querySelectorAll('.message.assistant, .answer-content, .ai-response');
+
+    // 못 찾으면 다른 방법 시도
+    if (answers.length === 0) {
+        // 모든 메시지 중 마지막 것 찾기
+        const allMessages = document.querySelectorAll('#chatContent > div');
+        if (allMessages.length < 2) {
+            alert('먼저 질문을 해주세요!');
+            return null;
+        }
+        // 마지막 메시지의 텍스트
+        return allMessages[allMessages.length - 1].innerText;
+    }
+
+    return answers[answers.length - 1].innerText;
+}
+
+
+/**
+ * AI 도구 버튼 클릭 시 - 답변 아래에 결과 추가
+ */
+async function requestAI(type) {
+    const lastAnswer = getLastAnswer();
+    if (!lastAnswer) return;
+
+    const prompts = {
+        summarize: `[중요: 아래 내용을 3줄로 요약만 해줘]\n\n${lastAnswer}`,
+        stepByStep: `[중요: 아래 내용을 1,2,3 단계로 나눠서 설명해줘]\n\n${lastAnswer}`,
+        table: `[중요: 아래 내용을 마크다운 표로 정리해줘]\n\n${lastAnswer}`,
+        example: `[중요: 아래 개념의 다른 예시를 들어줘]\n\n${lastAnswer}`,
+        quiz: `[JSON으로 답해줘] 아래 내용으로 O/X 퀴즈 1개 만들어줘. 형식: {"quizzes": [{"question": "질문", "answer": true, "explanation": "해설"}]}\n\n${lastAnswer}`,
+        flashcard: `[JSON으로 답해줘] 아래 내용으로 플래시카드 3개 만들어줘. 형식: {"cards": [{"front": "질문", "back": "답변"}]}\n\n${lastAnswer}`,
+    };
+
+    const labels = {
+        summarize: '개념 요약',
+        stepByStep: '단계별 설명',
+        table: '표로 정리',
+        example: '다른 예시',
+        quiz: 'O/X 퀴즈',
+        flashcard: '플래시카드',
+    };
+
+    const prompt = prompts[type];
+    if (!prompt) return;
+
+    const chatContent = document.getElementById('chatContent');
+    const lastMessageDiv = chatContent.lastElementChild;
+
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'studio-result';
+    resultDiv.dataset.type = type;  // 타입 저장
+    resultDiv.style.cssText = `
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 12px;
+        border: 1px solid var(--border, #e9ecef);
+    `;
+    resultDiv.innerHTML = `
+        <div class="studio-header" style="
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent, #e91e8c);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border, #e9ecef);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <span>${labels[type]}</span>
+            <button class="bookmark-studio-btn" style="display:none; background:#e91e8c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">⭐ 저장</button>
+        </div>
+        <div class="studio-content" style="
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary, #666);
+        ">생성 중...</div>
+    `;
+    lastMessageDiv.appendChild(resultDiv);
+
+    try {
+        // 스튜디오 전용 API 호출 (RAG 없이 순수 LLM)
+        const response = await fetch('/api/chat/studio/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                type: type  // 타입 전송 (summarize, quiz, flashcard 등)
+            })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let result = '';
+        const contentDiv = resultDiv.querySelector('.studio-content');
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.slice(6));
+                        // chunk 타입: 실시간 스트리밍 표시
+                        if (data.type === 'chunk' && data.data) {
+                            result += data.data;
+                            // 퀴즈/플래시카드는 완료 후 렌더링, 나머지는 실시간
+                            if (type !== 'quiz' && type !== 'flashcard') {
+                                contentDiv.innerHTML = marked.parse(result);
+                            } else {
+                                contentDiv.textContent = '생성 중... ' + result.slice(0, 50) + '...';
+                            }
+                        }
+                        // message 타입: 최종 결과
+                        if (data.type === 'message' && data.data) {
+                            result = data.data;
+                        }
+                    } catch (e) { }
+                }
+            }
+        }
+
+        // 타입별 렌더링
+        if (type === 'quiz') {
+            renderQuizUI(contentDiv, result, resultDiv);
+        } else if (type === 'flashcard') {
+            renderFlashcardUI(contentDiv, result);
+        } else {
+            contentDiv.innerHTML = marked.parse(result);
+        }
+
+        // 북마크 버튼 표시
+        if (type === 'quiz') {
+            const bookmarkBtn = resultDiv.querySelector('.bookmark-studio-btn');
+            bookmarkBtn.style.display = 'inline-block';
+            bookmarkBtn.onclick = () => saveQuizToBookmark(result);
+        }
+
+    } catch (error) {
+        console.error('Studio error:', error);
+        resultDiv.querySelector('.studio-content').innerHTML = '오류가 발생했습니다.';
+    }
+}
+
+/**
+ * O/X 퀴즈 UI 렌더링
+ */
+function renderQuizUI(container, result, resultDiv) {
+    try {
+        // JSON 추출 시도
+        const jsonMatch = result.match(/\{[\s\S]*"quizzes"[\s\S]*\}/);
+        if (!jsonMatch) {
+            container.innerHTML = marked.parse(result);
+            return;
+        }
+
+        const data = JSON.parse(jsonMatch[0]);
+        const quizzes = data.quizzes || [];
+
+        let html = '<div class="quiz-container">';
+        quizzes.forEach((q, idx) => {
+            // 해설을 Base64로 인코딩하여 특수문자 문제 방지
+            const encodedExplanation = btoa(encodeURIComponent(q.explanation || '해설 없음'));
+            html += `
+                <div class="inline-quiz" data-answer="${q.answer}" data-explanation="${encodedExplanation}" style="
+                    background: linear-gradient(135deg, #fff5f8 0%, #fff 100%);
+                    border: 2px solid #ffcce0;
+                    border-radius: 12px;
+                    padding: 16px;
+                    margin-bottom: 12px;
+                ">
+                    <div style="font-weight: 600; margin-bottom: 12px; color: #333;">🧩 ${q.question}</div>
+                    <div class="quiz-buttons" style="display: flex; gap: 10px;">
+                        <button class="quiz-btn-o" data-answer="true"
+                            style="flex:1; padding:12px; border:2px solid #e91e8c; background:#fff5f8; border-radius:8px; cursor:pointer; font-weight:600; color:#e91e8c; transition:all 0.2s;">
+                            ⭕ O
+                        </button>
+                        <button class="quiz-btn-x" data-answer="false"
+                            style="flex:1; padding:12px; border:2px solid #666; background:#f8f9fa; border-radius:8px; cursor:pointer; font-weight:600; color:#333; transition:all 0.2s;">
+                            ❌ X
+                        </button>
+                    </div>
+                    <div class="quiz-result" style="display:none; margin-top:12px; padding:10px; border-radius:8px;"></div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+
+        // 이벤트 리스너 등록
+        container.querySelectorAll('.quiz-btn-o, .quiz-btn-x').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const quizDiv = this.closest('.inline-quiz');
+                const correctAnswer = quizDiv.dataset.answer === 'true';
+                const userAnswer = this.dataset.answer === 'true';
+                const encodedExp = quizDiv.dataset.explanation;
+                const explanation = decodeURIComponent(atob(encodedExp));
+                const resultDiv = quizDiv.querySelector('.quiz-result');
+                const isCorrect = userAnswer === correctAnswer;
+
+                // 버튼 비활성화
+                quizDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+
+                // 결과 표시
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = isCorrect ? '#d4edda' : '#f8d7da';
+                resultDiv.style.color = isCorrect ? '#155724' : '#721c24';
+                resultDiv.innerHTML = `
+                    <strong>${isCorrect ? '🎉 정답!' : '😅 오답!'}</strong>
+                    <p style="margin:8px 0 0 0;">${explanation}</p>
+                `;
+            });
+        });
+
+        // 데이터 저장 (북마크용)
+        resultDiv.dataset.quizData = JSON.stringify(data);
+
+    } catch (e) {
+        console.error('Quiz parse error:', e);
+        container.innerHTML = marked.parse(result);
+    }
+}
+
+/**
+ * 퀴즈 정답 확인
+ */
+function checkQuizAnswer(btn, userAnswer, explanation) {
+    const quizDiv = btn.closest('.inline-quiz');
+    const correctAnswer = quizDiv.dataset.answer === 'true';
+    const resultDiv = quizDiv.querySelector('.quiz-result');
+    const isCorrect = userAnswer === correctAnswer;
+
+    // 버튼 비활성화
+    quizDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+
+    // 결과 표시
+    resultDiv.style.display = 'block';
+    resultDiv.style.background = isCorrect ? '#d4edda' : '#f8d7da';
+    resultDiv.style.color = isCorrect ? '#155724' : '#721c24';
+    resultDiv.innerHTML = `
+        <strong>${isCorrect ? '🎉 정답!' : '😅 오답!'}</strong>
+        <p style="margin:8px 0 0 0;">${explanation}</p>
+    `;
+}
+
+/**
+ * 플래시카드 UI 렌더링
+ */
+function renderFlashcardUI(container, result) {
+    try {
+        const jsonMatch = result.match(/\{[\s\S]*"cards"[\s\S]*\}/);
+        if (!jsonMatch) {
+            container.innerHTML = marked.parse(result);
+            return;
+        }
+
+        const data = JSON.parse(jsonMatch[0]);
+        const cards = data.cards || [];
+
+        let html = '<div class="flashcard-container" style="display:flex; gap:12px; flex-wrap:wrap;">';
+        cards.forEach((card, idx) => {
+            html += `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')" style="
+                    width: 180px;
+                    height: 120px;
+                    perspective: 1000px;
+                    cursor: pointer;
+                ">
+                    <div class="flashcard-inner" style="
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        transition: transform 0.6s;
+                        transform-style: preserve-3d;
+                    ">
+                        <div class="flashcard-front" style="
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            backface-visibility: hidden;
+                            background: linear-gradient(135deg, #e91e8c 0%, #ff6b9d 100%);
+                            color: white;
+                            border-radius: 12px;
+                            padding: 12px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            text-align: center;
+                            font-weight: 600;
+                            font-size: 13px;
+                            box-shadow: 0 4px 15px rgba(233, 30, 140, 0.3);
+                        ">${card.front}</div>
+                        <div class="flashcard-back" style="
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            backface-visibility: hidden;
+                            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+                            color: #333;
+                            border-radius: 12px;
+                            padding: 12px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            text-align: center;
+                            font-size: 12px;
+                            transform: rotateY(180deg);
+                            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3);
+                        ">${card.back}</div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        html += '<p style="font-size:11px; color:var(--text-muted, #999); margin-top:8px;">💡 카드를 클릭하면 뒤집어집니다</p>';
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error('Flashcard parse error:', e);
+        container.innerHTML = marked.parse(result);
+    }
+}
+
+/**
+ * 스튜디오에서 만든 O/X 퀴즈를 퀴즈 북마크에 저장
+ * QuizBookmark 모델: quiz_id, question, answer, explanation, source
+ */
+async function saveQuizToBookmark(result) {
+    try {
+        // JSON 파싱 시도
+        const jsonMatch = result.match(/\{[\s\S]*"quizzes"[\s\S]*\}/);
+        if (!jsonMatch) {
+            alert('퀴즈 데이터를 찾을 수 없습니다.');
+            return;
+        }
+
+        const data = JSON.parse(jsonMatch[0]);
+        const quizzes = data.quizzes || [];
+
+        if (quizzes.length === 0) {
+            alert('저장할 퀴즈가 없습니다.');
+            return;
+        }
+
+        let savedCount = 0;
+
+        // 각 퀴즈를 개별적으로 저장
+        for (const quiz of quizzes) {
+            const quizData = {
+                quiz_id: `studio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                question: quiz.question,
+                answer: quiz.answer ? 'O' : 'X',  // true -> 'O', false -> 'X'
+                explanation: quiz.explanation || '해설 없음',
+                source: 'AI 스튜디오'
+            };
+
+            const response = await fetch('/quiz/api/bookmarks/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(quizData)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                savedCount++;
+            }
+        }
+
+        if (savedCount > 0) {
+            alert(`${savedCount}개의 퀴즈가 저장되었습니다!\n마이페이지에서 확인할 수 있어요.`);
+        } else {
+            alert('이미 저장된 퀴즈입니다.');
+        }
+
+    } catch (e) {
+        console.error('Quiz save error:', e);
+        alert('퀴즈 저장에 실패했습니다.');
+    }
+}
+
+
+
+// ========================================
+// 🎨 드로잉 (Note) 기능
+// ========================================
+
+let isDrawing = false;
+let drawingContext = null;
+let currentColor = '#000000';
+
+/**
+ * Note 모드 활성화
+ */
+function openDrawing() {
+    const overlay = document.getElementById('drawingOverlay');
+    const canvas = document.getElementById('drawingCanvas');
+
+    // 캔버스 크기 설정
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    drawingContext = canvas.getContext('2d');
+    drawingContext.lineCap = 'round';
+    drawingContext.lineJoin = 'round';
+    drawingContext.lineWidth = 3;
+    drawingContext.strokeStyle = currentColor;
+
+    overlay.style.display = 'block';
+
+    // 이벤트 리스너
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // 터치 지원
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouchMove);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // 펜 색상 버튼 이벤트
+    document.querySelectorAll('.pen-color').forEach(btn => {
+        btn.onclick = () => {
+            currentColor = btn.dataset.color;
+            drawingContext.strokeStyle = currentColor;
+            document.querySelectorAll('.pen-color').forEach(b => b.style.border = '2px solid #ddd');
+            btn.style.border = '3px solid #333';
+        };
+    });
+
+    // 첫 번째 색상 선택
+    document.querySelector('.pen-color').click();
+}
+
+function startDrawing(e) {
+    isDrawing = true;
+    drawingContext.beginPath();
+    drawingContext.moveTo(e.clientX, e.clientY);
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    drawingContext.lineTo(e.clientX, e.clientY);
+    drawingContext.stroke();
+}
+
+function stopDrawing() {
+    isDrawing = false;
+}
+
+function handleTouch(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    startDrawing({ clientX: touch.clientX, clientY: touch.clientY });
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    draw({ clientX: touch.clientX, clientY: touch.clientY });
+}
+
+/**
+ * 드로잉 지우기
+ */
+function clearDrawing() {
+    const canvas = document.getElementById('drawingCanvas');
+    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/**
+ * 드로잉 닫기
+ */
+function closeDrawing() {
+    const overlay = document.getElementById('drawingOverlay');
+    overlay.style.display = 'none';
+    clearDrawing();
+}
+
+/**
+ * 스크린샷 찍기
+ */
+async function takeScreenshot() {
+    try {
+        // html2canvas 라이브러리 필요
+        if (typeof html2canvas === 'undefined') {
+            alert('스크린샷 기능을 사용하려면 html2canvas 라이브러리가 필요합니다.');
+            return;
+        }
+
+        const canvas = await html2canvas(document.body);
+        const link = document.createElement('a');
+        link.download = `screenshot_${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+        alert('스크린샷이 저장되었습니다!');
+    } catch (error) {
+        console.error('Screenshot error:', error);
+        alert('스크린샷 저장에 실패했습니다.');
+    }
 }
