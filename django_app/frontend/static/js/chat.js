@@ -174,7 +174,7 @@ function showWelcome() {
     document.getElementById('chatContent').innerHTML = `
         <div class="welcome" id="welcome">
             <!-- 배지 제거됨 -->
-            <img src="/image/pymate_logo.png" alt="PyMate" style="width: 220px; height: auto; margin-bottom: 30px; border-radius: 16px;">
+            <img src="/static/image/pymate_logo.png" alt="PyMate" style="width: 220px; height: auto; margin-bottom: 30px; border-radius: 16px;">
             <h1>무엇을 배우고 싶으세요?</h1>
             <p>부트캠프 학습 자료를 기반으로 한 AI 튜터입니다.</p>
             <div class="suggestions">
@@ -352,7 +352,7 @@ function createBotMessage() {
     div.innerHTML = `
         <div class="message-header">
             <div class="message-avatar">
-                <img src="/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">
+                <img src="/static/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">
             </div>
             <div class="message-name">AI Tutor</div>
             <button class="chat-bookmark-btn" onclick="requestChatBookmark(this)" title="북마크 저장">★</button>
@@ -472,7 +472,7 @@ function addMessage(sender, text, sources = null) {
     const div = document.createElement('div');
     div.className = `message ${sender}`;
     const avatar = sender === 'bot' ?
-        '<img src="/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">' :
+        '<img src="/static/image/pymate_logo.png" alt="AI" style="width: 100%; height: 100%; border-radius: 50%;">' :
         '👤';
 
     let srcHtml = '';
