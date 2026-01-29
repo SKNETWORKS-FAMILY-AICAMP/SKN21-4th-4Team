@@ -361,7 +361,16 @@ DJANGO_SECRET_KEY=<강력한-비밀번호-생성>
 DJANGO_ALLOWED_HOSTS=54.180.123.45,localhost,127.0.0.1
 OPENAI_API_KEY=<본인의-OpenAI-API-키>
 TAVILY_API_KEY=<본인의-Tavily-API-키>
+
+# Database (RDS PostgreSQL) - 팀원과 공유된 정보 입력
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASSWORD=vmffpdlepdlxj1!
+DB_HOST=skn21-django-db.cfo0sc4o2oej.ap-northeast-2.rds.amazonaws.com
+DB_PORT=5432
 ```
+
+
 
 > [!TIP]
 > Django SECRET_KEY 생성 방법:
@@ -409,6 +418,25 @@ chmod +x deploy.sh
 [6/6] 서비스 상태 확인...
 ✓ 배포 완료!
 ```
+
+### Step 4: 데이터베이스 초기화 (처음 배포 시에만)
+
+**RDS PostgreSQL 마이그레이션**:
+```bash
+# 데이터베이스 테이블 생성
+docker exec django_app python django_app/manage.py migrate
+
+# 슈퍼유저 생성 (관리자 계정)
+docker exec -it django_app python django_app/manage.py createsuperuser
+
+# 정적 파일 수집
+docker exec django_app python django_app/manage.py collectstatic --noinput
+```
+
+> [!NOTE]
+> - 마이그레이션은 **처음 배포할 때만** 실행하면 됩니다
+> - 이후 코드 업데이트 시에는 모델 변경이 있을 때만 다시 실행
+
 
 ---
 
