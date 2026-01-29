@@ -25,5 +25,8 @@ fastembed
 django
 djangorestframework
 
+# PostgreSQL 드라이버 (RDS 연결용)
+psycopg2-binary==2.9.9
+
 # view (legacy)
 flask
