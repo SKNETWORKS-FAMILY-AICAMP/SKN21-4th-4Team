@@ -29,7 +29,6 @@ def submit_analysis(summary: str, code_explanation: str, practice_tips: str, one
         "one_liner": one_liner,
         "confidence_score": confidence_score,
         "references": references,
-        "references": references,
         "suggested_questions": suggested_questions,
         "relevant_code": relevant_code
     }
