@@ -263,3 +263,108 @@ def delete_bookmark(request, bookmark_id):
         return JsonResponse({'success': True, 'message': '삭제되었습니다.'})
     except ChatBookmark.DoesNotExist:
         return JsonResponse({'success': False, 'message': '북마크를 찾을 수 없습니다.'}, status=404)
+
+@login_required
+@require_http_methods(["POST"])
+def execute_code(request):
+    """파이썬 코드 실행 API"""
+    try:
+        data = json.loads(request.body)
+        code = data.get('code', '')
+        
+        if not code:
+            return JsonResponse({'success': False, 'error': '코드가 없습니다.'}, status=400)
+
+        # 보안상 위험한 키워드 필터링 (데모용 간단 차단)
+        forbidden = ['import os', 'import sys', 'subprocess', 'open(', 'eval(', 'exec(']
+        for word in forbidden:
+            if word in code:
+                return JsonResponse({
+                    'success': True, 
+                    'output': '', 
+                    'error': f'보안 경고: "{word}" 사용이 제한됩니다.'
+                })
+
+        # 코드 실행 (subprocess)
+        import subprocess
+        # 타임아웃 5초 설정
+        result = subprocess.run(
+            ['python', '-c', code], 
+            capture_output=True, 
+            text=True, 
+            timeout=5
+        )
+        
+        output = result.stdout
+        error = result.stderr
+        
+        return JsonResponse({'success': True, 'output': output, 'error': error})
+
+    except subprocess.TimeoutExpired:
+        return JsonResponse({'success': True, 'output': '', 'error': '실행 시간 초과 (5초)'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+@csrf_exempt
+def review_code(request):
+    """AI 코드 리뷰 및 디버깅 API"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST만 허용'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        code = data.get('code', '')
+        output = data.get('output', '')
+
+        if not code:
+            return JsonResponse({'error': '코드가 없습니다.'}, status=400)
+
+        # 시스템 프롬프트 설정
+        system_prompt = """당신은 친절한 파이썬 튜터입니다. 
+학생이 작성한 코드와 실행 결과를 보고 다음을 수행하세요:
+1. 에러가 있다면 원인을 쉽게 설명하고 해결책을 제시하세요.
+2. 에러가 없다면 코드를 더 효율적으로 개선할 방법이나 칭찬을 해주세요.
+3. 설명은 초보자가 이해하기 쉽게 하고, 예시 코드를 보여주세요.
+4. 한국어로 답변하세요."""
+
+        user_prompt = f"""
+[작성한 코드]
+{code}
+
+[실행 결과]
+{output}
+
+이 코드를 리뷰해주세요.
+"""
+
+        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+        def generate():
+            try:
+                stream = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    stream=True,
+                    max_tokens=1000,
+                    temperature=0.7
+                )
+
+                for chunk in stream:
+                    if chunk.choices[0].delta.content:
+                        content = chunk.choices[0].delta.content
+                        # 프론트엔드 형식에 맞춰 전송
+                        yield f"data: {json.dumps({'type': 'chunk', 'data': content})}\n\n"
+                
+                yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+            except Exception as e:
+                yield f"data: {json.dumps({'type': 'error', 'data': str(e)})}\n\n"
+
+        return StreamingHttpResponse(generate(), content_type='text/event-stream')
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

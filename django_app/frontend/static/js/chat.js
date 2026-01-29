@@ -10,13 +10,15 @@
  */
 const SECTIONS = [
     { id: 'learning', name: '학습할래용' },
-    { id: 'quiz', name: '퀴즈풀래용' }
+    { id: 'quiz', name: '퀴즈풀래용' },
+    { id: 'coding', name: '코딩할래용' }
 ];
 
 // 현재 상태 변수들
 let currentMode = 'learning';  // 현재 선택된 모드 (learning/quiz)
 let isProcessing = false;      // 메시지 처리 중 여부
 let notebookMode = false;      // Chat/Notebook 모드 (false: Chat, true: Notebook)
+let monacoInstance = null;     // Monaco Editor 인스턴스
 
 // 북마크 및 학습현황 데이터
 // 북마크 및 학습현황 데이터
@@ -103,7 +105,25 @@ function selectMode(mode) {
         // 퀴즈 모드에서는 입력창 숨기기
         const inputArea = document.querySelector('.input-area');
         if (inputArea) {
-            inputArea.style.display = (mode === 'quiz') ? 'none' : 'block';
+            inputArea.style.display = (mode === 'quiz' || mode === 'coding') ? 'none' : 'block';
+        }
+
+        // 코딩 모드 UI 토글
+        const chatArea = document.getElementById('chatArea');
+        const codingArea = document.getElementById('codingArea');
+
+        if (mode === 'coding') {
+            if (chatArea) chatArea.style.display = 'none';
+            if (codingArea) {
+                codingArea.style.display = 'flex';
+                // 에디터 초기화가 안 되어 있으면 초기화
+                if (!monacoInstance) {
+                    initMonaco();
+                }
+            }
+        } else {
+            if (chatArea) chatArea.style.display = 'block';
+            if (codingArea) codingArea.style.display = 'none';
         }
 
         // 캐시된 콘텐츠가 있으면 복원, 없으면 웰컴 화면
@@ -798,13 +818,231 @@ async function loadBookmarks() {
         const res = await fetch('/api/chat/bookmarks/');
         const data = await res.json();
         if (data.success) {
-            bookmarks = data.bookmarks;
-            renderBookmarks();
+            bookmarks = data.bookmarks || [];
+            if (document.getElementById('bookmarkList')) {
+                renderBookmarks();
+            }
         }
     } catch (e) {
         console.error('북마크 로드 오류:', e);
     }
 }
+
+/**
+ * 북마크 목록 렌더링
+ */
+function renderBookmarks() {
+    const list = document.getElementById('bookmarkList');
+    if (!list) return;
+
+    if (bookmarks.length === 0) {
+        list.innerHTML = '<div class="bookmark-empty">저장된 북마크가 없습니다</div>';
+        return;
+    }
+
+    list.innerHTML = bookmarks.map(b => `
+        <div class="bookmark-item" onclick="loadBookmark('${b.id}')">
+            <div class="bookmark-title">${b.query}</div>
+            <div class="bookmark-date">${new Date(b.created_at).toLocaleDateString()}</div>
+        </div>
+    `).join('');
+}
+
+// ========================================
+// 💻 Monaco Editor & Code Execution
+// ========================================
+
+const CHALLENGES = {
+    'basic': `# 1. 기초 예제: 변수와 출력
+name = "PyMate"
+age = 3
+print(f"안녕! 나는 {name}이고, {age}살이야.")
+print("반가워! 코딩 공부 화이팅!")`,
+    'loop': `# 2. 중급 예제: 반복문 (Loop)
+# 리스트에 있는 과일들을 하나씩 출력해봅시다.
+fruits = ["Apple", "Banana", "Cherry", "Date"]
+
+print("=== 과일 목록 ===")
+for fruit in fruits:
+    print(f"맛있는 {fruit}")`,
+    'function': `# 3. 고급 예제: 함수와 클래스
+class Dog:
+    def __init__(self, name):
+        self.name = name
+    
+    def bark(self):
+        return f"{self.name}: 멍멍!"
+
+my_dog = Dog("바둑이")
+print(my_dog.bark())`,
+    'error': `# 4. 디버깅 예제: 에러를 찾아보세요!
+def divide(a, b):
+    return a / b
+
+# 0으로 나누면 어떻게 될까요?
+result = divide(10, 0)
+print(result)`
+};
+
+/**
+ * 예제 불러오기
+ */
+function loadChallenge(type) {
+    if (!type || !monacoInstance) return;
+
+    const code = CHALLENGES[type];
+    if (code) {
+        monacoInstance.setValue(code);
+    }
+}
+
+/**
+ * AI 코드 리뷰 요청
+ */
+async function requestAIReview() {
+    if (!monacoInstance) return;
+
+    const code = monacoInstance.getValue();
+    const outputEl = document.getElementById('codeOutput');
+    const output = outputEl.textContent; // 실행 결과도 같이 보냄
+
+    // 실행 결과가 없으면 먼저 실행하라고 안내
+    if (!output || output === '실행 결과가 여기에 표시됩니다...') {
+        alert('먼저 코드를 실행해서 결과를 확인해주세요!');
+        return;
+    }
+
+    // UI 준비: 터미널 패널 내 리뷰 영역 활성화
+    const container = document.getElementById('aiReviewContainer');
+    const contentDiv = document.getElementById('aiReviewContent');
+    if (container && contentDiv) {
+        container.style.display = 'block';
+        contentDiv.innerHTML = 'AI 선생님이 코드를 분석하고 있어요... 🧠';
+        // 터미널 스크롤 맨 아래로
+        const terminalPanel = document.querySelector('.terminal-panel');
+        if (terminalPanel) terminalPanel.scrollTop = terminalPanel.scrollHeight;
+    }
+
+    try {
+        const response = await fetch('/api/chat/code/review/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                code: code,
+                output: output
+            })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let rawMarkdown = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const payload = JSON.parse(line.slice(6));
+
+                        if (payload.type === 'message' || payload.type === 'chunk') {
+                            rawMarkdown += payload.data;
+                            if (contentDiv) {
+                                contentDiv.innerHTML = marked.parse(rawMarkdown);
+                                // 스트리밍 될 때마다 스크롤을 맨 아래로
+                                const terminalPanel = document.querySelector('.terminal-panel');
+                                if (terminalPanel) terminalPanel.scrollTop = terminalPanel.scrollHeight;
+                            }
+                        }
+                    } catch (e) {
+                        // json parse error ignore
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error('리뷰 요청 실패:', e);
+        if (contentDiv) contentDiv.textContent = '리뷰 요청 중 오류가 발생했습니다.';
+    }
+}
+
+/**
+ * Monaco Editor 초기화
+ */
+function initMonaco() {
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+    require(['vs/editor/editor.main'], function () {
+        monacoInstance = monaco.editor.create(document.getElementById('monaco-editor'), {
+            value: '# 여기에 파이썬 코드를 작성하세요\nprint("Hello, World!")\n',
+            language: 'python',
+            theme: isDark ? 'vs-dark' : 'vs',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14
+        });
+    });
+}
+
+/**
+ * 코드 실행 요청
+ */
+async function executeCode() {
+    if (!monacoInstance) return;
+
+    const code = monacoInstance.getValue();
+    const outputEl = document.getElementById('codeOutput');
+    outputEl.textContent = '실행 중...';
+
+    try {
+        const response = await fetch('/api/chat/code/execute/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // Django CSRF 토큰 필요
+            },
+            body: JSON.stringify({ code: code })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            outputEl.textContent = data.output || '(출력 결과 없음)';
+            if (data.error) {
+                outputEl.textContent += '\n\n[Error]\n' + data.error;
+            }
+        } else {
+            outputEl.textContent = '실행 오류: ' + (data.error || '알 수 없는 오류');
+        }
+    } catch (e) {
+        outputEl.textContent = '서버 통신 오류: ' + e.message;
+    }
+}
+
+/**
+ * 쿠키 가져오기 (CSRF 토큰용)
+ */
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
 /**
  * 북마크 목록 렌더링

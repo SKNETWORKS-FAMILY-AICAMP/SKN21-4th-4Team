@@ -25,6 +25,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 
     <!-- ========================================
     [정적 CSS 파일 연결]
@@ -54,6 +58,14 @@
                 </svg>
             </button>
         </div>
+
+        </div>
+
+
+
+        </div>
+
+        <!-- 모드 선택 영역 제거됨 -->
 
         <!-- ① 자료 필터링 -->
         <div class="sidebar-section">
@@ -164,6 +176,49 @@
             </div>
         </div>
 
+        <!-- 💻 코딩 테스트 영역 (Coding Mode) -->
+        <div class="coding-area" id="codingArea" style="display: none; height: 100%; flex-direction: column;">
+            <div class="editor-header"
+                style="padding: 10px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-weight: 600; font-size: 14px;">🐍 Python Editor</span>
+                    <select onchange="loadChallenge(this.value)"
+                        style="padding: 4px; border-radius: 4px; border: 1px solid var(--border); font-size: 12px; background: var(--bg-primary); color: var(--text-primary);">
+                        <option value="">🎯 예제 불러오기</option>
+                        <option value="basic">1. 기초: 변수와 출력</option>
+                        <option value="loop">2. 중급: 반복문 (Loop)</option>
+                        <option value="function">3. 고급: 함수와 클래스</option>
+                        <option value="error">4. 디버깅: 에러 찾기</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <button onclick="requestAIReview()"
+                        style="padding: 6px 12px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px;">
+                        <span style="font-size: 14px;">🤖</span> AI 리뷰
+                    </button>
+                    <button onclick="executeCode()"
+                        style="padding: 6px 16px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg> 실행 (Run)
+                    </button>
+                </div>
+            </div>
+            <div id="monaco-editor" style="flex: 1; min-height: 400px;"></div>
+            <div class="terminal-panel"
+                style="height: 200px; background: #1e1e1e; color: #f0f0f0; padding: 12px; overflow-y: auto; font-family: monospace; font-size: 13px; border-top: 1px solid #333;">
+                <div style="margin-bottom: 6px; color: #888;">💻 Terminal Output</div>
+                <pre id="codeOutput" style="margin: 0; white-space: pre-wrap;">실행 결과가 여기에 표시됩니다...</pre>
+                <div id="aiReviewContainer"
+                    style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #444; display: none;">
+                    <div style="font-weight: 600; color: var(--accent); margin-bottom: 8px;">🤖 AI 선생님의 코드 리뷰</div>
+                    <div id="aiReviewContent"
+                        style="white-space: normal; line-height: 1.6; font-family: 'Inter', sans-serif;"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- 입력 영역 -->
         <div class="input-area">
             <div class="input-container">
@@ -219,6 +274,11 @@
 
         <!-- 메모 추가 영역 -->
         <div class="memo-section">
+            <!-- 코딩할래용 (퀴즈 버튼 위에 추가) -->
+            <button onclick="selectMode('coding')" class="quiz-btn"
+                style="width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); box-shadow: none;">
+                <span>💻</span> 코딩할래용
+            </button>
             <a href="{% url 'quiz:quiz_page' %}" class="quiz-btn">🧩 퀴즈풀래용</a>
 
         </div>
@@ -228,6 +288,11 @@
     <!-- ========================================
     [정적 JavaScript 파일 연결]
     ======================================== -->
+    <!-- ========================================
+    🛠 하단 플로팅 버튼 (Mode Switch)
+    ======================================== -->
+
+
     <script src="{% static 'js/chat.js' %}"></script>
     <script src="{% static 'js/quiz.js' %}"></script>
 
