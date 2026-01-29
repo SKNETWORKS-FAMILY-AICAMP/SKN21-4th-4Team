@@ -21,7 +21,7 @@ async function loadQuizzes() {
     container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">퀴즈를 불러오는 중...</p>';
 
     try {
-        const res = await fetch(`/api/quiz/?category=${category}&count=${count}`);
+        const res = await fetch(`/quiz/api/?category=${category}&count=${count}`);
         const data = await res.json();
 
         if (data.success && data.quizzes.length > 0) {
@@ -80,39 +80,45 @@ async function toggleQuizBookmark(btn) {
     // 여기서는 API 403 에러 핸들링으로 하거나, 그냥 보냄
 
     try {
-        const res = await fetch('/api/quiz/bookmark/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({
-                quiz_id: quiz.id,
-                question: quiz.question,
-                answer: quiz.answer,
-                explanation: quiz.explanation,
-                source: quiz.source
-            })
-        });
+        try {
+            const res = await fetch('/quiz/api/bookmarks/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    quiz_id: quiz.id,
+                    question: quiz.question,
+                    answer: quiz.answer,
+                    explanation: quiz.explanation,
+                    source: quiz.source
+                })
+            });
 
-        if (res.status === 403) {
-            alert('로그인이 필요한 기능입니다.');
-            return;
-        }
-
-        const data = await res.json();
-
-        if (data.success) {
-            if (data.bookmarked) {
-                btn.classList.add('active');
-                quiz.bookmarked = true; // 상태 저장
-                // alert('북마크에 저장되었습니다.'); // 너무 방해될 수 있으니 생략하거나 toast 사용
-            } else {
-                btn.classList.remove('active');
-                quiz.bookmarked = false;
+            if (res.status === 403) {
+                alert('로그인이 필요한 기능입니다.');
+                return;
             }
-        } else {
-            console.error(data.message || data.error);
+
+            const data = await res.json();
+
+            if (data.success) {
+                btn.classList.add('active');
+                quiz.bookmarked = true;
+                // 성공 시 별도 알림 없음 (UI만 변경)
+            } else {
+                // 실패(중복 등) 시 메시지 표시
+                alert(data.message);
+                // 이미 저장된 상태라면 active 유지
+                if (data.message.includes('이미')) {
+                    btn.classList.add('active');
+                    quiz.bookmarked = true;
+                }
+            }
+        } catch (e) {
+            console.error(e);
+            alert('서버 통신 중 오류가 발생했습니다.');
         }
     } catch (e) {
         console.error(e);
@@ -246,8 +252,8 @@ async function startQuiz() {
     btn.disabled = true;
 
     try {
-        // Django URL: /api/quiz/
-        const res = await fetch(`/api/quiz/?category=${category}&count=${count}`);
+        // Django URL: /quiz/api/
+        const res = await fetch(`/quiz/api/?category=${category}&count=${count}`);
         const data = await res.json();
 
         if (data.success && data.quizzes.length > 0) {

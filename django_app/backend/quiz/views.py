@@ -24,12 +24,6 @@ def quiz_page(request):
 def get_quiz(request):
     """
     퀴즈 데이터 반환 API
-    Query Params:
-      - category: 'python' | 'lecture' | 'all' (default: all)
-      - count: int (default: 5)
-    
-    Returns:
-      JSON: {'success': True, 'quizzes': [...]}
     """
     category = request.GET.get('category', 'all')
     
@@ -57,9 +51,18 @@ def get_quiz(request):
         }, status=500)
 
 @login_required
+@require_http_methods(["GET"])
+def get_bookmarks(request):
+    """퀴즈 북마크 목록 조회 API"""
+    bookmarks = QuizBookmark.objects.filter(user=request.user).values(
+        'id', 'quiz_id', 'question', 'answer', 'explanation', 'created_at'
+    )
+    return JsonResponse({'success': True, 'bookmarks': list(bookmarks)})
+
+@login_required
 @require_http_methods(["POST"])
-def toggle_bookmark(request):
-    """퀴즈 북마크 토글 API"""
+def create_bookmark(request):
+    """퀴즈 북마크 저장 API (중복 체크)"""
     try:
         data = json.loads(request.body)
         quiz_id = str(data.get('quiz_id'))
@@ -67,21 +70,38 @@ def toggle_bookmark(request):
         if not quiz_id:
             return JsonResponse({'success': False, 'message': 'Quiz ID is required'}, status=400)
             
-        bookmark = QuizBookmark.objects.filter(user=request.user, quiz_id=quiz_id).first()
-        
-        if bookmark:
-            bookmark.delete()
-            return JsonResponse({'success': True, 'bookmarked': False})
-        else:
-            QuizBookmark.objects.create(
-                user=request.user,
-                quiz_id=quiz_id,
-                question=data.get('question', ''),
-                answer=data.get('answer', ''),
-                explanation=data.get('explanation', ''),
-                source=data.get('source', '')
-            )
-            return JsonResponse({'success': True, 'bookmarked': True})
+        # 중복 확인
+        exists = QuizBookmark.objects.filter(user=request.user, quiz_id=quiz_id).exists()
+        if exists:
+            return JsonResponse({'success': False, 'message': '이미 저장된 문제입니다.'})
+            
+        QuizBookmark.objects.create(
+            user=request.user,
+            quiz_id=quiz_id,
+            question=data.get('question', ''),
+            answer=data.get('answer', ''),
+            explanation=data.get('explanation', ''),
+            source=data.get('source', '')
+        )
+        return JsonResponse({'success': True, 'message': '저장되었습니다!'})
             
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_bookmark(request, bookmark_id):
+    """퀴즈 북마크 삭제 API (ID 기반)"""
+    try:
+        bookmark = QuizBookmark.objects.get(id=bookmark_id, user=request.user)
+        bookmark.delete()
+        return JsonResponse({'success': True, 'message': '삭제되었습니다.'})
+    except QuizBookmark.DoesNotExist:
+        return JsonResponse({'success': False, 'message': '북마크를 찾을 수 없습니다.'}, status=404)
+        
+# 구버전 호환성 유지 (필요하다면 삭제, 여기선 create_bookmark로 안내)
+@login_required
+@require_http_methods(["POST"])
+def toggle_bookmark(request):
+    """(구) 토글 API - 점진적 제거 예정"""
+    return create_bookmark(request)

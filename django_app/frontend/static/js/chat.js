@@ -19,8 +19,9 @@ let isProcessing = false;      // 메시지 처리 중 여부
 let notebookMode = false;      // Chat/Notebook 모드 (false: Chat, true: Notebook)
 
 // 북마크 및 학습현황 데이터
-let bookmarks = JSON.parse(localStorage.getItem('pymate_bookmarks') || '[]');
-let studyStats = JSON.parse(localStorage.getItem('pymate_stats') || '{"quiz": 0, "notes": 0}');
+// 북마크 및 학습현황 데이터
+let bookmarks = []; // DB에서 로드됨
+let studyStats = { quiz: 0, notes: 0 }; // HTML에서 초기화됨
 
 // 모드별 chatContent 캐시 (모드 전환 시 상태 유지용)
 const modeContentCache = {};
@@ -599,8 +600,10 @@ async function checkServerStatus() {
 }
 
 // 최초 실행 및 주기적 반복 (5초)
+// 최초 실행 및 주기적 반복 (5초)
 checkServerStatus();
 setInterval(checkServerStatus, 5000);
+loadBookmarks(); // 북마크 목록 초기 로드
 
 // ========================================
 // 🔄 Chat/Notebook 모드 전환 (작업 5)
@@ -648,18 +651,43 @@ function switchMode(mode) {
  * @param {string} title - 북마크 제목
  * @param {string} content - 북마크 내용 (짧게)
  */
-function addBookmark(title, content) {
-    const bookmark = {
-        id: Date.now(),
-        title: title.slice(0, 30),
-        content: content.slice(0, 50),
-        timestamp: new Date().toLocaleString('ko-KR')
-    };
-    bookmarks.unshift(bookmark);
-    if (bookmarks.length > 10) bookmarks.pop(); // 최대 10개
-    localStorage.setItem('pymate_bookmarks', JSON.stringify(bookmarks));
-    renderBookmarks();
-    updateStats('notes', 1);
+async function addBookmark(title, content) {
+    // DB API 사용하므로 로컬 스토리지 로직 제거
+    try {
+        const res = await fetch('/api/chat/bookmarks/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ query: title, answer: content })
+        });
+        const data = await res.json();
+        if (data.success) {
+            loadBookmarks(); // 목록 새로고침
+            updateStats('notes', 1); // 통계만 클라이언트에서 임시 증가 (또는 새로고침)
+        } else {
+            alert(data.message); // "이미 저장된 내용입니다" 등
+        }
+    } catch (e) {
+        console.error('북마크 저장 오류:', e);
+    }
+}
+
+/**
+ * 북마크 목록 로드 (DB 연동)
+ */
+async function loadBookmarks() {
+    try {
+        const res = await fetch('/api/chat/bookmarks/');
+        const data = await res.json();
+        if (data.success) {
+            bookmarks = data.bookmarks;
+            renderBookmarks();
+        }
+    } catch (e) {
+        console.error('북마크 로드 오류:', e);
+    }
 }
 
 /**
@@ -669,16 +697,46 @@ function renderBookmarks() {
     const list = document.getElementById('bookmarkList');
     if (!list) return;
 
-    if (bookmarks.length === 0) {
+    if (!bookmarks || bookmarks.length === 0) {
         list.innerHTML = '<div class="bookmark-empty">저장된 북마크가 없습니다</div>';
         return;
     }
 
     list.innerHTML = bookmarks.map(b => `
-        <div class="bookmark-item" onclick="scrollToBookmark('${b.id}')">
-            📌 ${b.title}
+        <div class="bookmark-item">
+            <div style="flex:1; cursor:pointer;" onclick="location.href='/mypage/#bookmark-card-${b.id}'">
+                📌 ${b.query ? b.query.slice(0, 20) : '제목 없음'}...
+            </div>
+            <button onclick="deleteBookmark(${b.id})" style="background:none; border:none; color:#ef4444; font-size:12px; cursor:pointer;" title="삭제">✕</button>
         </div>
     `).join('');
+}
+
+/**
+ * 북마크 삭제 (DB 연동)
+ */
+async function deleteBookmark(id) {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+    try {
+        const res = await fetch(`/api/chat/bookmarks/${id}/delete/`, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+        });
+        const data = await res.json();
+        if (data.success) {
+            loadBookmarks(); // 목록 다시 불러오기
+            // 통계 업데이트 (임시)
+            const el = document.getElementById('noteCount');
+            if (el) {
+                let count = parseInt(el.innerText) || 0;
+                el.innerText = Math.max(0, count - 1) + '개';
+            }
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        console.error('삭제 오류:', e);
+    }
 }
 
 /**
@@ -893,25 +951,13 @@ async function requestChatBookmark(btn) {
 
     // API 호출
     try {
-        const res = await fetch('/api/chat/bookmark/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({ query, answer })
-        });
+        // 기존 addBookmark 함수 재사용 (내부에서 API 호출하도록 수정되었음)
+        addBookmark(query, answer);
 
-        const data = await res.json();
-        if (data.success) {
-            if (data.bookmarked) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        } else {
-            console.error('북마크 실패:', data.message);
-        }
+        // 버튼 UI 토글 (중복인 경우 addBookmark가 alert를 띄우고 끝남)
+        // 여기서는 성공 여부를 알기 어려우므로(비동기), 일단 active 클래스는 추가하지 않음
+        // (사용자가 목록을 보고 확인해야 함)
+
     } catch (e) {
         console.error('서버 통신 오류:', e);
     }
