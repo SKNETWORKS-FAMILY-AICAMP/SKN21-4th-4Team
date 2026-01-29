@@ -1,5 +1,5 @@
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_tavily import TavilySearch
@@ -41,7 +41,7 @@ def analyst_node(state: AgentState):
     # 1. Prompt 정의 (System Message + Human Message)    
     prompt = ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(PROMPTS["ANALYSIS_SYSTEM_PROMPT"]),
-        HumanMessagePromptTemplate.from_template("{query}")
+        MessagesPlaceholder(variable_name="messages"),
     ])
 
     # 2. LLM 설정

@@ -57,7 +57,7 @@ def chat_stream(request):
         def generate():
             """챗봇 응답 생성"""
             # RAG 호출
-            response = rag_main(message)
+            response = rag_main(message, '1')
 
             # 1단계: 진행 상태 전송
             steps = [

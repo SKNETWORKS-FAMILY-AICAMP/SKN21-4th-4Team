@@ -72,7 +72,7 @@ def learning_agent(message, context=None):
     try:
         print(">>> learning_agent 호출됨!", flush=True)
         # LangGraph workflow 실행
-        response = main(message)
+        response = main(message, '1')
         
         # messages에서 답변 추출 및 포맷팅
         analyst_result = response.get('analyst_results', [])
