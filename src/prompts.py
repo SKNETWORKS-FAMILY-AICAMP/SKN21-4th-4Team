@@ -170,14 +170,28 @@ SEARCH_ROUTER_PROMPT = """다음 질문을 분석하고, 최적의 검색 설정
 """
 
 # ========== 질문 재작성(Condense Question) 프롬프트 ==========
-CONDENSE_QUESTION_PROMPT = """Given the following conversation and a follow up question, rephrase the follow up question to be a concise standalone question, in its original language.
-The rewritten question should be suitable for a search engine query (keywords + intent).
+CONDENSE_QUESTION_PROMPT = """
+당신은 대화의 맥락을 완벽하게 파악하여 검색 엔진에 최적화된 '독립형 질문'을 만드는 전문가입니다.
 
-Chat History:
+[작업 지침]
+1. **맥락 분석**: Chat History 를 분석하여 현재 대화의 중심 주제(대상, 기술명, 개념)가 무엇인지 파악하세요.
+2. **누락된 정보 복원**: Follow Up Input 에 주어나 목적어가 생략되었다면(예: "장점이 뭐야?", "어떻게 써?"), 1번에서 파악한 주제를 질문에 구체적으로 명시하세요.
+3. **키워드 결합**: 사용자가 언급하지 않았더라도 대화 흐름상 반드시 포함되어야 할 핵심 키워드를 질문에 추가하세요.
+4. **검색 최적화**: 서술형보다는 '핵심 키워드 + 구체적 의도'가 포함된 간결한 독립 질문으로 만드세요.
+
+[예시]
+- 이전 대화: "전이 학습(Transfer Learning)에 대해 알려줘"
+- 후속 질문: "장점이 뭐야?"
+- 결과: "전이 학습(Transfer Learning) 기법의 주요 장점과 활용 이점"
+
+## Chat History
 {chat_history}
 
-Follow Up Input: {question}
-Standalone question:"""
+## Follow Up Input: {question}
+
+독립형 질문 (Standalone question):
+"""
+
 
 # ========== 번역 프롬프트 ==========
 # 목적: "번역"이 아니라 "검색용 영어 키워드 생성"

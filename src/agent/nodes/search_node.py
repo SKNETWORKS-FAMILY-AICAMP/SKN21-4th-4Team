@@ -35,6 +35,10 @@ def rewrite_query(original_query: str, messages: list) -> str:
             
     history_str = "\n".join(formatted_history)
 
+    # print("===== START history_str =====", flush=True)
+    # print(history_str, flush=True)
+    # print("===== END history_str =====", flush=True)
+
     # LLM 설정
     llm = ChatOpenAI(model=ConfigLLM.OPENAI_MODEL, temperature=0)
     prompt = ChatPromptTemplate.from_template(CONDENSE_QUESTION_PROMPT)
