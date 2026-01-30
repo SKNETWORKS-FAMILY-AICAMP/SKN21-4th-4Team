@@ -148,11 +148,15 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
         <img src="images/이전답변기억.gif" alt="feature_importance" width="700">
       </p>
 
+<br>
+
 ### 2. 답변에 강의 코드 추가
 
 <div align="center">
-  <img src="images/코드답변예시.png" alt="코드답변예시" width="600"/>
+  <img src="images/코드답변예시.png" alt="코드답변예시" width="700"/>
 </div>
+
+<br>
 
 ### 3. Retrieval : Reranker 모델 도입
 
@@ -170,6 +174,7 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 답변 못하던 질문들에대해 정성평가에서 뛰어난 답변률을 보여줌
 
+<br><br>
 
 ## 시스템 아키텍처
 
