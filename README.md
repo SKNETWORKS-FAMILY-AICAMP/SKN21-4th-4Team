@@ -143,7 +143,36 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 <br><br>
 
-## Application의 주요 기능
+## RAG 고도화
+
+### 1. 이전 대화 내용 기억하는 Memory Retriever 구현
+ 
+ <p align="center">
+        <img src="images/이전답변기억.gif" alt="feature_importance" width="700">
+      </p>
+
+### 2. 답변에 강의 코드 추가
+
+<div align="center">
+  <img src="images/코드답변예시.png" alt="코드답변예시" width="600"/>
+</div>
+
+### 3. Retrieval : Reranker 모델 도입
+
+> **Context Precision(문맥 정밀도)**
+
+검색된 문서(context)들 중 질문과 관련 있는 것들이 **얼마나 상위 순위에 위치하는지** 평가하는 지표.
+-  **<span style="color:red">0.8333 ➡️ 0.9758 (↑14.4%)</span>**
+
+> **Context Recall(문맥 재현률)**
+
+검색된 문서(context)가 정답(ground-truth)의 정보를 얼마나 포함하고 있는지 평가하는 지표.
+-  **<span style="color:red">0.7044 ➡️ 0.7944 (↑12.7%)</span>**
+
+> **LLM 추출 질문에대한 답변 정확도**
+
+답변 못하던 질문들에대해 정성평가에서 뛰어난 답변률을 보여줌
+
 
 ## 시스템 아키텍처
 
