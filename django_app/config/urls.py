@@ -28,6 +28,11 @@ urlpatterns = [
     path('chat/', include('django_app.backend.chat.urls')),
     path('quiz/', include('django_app.backend.quiz.urls')),
     path('code/', include('django_app.backend.code.urls')),
+
+    # API 경로 추가 (JS 호환성)
+    path('api/chat/', include('django_app.backend.chat.urls')),
+    path('api/quiz/', include('django_app.backend.quiz.urls')),
+    path('api/code/', include('django_app.backend.code.urls')),
     path('', include('django_app.backend.accounts.urls')), # login, mypage 등 (짧은 URL)
     path('', include('django_app.backend.chat.urls')),  # 루트 접속 시 chat으로 (로그인 되어있을 경우)
     # path('', main_views.main_page, name = 'main'),

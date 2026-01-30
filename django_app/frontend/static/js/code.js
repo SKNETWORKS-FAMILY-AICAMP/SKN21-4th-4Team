@@ -62,17 +62,70 @@ require(['vs/editor/editor.main'], function () {
     window.monacoEditor = editor;
 });
 
-// 예제 코드 데이터
-const challenges = {
-    'basic': 'print("Hello, World!")\nprint(10 + 20)',
-    'calc': 'a = 10\nb = 5\n\nprint(f"더하기: {a + b}")\nprint(f"빼기: {a - b}")\nprint(f"곱하기: {a * b}")\nprint(f"나누기: {a / b}")',
-    'loop': 'for i in range(1, 10):\n    print(f"2 x {i} = {2 * i}")',
-    'fibonacci': 'def fib(n):\n    if n <= 1: return n\n    return fib(n-1) + fib(n-2)\n\nfor i in range(10):\n    print(fib(i), end=" ")'
+// 코딩 테스트 문제 데이터
+const problems = {
+    'basic_1': {
+        title: "문자열 출력하기",
+        desc: `[문제 설명]
+문자열 str이 주어질 때, str을 출력하는 코드를 작성해 보세요.
+
+[제한사항]
+1 ≤ str의 길이 ≤ 1,000,000
+str에는 공백이 없으며, 첫째 줄에 한 줄로만 주어집니다.
+
+[입출력 예]
+입력: HelloWorld!
+출력: HelloWorld!`,
+        code: `str = input()
+print(str)`
+    },
+    'intro_1': {
+        title: "문자열안에 문자열",
+        desc: `[문제 설명]
+문자열 str1, str2가 매개변수로 주어집니다.
+str1 안에 str2가 있다면 1을, 없다면 2를 return하도록 solution 함수를 완성해주세요.
+
+[제한사항]
+1 ≤ str1의 길이 ≤ 100
+1 ≤ str2의 길이 ≤ 100
+문자열은 알파벳 대문자, 소문자, 숫자로 구성되어 있습니다.
+
+[입출력 예]
+str1: "ab6CDE443fgh22iJKlmn1o", str2: "6CD" -> result: 1
+str1: "ppprrrogrammers", str2: "pppp" -> result: 2`,
+        code: `def solution(str1, str2):
+    answer = 0
+    return answer`
+    },
+    'adv_1': {
+        title: "폰켓몬",
+        desc: `[문제 설명]
+총 N 마리의 폰켓몬 중에서 N/2마리를 가져가도 좋다고 했습니다.
+N마리 폰켓몬의 종류 번호가 담긴 배열 nums가 매개변수로 주어질 때,
+N/2마리의 폰켓몬을 선택하는 방법 중, 가장 많은 종류의 폰켓몬을 선택하는 방법을 찾아,
+그때의 폰켓몬 종류 번호의 개수를 return 하도록 solution 함수를 완성해주세요.
+
+[제한사항]
+nums는 폰켓몬의 종류 번호가 담긴 1차원 배열입니다.
+nums의 길이(N)는 1 이상 10,000 이하의 자연수이며, 항상 짝수로 주어집니다.
+
+[입출력 예]
+[3,1,2,3] -> 2
+[3,3,3,2,2,4] -> 3`,
+        code: `def solution(nums):
+    answer = 0
+    return answer`
+    }
 };
 
-function loadChallenge(key) {
-    if (editor && challenges[key]) {
-        editor.setValue(challenges[key]);
+function loadProblem(key) {
+    if (editor && problems[key]) {
+        const p = problems[key];
+        // 문제 설명을 주석으로 상단에 추가
+        const content = '"""\n' + p.title + '\n\n' + p.desc + '\n"""\n\n' + p.code;
+
+        editor.setValue(content);
+
         if (window.innerWidth <= 768) {
             toggleSidebar(); // 모바일에서는 선택 후 사이드바 닫기
         }
