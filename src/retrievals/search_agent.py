@@ -28,7 +28,7 @@ from langchain_openai import OpenAIEmbeddings
 # 로컬 실행 시 `src.` import가 깨지지 않게 프로젝트 루트를 path에 추가
 sys.path.append(os.getcwd())
 
-from src.agent.nodes.search_router import build_search_config
+from src.retrievals.search_router import build_search_config
 from src.utils.config import ConfigDB, ConfigAPI
 from src.utils.search_utils import (
     is_korean,
@@ -36,6 +36,7 @@ from src.utils.search_utils import (
     calculate_keyword_score,
     calculate_bm25_score
 )
+from src.retrievals.reranker import Reranker
 from langchain_openai import OpenAIEmbeddings
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
@@ -212,6 +213,8 @@ def execute_dual_query_search(query: str) -> tuple:
     analysis = config.get('_analysis', {})
     topic_keywords = analysis.get('topic_keywords', [])
     
+    query_info['top_k'] = top_k
+
     # 정책:
     # - lecture: (대부분 한국어 텍스트) 질문 원문으로만 검색
     # - python_doc: (영어 문서) 한글 질문이면 번역(영어 키워드) 검색을 기본으로 하고,
@@ -261,5 +264,14 @@ def execute_dual_query_search(query: str) -> tuple:
     
     # 4. 유사도 순 정렬 후 top_k만 반환
     unique_results.sort(key=lambda x: x['score'], reverse=True)
+    
+    # 5. Re-ranking 적용
+    if unique_results:
+        reranker = Reranker(top_k=top_k)
+        reranked_results = reranker.invoke(query, unique_results[:top_k*2]) # top_k의 2배수 후보를 reranking
+        
+        # reranked_results는 Document 객체가 아니라 dict 형태여야 함을 주의 (Reranker 구현에 따라 다름)
+        # Reranker.invoke -> returns list of dicts with 'score' updated
+        return reranked_results, query_info
     
     return unique_results[:top_k], query_info

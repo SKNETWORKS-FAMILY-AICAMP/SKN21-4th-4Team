@@ -1,13 +1,13 @@
 from src.schema.state import AgentState
-from src.agent.nodes.search_agent import execute_dual_query_search
-from src.agent.nodes.search_router import build_search_config
+from src.retrievals.search_agent import execute_dual_query_search
+from src.retrievals.search_router import build_search_config
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from src.utils.config import ConfigLLM
-from src.agent.prompts.search_prompt import CONDENSE_QUESTION_PROMPT
-
+from src.prompts import CONDENSE_QUESTION_PROMPT
+from src.retrievals.reranker import Reranker
 
 
 def rewrite_query(original_query: str, messages: list) -> str:
@@ -80,7 +80,7 @@ def search_node(state: AgentState):
     # 결과 포맷팅
     search_results = [
         {
-            "content": "=== [내부 자료 (Original)] === \n\n" + r['content'],
+            "content": r['content'],
             "score": round(r['score'], 4),
             "metadata": r['metadata']
         }
@@ -89,8 +89,40 @@ def search_node(state: AgentState):
     
     return {
         'search_results': search_results,
+        'search_top_k': config.get('top_k', ConfigLLM.TOP_K)
     }
     
+    
+def rerank_node(state: AgentState):
+    """
+    search_node에서 1차 선별된 결과(search_results)를 
+    Cross-Encoder 모델로 정밀 재정렬(Reranking)합니다.
+    """
+    query = state['query']
+    results = state.get('search_results', [])
+    
+    # 결과가 없으면 종료
+    if not results:
+        return {"search_results": []}
+
+    # 관련성 점수 계산 (Inference)
+    reranker = Reranker(top_k=state.get('search_top_k', ConfigLLM.TOP_K))
+    reranked_results = reranker.invoke(query, results)
+
+    # 결과 포맷팅
+    search_results = [
+        {
+            "content": "=== [내부 자료 (Original)] === \n\n" + r['content'],
+            "score": round(r['score'], 4),
+            "metadata": r['metadata']
+        }
+        for r in reranked_results
+    ]
+
+    return {
+        "search_results": search_results
+    }
+
 
 def build_context(state: AgentState):
     """

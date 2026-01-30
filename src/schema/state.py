@@ -25,6 +25,7 @@ class AgentState(TypedDict):
     # 2. 검색 결과 (search_node → build_context)
     # ─────────────────────────────────────────────────────────────
     search_results: List[Dict[str, Any]]  # content, score, metadata 포함
+    search_top_k: int
     
     # ─────────────────────────────────────────────────────────────
     # 3. 컨텍스트 (build_context → analyst_node/web_search_node)

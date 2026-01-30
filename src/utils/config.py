@@ -45,3 +45,9 @@ class ConfigDB:
 
 class ConfigLLM:
     OPENAI_MODEL = "gpt-4o-mini"
+    # RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L6-v2"
+    RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+    RERANKER_MAX_LENGTH = 512
+
+    TOP_K = 5
+    

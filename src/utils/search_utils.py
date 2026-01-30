@@ -13,7 +13,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from src.agent.prompts import PROMPTS
+from src.prompts import TRANSLATE_PROMPT
 from src.utils.config import ConfigLLM
 
 
@@ -30,7 +30,7 @@ def create_translate_chain():
         Chain: prompt | llm | parser 형태의 chain
     """
     prompt = ChatPromptTemplate.from_messages([
-        SystemMessagePromptTemplate.from_template(PROMPTS["TRANSLATE_PROMPT"])
+        SystemMessagePromptTemplate.from_template(TRANSLATE_PROMPT)
     ])
     
     llm = ChatOpenAI(model=ConfigLLM.OPENAI_MODEL, temperature=0)

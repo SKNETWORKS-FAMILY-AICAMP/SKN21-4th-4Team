@@ -5,7 +5,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_tavily import TavilySearch
 
 from src.utils.config import ConfigLLM
-from src.agent.prompts import PROMPTS
+from src.prompts import ANALYSIS_SYSTEM_PROMPT
 from src.agent.tools.analyst_tools import submit_analysis
 from src.schema.state import AgentState
 
@@ -40,7 +40,7 @@ def check_relevance(state: AgentState):
 def analyst_node(state: AgentState):
     # 1. Prompt 정의 (System Message + Human Message)    
     prompt = ChatPromptTemplate.from_messages([
-        SystemMessagePromptTemplate.from_template(PROMPTS["ANALYSIS_SYSTEM_PROMPT"]),
+        SystemMessagePromptTemplate.from_template(ANALYSIS_SYSTEM_PROMPT),
         MessagesPlaceholder(variable_name="messages"),
     ])
 

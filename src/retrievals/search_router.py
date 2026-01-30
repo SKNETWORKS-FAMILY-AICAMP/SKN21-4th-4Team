@@ -24,7 +24,7 @@ from langchain_openai import ChatOpenAI  # OpenAI LLM 인터페이스
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from pydantic import BaseModel, Field    # 데이터 검증 및 구조화
 
-from src.agent.prompts import PROMPTS
+from src.prompts import SEARCH_ROUTER_PROMPT
 from src.utils.config import ConfigLLM
 
 def build_search_config(query: str) -> Dict:
@@ -78,7 +78,7 @@ def build_search_config(query: str) -> Dict:
         )
     
     prompt = ChatPromptTemplate.from_messages([
-        SystemMessagePromptTemplate.from_template(PROMPTS["SEARCH_ROUTER_PROMPT"])
+        SystemMessagePromptTemplate.from_template(SEARCH_ROUTER_PROMPT)
     ])
     
     llm = ChatOpenAI(

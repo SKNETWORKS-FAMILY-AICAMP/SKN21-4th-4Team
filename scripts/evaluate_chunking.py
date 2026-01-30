@@ -25,8 +25,7 @@ sys.path.insert(0, str(project_root))
 
 from scripts.eval_dataset import EVALUATION_DATASET
 from src.ingestion_lectures import Ingestor
-from src.agent.nodes.search_router import build_search_config
-from src.agent.nodes.search_executor import SearchExecutor
+from src.retrievals.search_router import build_search_config
 
 
 class ChunkingEvaluator:
@@ -34,7 +33,6 @@ class ChunkingEvaluator:
     
     def __init__(self, collection_name: str = "learning_ai"):
         self.collection_name = collection_name  # 고정: learning_ai
-        self.executor = SearchExecutor()
         self.results_dir = project_root / "evaluation_results"
         self.results_dir.mkdir(exist_ok=True)
         
@@ -134,11 +132,7 @@ class ChunkingEvaluator:
         correct = 0
         total = len(test_querys)
         details = []
-        
-        # 임시로 SearchExecutor의 컬렉션 이름 변경 (원래 코드 수정 필요 시)
-        # 현재 SearchExecutor는 하드코딩된 컬렉션 이름 사용할 수 있음
-        # 여기서는 간단히 전역으로 수정 (실제로는 리팩토링 필요)
-        
+                
         for i, qa in enumerate(test_querys, 1):
             query = qa["query"]
             expected_files = qa["expected_files"]
@@ -147,11 +141,7 @@ class ChunkingEvaluator:
                 # Router로 검색 설정 생성
                 config = build_search_config(query)
                 config["top_k"] = top_k  # 강제 설정
-                
-                # Executor로 검색 (collection_name을 어떻게 전달할지는 구현에 따라)
-                # 현재 SearchExecutor가 고정 컬렉션 사용 중이므로, 
-                # 이 부분은 실제 구현에 맞춰 수정해야 함
-                
+                                
                 # 직접 Qdrant 검색
                 from qdrant_client import QdrantClient
                 from langchain_openai import OpenAIEmbeddings

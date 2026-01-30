@@ -37,8 +37,7 @@ from src.utils.search_utils import (
     calculate_keyword_score,
     calculate_bm25_score
 )
-from src.agent.prompts import PROMPTS
-from src.agent.nodes.search_router import build_search_config
+from src.retrievals.search_router import build_search_config
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import re
@@ -73,7 +72,7 @@ def get_file_hash(file_path: str) -> str:
 def get_prompt_version() -> Dict[str, Any]:
     """프롬프트 파일 버전 정보 수집"""
     script_dir = Path(__file__).parent
-    prompt_file = script_dir / "agent" / "prompts" / "translate_prompt.py"
+    prompt_file = script_dir / "src" / "prompts.py"
     
     version_info = {
         "file": str(prompt_file.relative_to(script_dir.parent)),
@@ -363,7 +362,7 @@ def test_vector_search(
         collection_name: 사용할 컬렉션 이름 (None이면 파일 상단 COLLECTION_NAME 또는 ConfigDB.COLLECTION_NAME 사용)
         use_translation: 한글 질문을 영어로 번역해서 python_doc 검색할지 여부 (기본: True)
     """
-    load_dotenv(override=True)
+    load_dotenv('.env.local', override=True)
     
     # 기본값 설정 (ConfigDB 사용)
     if embedding_model is None:
