@@ -262,16 +262,6 @@ def execute_dual_query_search(query: str) -> tuple:
             seen.add(content_key)
             unique_results.append(r)
     
-    # 4. 유사도 순 정렬 후 top_k만 반환
     unique_results.sort(key=lambda x: x['score'], reverse=True)
-    
-    # 5. Re-ranking 적용
-    if unique_results:
-        reranker = Reranker(top_k=top_k)
-        reranked_results = reranker.invoke(query, unique_results[:top_k*2]) # top_k의 2배수 후보를 reranking
-        
-        # reranked_results는 Document 객체가 아니라 dict 형태여야 함을 주의 (Reranker 구현에 따라 다름)
-        # Reranker.invoke -> returns list of dicts with 'score' updated
-        return reranked_results, query_info
     
     return unique_results[:top_k], query_info

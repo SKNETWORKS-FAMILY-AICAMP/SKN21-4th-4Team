@@ -19,7 +19,7 @@ class Reranker:
         이미 검색된 결과(List[Dict])를 받아서 재정렬 점수를 반환합니다.
         """
         print(f"🔄 Reranking 진행 (후보 {len(results)}개)...")
-
+        
         # 1. Dict -> Document 변환
         documents = []
         for doc in results:
@@ -53,7 +53,6 @@ class Reranker:
             })
         
         # 4. 정렬 및 필터링
-        # Reranker 점수 기준 내림차순 정렬
         reranked_results = sorted(result_docs, key=lambda x: x['score'], reverse=True)
         
         print(f"✅ Reranking 완료: 상위 {len(reranked_results)}개 선택됨")
