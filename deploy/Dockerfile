@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
 
 # Python 의존성 파일 복사 및 설치
 COPY requirements.txt .
+# 1. CPU 전용 Torch 먼저 설치 (용량 절약)
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Gunicorn 설치

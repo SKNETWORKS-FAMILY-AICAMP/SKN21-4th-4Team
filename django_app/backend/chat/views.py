@@ -1,6 +1,7 @@
 # chat/views.py
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.http import StreamingHttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -25,6 +26,7 @@ from django_app.backend.quiz.models import QuizBookmark
 import os
 from openai import OpenAI
 
+@never_cache
 @login_required
 def chat_page(request):
     """챗봇 페이지 렌더링"""

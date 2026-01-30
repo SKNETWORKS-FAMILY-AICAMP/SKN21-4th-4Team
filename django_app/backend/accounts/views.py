@@ -7,6 +7,9 @@ from .forms import SignUpForm, LoginForm
 
 def login_page(request):
     """로그인 페이지"""
+    if request.user.is_authenticated:
+        return redirect('chat')
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
 
