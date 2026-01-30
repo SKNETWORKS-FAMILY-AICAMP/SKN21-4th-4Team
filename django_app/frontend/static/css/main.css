@@ -713,6 +713,9 @@ showWelcome() 함수의 suggestions 부분을 수정하세요.
     overflow-x: auto;
     font-family: monospace;
     font-size: 13px;
+    white-space: pre-wrap !important;
+    /* 긴 줄 자동 줄바꿈 */
+    word-break: break-all !important;
 }
 
 /* 인라인 코드 스타일 */
@@ -1031,4 +1034,27 @@ AI가 답변을 생성하는 과정을 보여주는 UI입니다.
 .message-content {
     word-break: break-word !important;
     overflow-wrap: anywhere !important;
+}
+
+/* 메시지 내 목록 스타일 교정 */
+.message-content ol,
+.message-content ul {
+    padding-left: 24px;
+    margin: 8px 0;
+}
+
+.message-content li {
+    margin-bottom: 4px;
+}
+
+/* 코드 블록 내부 줄바꿈 강제 (Highlight.js 오버라이드) */
+.message-content pre,
+.message-content pre code,
+.hljs {
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    word-wrap: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-width: 100%;
+    box-sizing: border-box;
 }
