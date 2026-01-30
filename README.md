@@ -16,21 +16,6 @@
 
 <table>
 <tr>
-
-| 이름 | 담당 분야 | 상세 역할 |
-|------|-----------|-----------|
-| **김가람** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/gr-kim-94)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링|
-| **최자슈아주원** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/reasonableplan)| **Backend Lead** | Django 프로젝트 아키텍처 설계, Chat API(SSE 스트리밍) 구현, 메인 UI 템플릿 통합 |
-| **신지용** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/sjy361872)| **DevOps & Infra** | AWS EC2 서버 구축, Docker 컨테이너화, Nginx 리버스 프록시 설정, CI/CD 파이프라인 |
-| **윤경은** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/ykgstar37-lab)  | **Backend & Frontend** | Quiz API 구현, 에러 핸들링 미들웨어, 프론트엔드 스타일링(CSS) 및 로직(JS) 최적화 |
-| **안혜빈** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/hyebinhy)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링 |
-| **정세연** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/wjdtpdus25)|  |  |
-
-<br><br>
-
-<table>
-<tr>
-
 <!-- 김가람 -->
 <td align="center" width="200" style="vertical-align: top; padding: 15px;">
   <img src="images/한별이.webp" width="70" style="border-radius: 50%; alt="김가람"/>
@@ -94,7 +79,8 @@
 </tr>
 </table>
 
-<br><br>
+<br><br><br>
+
 
 ## 프로젝트 개요
 
