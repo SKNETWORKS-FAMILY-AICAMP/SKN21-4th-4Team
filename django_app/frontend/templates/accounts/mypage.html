@@ -654,10 +654,10 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button onclick="openModal('editProfileModal')" class="nav-btn">⚙️ 내 정보 수정</button>
-                    <button onclick="openModal('changePwModal')" class="nav-btn">🔒 비밀번호 변경</button>
+                    <button onclick="openModal('editProfileModal')" class="nav-btn">내 정보 수정</button>
+                    <button onclick="openModal('changePwModal')" class="nav-btn">비밀번호 변경</button>
                     <a href="{% url 'logout' %}" class="nav-btn logout">로그아웃</a>
-                    <button onclick="openModal('deleteUserModal')" class="nav-btn delete-account">👻 회원 탈퇴</button>
+                    <button onclick="openModal('deleteUserModal')" class="nav-btn delete-account">회원 탈퇴</button>
                 </div>
             </div>
         </aside>
@@ -666,12 +666,14 @@
         <main class="main-content">
             <div class="content-header">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="showTab('chat')">💬 채팅 북마크</button>
-                    <button class="tab-btn" onclick="showTab('quiz')">📝 퀴즈 북마크</button>
+                    <button class="tab-btn active" onclick="showTab('chat')"> 채팅 북마크</button>
+                    <button class="tab-btn" onclick="showTab('quiz')"> 퀴즈 북마크</button>
                 </div>
                 <div class="header-actions">
-                    <a href="{% url 'chat' %}" class="action-link primary">💬 학습하러 가기</a>
-                    <a href="{% url 'quiz:quiz_page' %}" class="action-link secondary">📝 퀴즈 풀기</a>
+                    <button onclick="location.href='/code/'" class="action-link secondary" style="cursor: pointer;">
+                        코딩할래용</button>
+                    <a href="{% url 'chat' %}" class="action-link primary"> 학습할래용</a>
+                    <a href="{% url 'quiz:quiz_page' %}" class="action-link secondary"> 퀴즈풀래용</a>
                 </div>
             </div>
 

@@ -23,25 +23,12 @@ from django_app.backend.quiz import views as quiz_views
 from django_app.backend.accounts import views as accounts_views
 
 urlpatterns = [
-    path('', lambda request: redirect('login')),
     path('admin/', admin.site.urls),
 
-    # accounts
-    path('login/', accounts_views.login_page, name='login'),
-    path('signup/', accounts_views.signup_page, name = 'signup'),
-    path('mypage/', accounts_views.mypage_page, name = 'mypage'),
-    path('logout/',accounts_views.logout_view, name='logout'),
-    path('mypage/update/', accounts_views.update_profile, name='update_profile'),
-    path('mypage/password/', accounts_views.change_password, name='change_password'),
-    path('mypage/delete/', accounts_views.delete_user, name='delete_user'),
-
-    # chat
-    path('chat/', chat_views.chat_page, name = 'chat'),
-    path('api/chat/', include('django_app.backend.chat.urls')), # API 경로
-
-    # quiz
+    path('chat/', include('django_app.backend.chat.urls')),
     path('quiz/', include('django_app.backend.quiz.urls')),
-
-    # main 일단 보류 구현 안할시 로그인페이지로
+    path('code/', include('django_app.backend.code.urls')),
+    path('', include('django_app.backend.accounts.urls')), # login, mypage 등 (짧은 URL)
+    path('', include('django_app.backend.chat.urls')),  # 루트 접속 시 chat으로 (로그인 되어있을 경우)
     # path('', main_views.main_page, name = 'main'),
 ]

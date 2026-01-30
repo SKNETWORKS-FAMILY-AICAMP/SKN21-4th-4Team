@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.chat_page, name='chat'),  # 챗봇 페이지 (name='chat' 필수)
     path('stream/', views.chat_stream, name='chat_stream'),
     path('studio/', views.studio_stream, name='studio_stream'),  # 스튜디오 전용 API
     path('bookmarks/', views.get_bookmarks, name='get_bookmarks'), # 목록 조회
