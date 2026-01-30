@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from src.utils.config import ConfigLLM
 from src.prompts import CONDENSE_QUESTION_PROMPT
 from src.retrievals.reranker import Reranker
-
+from src.utils.search_utils import is_korean, translate_to_english
 
 def rewrite_query(original_query: str, messages: list) -> str:
     """
@@ -60,10 +60,14 @@ def search_node(state: AgentState):
     
     original_query = state['query']
     messages = state.get('messages', [])
-    
-    # 1. 질문 재작성 (History가 있는 경우)
+
     query = rewrite_query(original_query, messages)
-    
+
+    english_query = ""
+    if len(query) > 0 and is_korean(query):
+        # 2. 번역(영어 키워드) 검색
+        english_query = translate_to_english(query)
+
     # 검색 설정 결정
     config = build_search_config(query)
     
@@ -75,11 +79,12 @@ def search_node(state: AgentState):
         }
     
     # 검색 설정 및 실행 (하이브리드 검색 기본 적용)
-    results, query_info = execute_dual_query_search(query)
+    results, query_info = execute_dual_query_search(query, english_query)
     
     # 결과 포맷팅
     search_results = [
         {
+            "english_query": english_query,
             "content": r['content'],
             "score": round(r['score'], 4),
             "metadata": r['metadata']

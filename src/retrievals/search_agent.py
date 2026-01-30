@@ -6,16 +6,14 @@ Search Agent - 듀얼 쿼리 검색 시스템
 - Python 공식문서(RST)는 영어 본문이 대부분이라 한글 질문만으로는 유사도 점수가 낮게 나올 수 있어
   "원문(한글) + 번역(영어)"를 같이 검색해 recall을 올리는 전략(dual query)을 사용합니다
 - 검색 흐름:
-  1) 질문 언어 판별: `is_korean()`
+  1) 질문 언어 판별: len(english_query) > 0
   2) 검색 설정 결정: `build_search_config(query)` - top_k, sources 등 결정
   3) 소스별 검색: `search_by_source(query, source, top_k)` - lecture/python_doc 필터링
-  4) (한글이면) 번역 검색 추가: `translate_to_english()` - 영어 키워드로 재검색
-  5) 결과 합치기 → 중복 제거 → 점수순 정렬 → 최종 top_k 반환
+  4) 결과 합치기 → 중복 제거 → 점수순 정렬 → 최종 top_k 반환
 
 핵심 개념: 하이브리드 검색
 - 벡터 검색 + 키워드 매칭 + BM25로 검색 품질 향상
 - 소스별 필터링으로 lecture/python_doc 구분 검색
-- 한글 질문은 번역하여 영어 문서 검색 recall 향상
 """
 import sys
 import os
@@ -31,8 +29,6 @@ sys.path.append(os.getcwd())
 from src.retrievals.search_router import build_search_config
 from src.utils.config import ConfigDB, ConfigAPI
 from src.utils.search_utils import (
-    is_korean,
-    translate_to_english,
     calculate_keyword_score,
     calculate_bm25_score
 )
@@ -191,7 +187,7 @@ def search_by_source(query: str, source: str, top_k: int, keywords: Optional[Lis
     return candidates[:top_k]
 
 
-def execute_dual_query_search(query: str) -> tuple:
+def execute_dual_query_search(query: str, english_query: str = '') -> tuple:
     """
     소스별 듀얼 쿼리 검색
     
@@ -227,9 +223,8 @@ def execute_dual_query_search(query: str) -> tuple:
     # 2) python_doc 검색
     python_results = []
     if "python_doc" in sources:
-        if is_korean(query):
+        if len(english_query) > 0:
             # 2-1) 번역(영어 키워드) 검색이 기본
-            english_query = translate_to_english(query)
             query_info["translated"] = english_query
             # python_doc(영어 번역 검색)은 영어 키워드이므로 topic_keywords(한글) 대신 쿼리에서 자동 추출하도록 None 전달
             python_results_en = search_by_source(english_query, "python_doc", top_k)

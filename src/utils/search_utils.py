@@ -22,12 +22,16 @@ def is_korean(text: str) -> bool:
     return bool(re.search(r'[가-힣]', text))
 
 
-def create_translate_chain():
+def translate_to_english(query: str) -> str:
     """
-    번역용 LangChain chain 생성
-    
+    LLM으로 한글 → 영어 검색 쿼리 변환
+    Chain: prompt | llm | parser 형태의 chain
+
+    Args:
+        query: 한글 질문
+        
     Returns:
-        Chain: prompt | llm | parser 형태의 chain
+        영어 검색 키워드
     """
     prompt = ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(TRANSLATE_PROMPT)
@@ -37,20 +41,7 @@ def create_translate_chain():
     parser = StrOutputParser()
     
     chain = prompt | llm | parser
-    return chain
-
-
-def translate_to_english(query: str) -> str:
-    """
-    LLM으로 한글 → 영어 검색 쿼리 변환 (체인화 버전)
     
-    Args:
-        query: 한글 질문
-        
-    Returns:
-        영어 검색 키워드
-    """
-    chain = create_translate_chain()
     return chain.invoke({"query": query}).strip()
 
 
