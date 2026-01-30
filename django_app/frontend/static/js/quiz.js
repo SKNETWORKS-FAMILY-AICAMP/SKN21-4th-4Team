@@ -53,7 +53,7 @@ function renderQuizPage() {
         <div class="quiz-card">
             <div class="quiz-header-row">
                 <div class="quiz-progress">ë¬¸ì œ ${currentQuizIndex + 1} / ${currentQuizData.length}</div>
-                <button class="quiz-bookmark-btn ${bookmarkClass}" onclick="toggleQuizBookmark(this)" title="ë¶ë§ˆí¬ ì €ìž¥">â˜…</button>
+                <button class="quiz-bookmark-btn ${bookmarkClass}" onclick="toggleQuizBookmark(this)" title="ë¶ë§ˆí¬ ì €ìž¥"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
             </div>
             
             <div class="quiz-question">${quiz.question}</div>
@@ -390,3 +390,39 @@ function showQuizResult() {
         </div>
     `;
 }
+
+// ========================================
+// ?? ¸ð¹ÙÀÏ UI µ¿ÀÛ
+// ========================================
+
+/**
+ * ¸ð¹ÙÀÏ »çÀÌµå¹Ù Åä±Û
+ */
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        if (sidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+// ¿À¹ö·¹ÀÌ Å¬¸¯ ½Ã ´Ý±â
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.querySelector('.sidebar-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+             const sidebar = document.querySelector('.sidebar');
+             if (sidebar) sidebar.classList.remove('active');
+             overlay.classList.remove('active');
+             document.body.style.overflow = '';
+        });
+    }
+});

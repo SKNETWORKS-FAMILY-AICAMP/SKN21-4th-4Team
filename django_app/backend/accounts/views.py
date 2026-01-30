@@ -18,7 +18,7 @@ def login_page(request):
             # 로그인 성공 후 채팅 페이지로
             if user is not None:
                 login(request, user)
-                messages.success(request, f"{username}님 환영합니다!")
+                # 환영 메시지를 chat 페이지에서 표시하지 않고 바로 리다이렉트
                 return redirect('chat')
 
             # 로그인 실패

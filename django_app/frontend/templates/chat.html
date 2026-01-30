@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 ================================================================================
 📚 Bootcamp AI Tutor - 프론트엔드 메인 페이지 (Django Integrated)
 ================================================================================
@@ -27,8 +27,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <!-- Monaco Editor Loader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
-    <!-- Monaco Editor Loader -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 
     <!-- ========================================
     [정적 CSS 파일 연결]
@@ -39,6 +37,29 @@
 </head>
 
 <body>
+    <!-- 📱 모바일 오버레이 (사이드바 열렸을 때 배경) -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- 📱 모바일 헤더 -->
+    <div class="mobile-header">
+        <button class="icon-btn" onclick="toggleSidebar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="brand-text" style="font-size: 18px; font-weight: 700;">Py_Mate</span>
+        <!-- 스튜디오 토글 버튼 -->
+        <button class="icon-btn" onclick="toggleStudio()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
+        </button>
+    </div>
     <!-- ========================================
     📌 좌측 사이드바 (목표 레이아웃)
     ======================================== -->
@@ -46,7 +67,17 @@
         <!-- 헤더: 로고 + 테마 토글 -->
         <div class="sidebar-header">
             <div class="brand">
-                <div class="brand-icon">🥧</div>
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 9H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h3"></path>
+                        <path d="M12 15h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3"></path>
+                        <path d="M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2Z"></path>
+                        <path d="M16 15v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"></path>
+                        <circle cx="9" cy="6" r="1" fill="currentColor"></circle>
+                        <circle cx="15" cy="18" r="1" fill="currentColor"></circle>
+                    </svg>
+                </div>
                 <span class="brand-text">Py_Mate</span>
             </div>
             <!-- 다크/라이트 모드 토글 버튼 -->
@@ -69,7 +100,13 @@
 
         <!-- ① 자료 필터링 -->
         <div class="sidebar-section">
-            <h3 class="section-title">🔍 자료 필터링</h3>
+            <h3 class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                자료 필터링
+            </h3>
             <div class="filter-list">
                 <label class="filter-item">
                     <input type="checkbox" checked id="filterPython">
@@ -88,7 +125,13 @@
 
         <!-- ② 북마크 기능 -->
         <div class="sidebar-section">
-            <h3 class="section-title">📌 북마크</h3>
+            <h3 class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                북마크
+            </h3>
             <div class="bookmark-list" id="bookmarkList">
                 <div class="bookmark-empty">저장된 북마크가 없습니다</div>
             </div>
@@ -96,7 +139,15 @@
 
         <!-- ③ 학습 현황 (사용자별) -->
         <div class="sidebar-section">
-            <h3 class="section-title">📊 학습현황</h3>
+            <h3 class="section-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                학습현황
+            </h3>
             <div class="stats-list">
                 <div class="stat-item">
                     <span class="stat-label">퀴즈</span>
@@ -109,6 +160,36 @@
             </div>
         </div>
 
+        <div class="sidebar-section mobile-only"
+            style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+            {% if user.is_authenticated %}
+            <div class="user-info"
+                style="margin-bottom: 15px; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                <div style="font-weight: 700;">{{ user.profile.nickname|default:user.username }}님</div>
+                <div style="font-size: 12px; color: var(--text-muted);">{{ user.email }}</div>
+            </div>
+            <div class="sidebar-menu">
+                <a href="{% url 'mypage' %}" class="filter-item" style="color: inherit; text-decoration: none;">👤
+                    마이페이지</a>
+                <a href="{% url 'logout' %}" class="filter-item" style="color: #ef4444; text-decoration: none;">🚪
+                    로그아웃</a>
+            </div>
+            {% else %}
+            <div class="sidebar-menu">
+                <a href="{% url 'login' %}" class="filter-item" style="color: var(--accent); text-decoration: none;">🔑
+                    로그인</a>
+                <a href="{% url 'signup' %}" class="filter-item" style="color: inherit; text-decoration: none;">📝
+                    회원가입</a>
+            </div>
+            {% endif %}
+            <div class="mode-switch" style="margin-top: 15px; display: flex; gap: 8px;">
+                <button class="mode-btn active" style="flex: 1; padding: 8px; font-size: 13px;"
+                    onclick="window.location.href='{% url 'chat' %}'">Chat</button>
+                <button class="mode-btn"
+                    style="flex: 1; padding: 8px; font-size: 13px; background: var(--bg-tertiary); color: var(--text-muted);"
+                    onclick="alert('모바일에서는 준비 중입니다.')">Note</button>
+            </div>
+        </div>
     </aside>
 
     <!-- ========================================
@@ -119,15 +200,15 @@
         <div class="mode-toggle-container">
             <div class="mode-toggle">
                 <button class="mode-btn active" id="chatModeBtn" onclick="switchMode('chat')">
-                    💬 Chat Mode
+                    Chat Mode
                 </button>
-                <button class="mode-btn" id="notebookMode" onclick="openDrawing()">📘 Note</button>
+                <button class="mode-btn" id="notebookMode" onclick="openDrawing()">Note</button>
             </div>
 
             <!-- 유저 액션 (마이페이지/로그아웃) -->
             {% if user.is_authenticated %}
             <div class="header-user-actions">
-                <span class="header-user-name">👤 {{ user.profile.nickname|default:user.username }}</span>
+                <span class="header-user-name">{{ user.profile.nickname|default:user.username }}</span>
                 <a href="{% url 'mypage' %}" class="header-user-btn">마이페이지</a>
                 <a href="{% url 'logout' %}" class="header-user-btn">로그아웃</a>
             </div>
@@ -152,22 +233,22 @@
                     <!-- 추천 질문 카드 -->
                     <div class="suggestions">
                         <div class="suggestion" onclick="send('과적합이 뭐고 어떻게 방지해?')">
-                            <div class="suggestion-icon">🎯</div>
+                            <div class="suggestion-icon">Q1</div>
                             <div class="suggestion-title">과적합이 뭐고 어떻게 방지해?</div>
                             <div class="suggestion-desc">Overfitting 개념과 해결법</div>
                         </div>
                         <div class="suggestion" onclick="send('결정트리와 랜덤포레스트 차이가 뭐야?')">
-                            <div class="suggestion-icon">🌳</div>
+                            <div class="suggestion-icon">Q2</div>
                             <div class="suggestion-title">결정트리와 랜덤포레스트 차이가 뭐야?</div>
                             <div class="suggestion-desc">트리 기반 알고리즘 비교</div>
                         </div>
                         <div class="suggestion" onclick="send('train_test_split은 왜 하는 거야?')">
-                            <div class="suggestion-icon">📊</div>
+                            <div class="suggestion-icon">Q3</div>
                             <div class="suggestion-title">train_test_split은 왜 하는 거야?</div>
                             <div class="suggestion-desc">데이터 분할의 필요성</div>
                         </div>
                         <div class="suggestion" onclick="send('정확도와 정밀도 차이 설명해줘')">
-                            <div class="suggestion-icon">📈</div>
+                            <div class="suggestion-icon">Q4</div>
                             <div class="suggestion-title">정확도와 정밀도 차이 설명해줘</div>
                             <div class="suggestion-desc">평가 지표 비교</div>
                         </div>
@@ -176,46 +257,7 @@
             </div>
         </div>
 
-        <!-- 💻 코딩 테스트 영역 (Coding Mode) -->
-        <div class="coding-area" id="codingArea" style="display: none; height: 100%; flex-direction: column;">
-            <div class="editor-header"
-                style="padding: 10px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <span style="font-weight: 600; font-size: 14px;">🐍 Python Editor</span>
-                    <select onchange="loadChallenge(this.value)"
-                        style="padding: 4px; border-radius: 4px; border: 1px solid var(--border); font-size: 12px; background: var(--bg-primary); color: var(--text-primary);">
-                        <option value="">🎯 예제 불러오기</option>
-                        <option value="basic">1. 기초문제</option>
-                        <option value="intro">2. 입문문제</option>
-                        <option value="advanced">3. 심화문제(알고리즘)</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                    <button onclick="requestAIReview()"
-                        style="padding: 6px 12px; background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px;">
-                        <span style="font-size: 14px;">🤖</span> AI 리뷰
-                    </button>
-                    <button onclick="executeCode()"
-                        style="padding: 6px 16px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="5 3 19 12 5 21 5 3" />
-                        </svg> 실행 (Run)
-                    </button>
-                </div>
-            </div>
-            <div id="monaco-editor" style="flex: 1; min-height: 400px;"></div>
-            <div class="terminal-panel"
-                style="height: 200px; background: #1e1e1e; color: #f0f0f0; padding: 12px; overflow-y: auto; font-family: monospace; font-size: 13px; border-top: 1px solid #333;">
-                <div style="margin-bottom: 6px; color: #888;">💻 Terminal Output</div>
-                <pre id="codeOutput" style="margin: 0; white-space: pre-wrap;">실행 결과가 여기에 표시됩니다...</pre>
-                <div id="aiReviewContainer"
-                    style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #444; display: none;">
-                    <div style="font-weight: 600; color: var(--accent); margin-bottom: 8px;">🤖 AI 선생님의 코드 리뷰</div>
-                    <div id="aiReviewContent"
-                        style="white-space: normal; line-height: 1.6; font-family: 'Inter', sans-serif;"></div>
-                </div>
-            </div>
+
         </div>
 
         <!-- 입력 영역 -->
@@ -240,33 +282,68 @@
     <aside class="sidebar-right">
         <!-- 헤더 -->
         <div class="sidebar-right-header">
-            <h3>🎨 스튜디오</h3>
+            <h3>Studio</h3>
         </div>
 
         <!-- AI 도구 격자형 버튼 -->
         <div class="ai-tools-grid">
             <button class="tool-btn-grid" onclick="requestAI('summarize')">
-                <span class="icon">🧠</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="9" y1="18" x2="15" y2="18"></line>
+                    <line x1="10" y1="22" x2="14" y2="22"></line>
+                    <path
+                        d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14">
+                    </path>
+                </svg>
                 <span class="label">개념 요약</span>
             </button>
             <button class="tool-btn-grid" onclick="requestAI('stepByStep')">
-                <span class="icon">✍️</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="10" y1="6" x2="21" y2="6"></line>
+                    <line x1="10" y1="12" x2="21" y2="12"></line>
+                    <line x1="10" y1="18" x2="21" y2="18"></line>
+                    <path d="M4 6h1v4"></path>
+                    <path d="M4 10h2"></path>
+                    <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
+                </svg>
                 <span class="label">단계별 설명</span>
             </button>
             <button class="tool-btn-grid" onclick="requestAI('flashcard')">
-                <span class="icon">🎴</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                    <path d="M12 12h.01"></path>
+                </svg>
                 <span class="label">플래시카드</span>
             </button>
             <button class="tool-btn-grid" onclick="requestAI('quiz')">
-                <span class="icon">🧩</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
                 <span class="label">퀴즈</span>
             </button>
             <button class="tool-btn-grid" onclick="requestAI('table')">
-                <span class="icon">📊</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="3" y1="15" x2="21" y2="15"></line>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                    <line x1="15" y1="3" x2="15" y2="21"></line>
+                </svg>
                 <span class="label">표로 정리</span>
             </button>
             <button class="tool-btn-grid" onclick="requestAI('example')">
-                <span class="icon">🔄</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
                 <span class="label">다른 예시</span>
             </button>
         </div>
@@ -274,12 +351,27 @@
         <!-- 메모 추가 영역 -->
         <div class="memo-section">
             <!-- 코딩할래용 (퀴즈 버튼 위에 추가) -->
-            <button onclick="selectMode('coding')" class="quiz-btn"
+            <button onclick="location.href='/code/'" class="quiz-btn"
                 style="width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); box-shadow: none;">
-                <span>💻</span> 코딩할래용
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                코딩할래용
             </button>
-            <a href="{% url 'quiz:quiz_page' %}" class="quiz-btn">🧩 퀴즈풀래용</a>
-
+            <a href="{% url 'quiz:quiz_page' %}" class="quiz-btn"
+                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                퀴즈풀래용
+            </a>
         </div>
     </aside>
 
@@ -315,7 +407,7 @@
             gap: 8px;
             pointer-events: auto;
         ">
-            <div style="font-weight:600; font-size:12px; margin-bottom:4px;">🎨 펜 색상</div>
+            <div style="font-weight:600; font-size:12px; margin-bottom:4px;">펜 색상</div>
             <div style="display:flex; gap:6px;">
                 <button class="pen-color" data-color="#000000"
                     style="width:28px; height:28px; border-radius:50%; background:#000000; border:2px solid #ddd; cursor:pointer;"></button>
@@ -328,14 +420,14 @@
             </div>
             <div style="display:flex; gap:6px; margin-top:8px;">
                 <button onclick="clearDrawing()"
-                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#f8f9fa; cursor:pointer; font-size:12px;">🗑️
+                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#f8f9fa; cursor:pointer; font-size:12px;">
                     지우기</button>
                 <button onclick="takeScreenshot()"
-                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#e91e8c; color:white; cursor:pointer; font-size:12px;">📷
+                    style="flex:1; padding:8px; border:1px solid #ddd; border-radius:6px; background:#e91e8c; color:white; cursor:pointer; font-size:12px;">
                     캡처</button>
             </div>
             <button onclick="closeDrawing()"
-                style="padding:8px; border:1px solid #ddd; border-radius:6px; background:#fff; cursor:pointer; font-size:12px;">✖️
+                style="padding:8px; border:1px solid #ddd; border-radius:6px; background:#fff; cursor:pointer; font-size:12px;">
                 닫기</button>
         </div>
     </div>

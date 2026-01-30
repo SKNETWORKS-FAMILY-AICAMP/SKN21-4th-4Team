@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -57,23 +57,9 @@
             text-decoration: none;
         }
 
-        .brand-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: white;
-        }
 
-        .brand-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+
+
 
         .theme-toggle {
             background: var(--bg-tertiary);
@@ -502,10 +488,95 @@
                 justify-content: flex-end;
             }
         }
+
+        @media (max-width: 768px) {
+            .mypage-container {
+                display: block !important;
+                height: auto !important;
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 280px !important;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                background: var(--bg-secondary);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                padding: 16px !important;
+                padding-top: 70px !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow-y: visible !important;
+            }
+
+            .profile-section {
+                padding: 0 !important;
+                margin-bottom: 20px;
+            }
+
+            .avatar-circle {
+                width: 80px !important;
+                height: 80px !important;
+                font-size: 32px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .username {
+                font-size: 20px !important;
+            }
+
+            .user-id {
+                margin-bottom: 16px !important;
+            }
+
+            .user-meta-card {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            /* 북마크 탭 가로 스크롤 */
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+                margin-bottom: 10px;
+            }
+
+            .tab-btn {
+                font-size: 16px;
+                padding: 10px 16px;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- 📱 모바일 오버레이 -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="mobile-header">
+        <button class="icon-btn" onclick="toggleSidebar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <span class="brand-text" style="font-size: 18px; font-weight: 700;">Py_Mate</span>
+        <div style="width: 40px;"></div>
+    </div>
     {% if messages %}
     <div
         style="position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; width:90%; max-width:400px;">
@@ -522,7 +593,17 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="{% url 'chat' %}" class="brand">
-                    <div class="brand-icon">🥧</div>
+                    <div class="brand-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 9H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h3"></path>
+                            <path d="M12 15h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3"></path>
+                            <path d="M8 9V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2Z"></path>
+                            <path d="M16 15v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2Z"></path>
+                            <circle cx="9" cy="6" r="1" fill="currentColor"></circle>
+                            <circle cx="15" cy="18" r="1" fill="currentColor"></circle>
+                        </svg>
+                    </div>
                     <span class="brand-text">Py_Mate</span>
                 </a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="테마 변경">
@@ -573,10 +654,10 @@
                 </div>
 
                 <div class="profile-actions">
-                    <button onclick="openModal('editProfileModal')" class="nav-btn">⚙️ 내 정보 수정</button>
-                    <button onclick="openModal('changePwModal')" class="nav-btn">🔒 비밀번호 변경</button>
+                    <button onclick="openModal('editProfileModal')" class="nav-btn">내 정보 수정</button>
+                    <button onclick="openModal('changePwModal')" class="nav-btn">비밀번호 변경</button>
                     <a href="{% url 'logout' %}" class="nav-btn logout">로그아웃</a>
-                    <button onclick="openModal('deleteUserModal')" class="nav-btn delete-account">👻 회원 탈퇴</button>
+                    <button onclick="openModal('deleteUserModal')" class="nav-btn delete-account">회원 탈퇴</button>
                 </div>
             </div>
         </aside>
@@ -585,12 +666,14 @@
         <main class="main-content">
             <div class="content-header">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="showTab('chat')">💬 채팅 북마크</button>
-                    <button class="tab-btn" onclick="showTab('quiz')">📝 퀴즈 북마크</button>
+                    <button class="tab-btn active" onclick="showTab('chat')"> 채팅 북마크</button>
+                    <button class="tab-btn" onclick="showTab('quiz')"> 퀴즈 북마크</button>
                 </div>
                 <div class="header-actions">
-                    <a href="{% url 'chat' %}" class="action-link primary">💬 학습하러 가기</a>
-                    <a href="{% url 'quiz:quiz_page' %}" class="action-link secondary">📝 퀴즈 풀기</a>
+                    <button onclick="location.href='/code/'" class="action-link secondary" style="cursor: pointer;">
+                        코딩할래용</button>
+                    <a href="{% url 'chat' %}" class="action-link primary"> 학습할래용</a>
+                    <a href="{% url 'quiz:quiz_page' %}" class="action-link secondary"> 퀴즈풀래용</a>
                 </div>
             </div>
 
@@ -854,6 +937,17 @@
             } catch (e) {
                 console.error('삭제 오류:', e);
                 alert('서버 통신 오류');
+            }
+        }
+    </script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
             }
         }
     </script>
