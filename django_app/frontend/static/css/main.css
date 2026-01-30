@@ -1021,3 +1021,14 @@ AI가 답변을 생성하는 과정을 보여주는 UI입니다.
     color: var(--text-muted);
     margin-top: 14px;
 }
+
+/* ========================================
+✨ 텍스트 줄바꿈 및 오버플로우 방지
+======================================== */
+.best-match-card,
+.source-card,
+.web-sources-container,
+.message-content {
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+}
