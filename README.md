@@ -8,11 +8,12 @@
 
 </div>
 
-
 <br><br>
 
 ## 팀원 및 담당 업무
+
 ### SKN21_3rd_3Team
+
 | 이름 | 담당 분야 | 상세 역할 |
 |------|-----------|-----------|
 | **김가람** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/gr-kim-94)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링|
@@ -22,9 +23,7 @@
 | **안혜빈** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/hyebinhy)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링 |
 | **정세연** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/wjdtpdus25)|  |  |
 
-
 <br><br><br>
-
 
 ## 프로젝트 개요
 
@@ -33,13 +32,14 @@
 
 <br>
 
-### 주제 
+### 주제
+>
 > **개념·코드·실습 질문에 답변하는 RAG 기반 학습 지원 챗봇**
 
 <br>
 
 본 프로젝트는 **학습 자료 데이터(ipynb)** 와 **Python 공식 문서(Python 3 Documentation)** 를 핵심 지식으로 활용하여 <br>
-개념, 코드, 실습 질문에 답변할 수 있는 
+개념, 코드, 실습 질문에 답변할 수 있는
 RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하는 것을 목표로 한다.
 
 특히 강의 자료(ipynb)에 담긴 실습 코드와 설명을 중심으로 <br>
@@ -54,17 +54,20 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 <br>
 
 ### 주요 기능
+>
 > **‘질문 → 이해 → 정리 → 점검’ 학습 흐름을 RAG 기반 대화형 AI로 지원하는 학습 서비스**
 
 <br>
 
 1️⃣ **대화형 학습 챗봇 (Chat Mode)** <br>
 > **부트캠프 학습 자료와 Python 공식 문서를 기반으로 질문에 답변하는 대화형 AI 학습 튜터를 제공**
+
 - 자연어 질문을 입력하면 실시간으로 답변 생성
 - 단순 Q&A가 아닌 학습 맥락을 고려한 설명 제공
 - 이전 질문 흐름을 반영한 연속 대화 지원
 
 **예시 질문**:
+
 - “RAG가 뭐야?”
 - “Retriever의 역할이 뭐야?”
 - “결정트리랑 랜덤포레스트 차이 설명해줘”
@@ -73,6 +76,7 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 2️⃣ **학습 맥락 중심 응답 생성 (RAG 기반)** <br>
 > **Retrieval-Augmented Generation(RAG) 구조를 활용하여 “검색 → 생성” 흐름의 학습 응답을 제공한다.**
+
 - Retriever를 통해 관련 문서 검색
 - 검색된 문서를 근거로 LLM이 답변 생성
 - 추측이나 일반 지식이 아닌 학습 자료 기반 응답
@@ -83,6 +87,7 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 3️⃣ **`퀴즈풀래용`** <br>
 > **학습한 내용을 기반으로 AI가 생성한 퀴즈를 직접 풀어볼 수 있는 기능**
+
 - 학습 자료를 기반으로 문제 생성
 - OX 퀴즈 제공
 - 사용자의 선택에 따라 즉각적인 정답 피드백 제공
@@ -98,6 +103,7 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 **사용자가 직접 작성한 코드를 입력하면, <br>
 AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계적으로 설명**
+
 - 문법 오류 및 실행 오류 자동 분석
 - 오류 발생 원인에 대한 자연어 설명
 - 수정된 코드 예시 제공
@@ -110,8 +116,8 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 5️⃣ **학습 보조 기능 (스튜디오 기능)** <br>
 > **우측 스튜디오 영역을 통해 학습을 돕는 보조 기능을 제공**
 
-- **`개념 요약`** : 현재 질문 주제 핵심 요약 
-- **`단계별 설명`** : 개념을 단계적으로 분해하여 설명 
+- **`개념 요약`** : 현재 질문 주제 핵심 요약
+- **`단계별 설명`** : 개념을 단계적으로 분해하여 설명
 - **`플래시카드`** : 핵심 개념 암기용 카드 제공
 - **`퀴즈`** : 학습 내용을 기반으로 한 퀴즈 생성
 - **`표로 정리`** : 개념 비교 및 구조화
@@ -122,6 +128,7 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 6️⃣ **학습 기록 관리 (Bookmark & History)** <br>
 > **학습 과정에서 나온 질문과 결과를 기록 및 관리**
+
 - 북마크를 통한 중요 질문 저장
 - 이전 질문 히스토리 확인
 
@@ -129,15 +136,14 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 7️⃣ **학습 흐름을 고려한 UI/UX**  <br>
 > **PC·모바일 환경 모두에서 동일한 학습 흐름을 유지하는 UI 제공**
+
 - 별도 앱 설치 없이 **웹 브라우저만으로 어디서든 접속 가능**
 - 화면 크기에 따라 레이아웃이 자동 조정되어 **가독성과 사용성을 유지**
 - 모바일 환경에서도 **채팅 입력, 퀴즈 풀이, 코드 확인/복사**가 불편하지 않도록 UI 최적화
 
 **“질문 → 이해 → 정리 → 점검”** 흐름을 UI로 자연스럽게 유도
 
-
 <br><br>
-
 
 ## Application의 주요 기능
 
@@ -146,7 +152,7 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 ## RAG 고도화
 
 ### 1. 이전 대화 내용 기억하는 Memory Retriever 구현
- 
+
  <p align="center">
         <img src="images/이전답변기억.gif" alt="feature_importance" width="700">
       </p>
@@ -170,12 +176,14 @@ BAAI/bge-reranker-v2-m3 모델 사용시 속도 저하로 인해 경량화 모�
 > **Context Precision(문맥 정밀도)**
 
 검색된 문서(context)들 중 질문과 관련 있는 것들이 **얼마나 상위 순위에 위치하는지** 평가하는 지표.
--  **<span style="color:red">0.8333 ➡️ 0.9758 (↑14.4%)</span>**
+
+- **<span style="color:red">0.8333 ➡️ 0.9758 (↑14.4%)</span>**
 
 > **Context Recall(문맥 재현률)**
 
 검색된 문서(context)가 정답(ground-truth)의 정보를 얼마나 포함하고 있는지 평가하는 지표.
--  **<span style="color:red">0.7044 ➡️ 0.7944 (↑12.7%)</span>**
+
+- **<span style="color:red">0.7044 ➡️ 0.7944 (↑12.7%)</span>**
 
 > **LLM 추출 질문에대한 답변 정확도**
 
@@ -192,7 +200,6 @@ BAAI/bge-reranker-v2-m3 모델 사용시 속도 저하로 인해 경량화 모�
 </p>
 
 <br>
-
 
 <br><br>
 
@@ -256,14 +263,14 @@ SKN21-4th-4Team/
 
 원본 데이터(`/data/raw/`)의 경우, 최종 git에서 제거
 <br>
-<div> 
+<div>
 
 <br>
-
 
 ## Tech Stack
 
 ### Core Utilities & Environment
+
 ![ipykernel](https://img.shields.io/badge/ipykernel-CDB4DB?style=for-the-badge&logo=jupyter&logoColor=white)
 ![python-dotenv](https://img.shields.io/badge/python--dotenv-A8E6CF?style=for-the-badge&logo=dotenv&logoColor=black)
 ![pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
@@ -271,6 +278,7 @@ SKN21-4th-4Team/
 ![nbformat](https://img.shields.io/badge/nbformat-4B8BBE?style=for-the-badge&logo=python&logoColor=white)
 
 ### LLM & RAG Framework
+
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-EEDFCC?style=for-the-badge&logo=chainlink&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/LangGraph-005571?style=for-the-badge&logo=graphql&logoColor=white)
@@ -279,31 +287,30 @@ SKN21-4th-4Team/
 ![langchain_tavily](https://img.shields.io/badge/langchain--tavily-DADADA?style=for-the-badge&logo=internetexplorer&logoColor=black)
 ![langchain_qdrant](https://img.shields.io/badge/langchain__qdrant-FF6F00?style=for-the-badge&logo=qdrant&logoColor=white)
 
-
 ### RAG Evaluation & Similarity
+
 ![RAGAS](https://img.shields.io/badge/RAGAS-6A5ACD?style=for-the-badge&logo=databricks&logoColor=white)
 ![RapidFuzz](https://img.shields.io/badge/RapidFuzz-FF8C00?style=for-the-badge&logo=python&logoColor=white)
 
-
 ### Embedding & Vector Database
+
 ![FastEmbed](https://img.shields.io/badge/FastEmbed-2E8B57?style=for-the-badge&logo=lightning&logoColor=white)
 ![Qdrant](https://img.shields.io/badge/Qdrant-FF69B4?style=for-the-badge&logo=qdrant&logoColor=white)
 ![qdrant-client](https://img.shields.io/badge/qdrant--client-4C72B0?style=for-the-badge&logo=qdrant&logoColor=white)
 
-
 ### Backend & API
+
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![Django REST Framework](https://img.shields.io/badge/Django_REST_Framework-FF1709?style=for-the-badge&logo=django&logoColor=white)
 
-
 ### Database
+
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![psycopg2](https://img.shields.io/badge/psycopg2--binary-4B8BBE?style=for-the-badge&logo=postgresql&logoColor=white)
 
-
 ### Legacy / Reference
-![Flask](https://img.shields.io/badge/Flask_(Legacy)-000000?style=for-the-badge&logo=flask&logoColor=white)
 
+![Flask](https://img.shields.io/badge/Flask_(Legacy)-000000?style=for-the-badge&logo=flask&logoColor=white)
 
 ## 회고
 
@@ -311,8 +318,7 @@ SKN21-4th-4Team/
 |------|------|
 |**김가람**|      |
 |**신지용**|      |
-|**최자슈아주원**|      |
+|**최자슈아주원**|기존 Flask형식의 3차 프로젝트의  Djoano 변환과 UI/UX 개선을 담당했습니다.  Django로 변환시키는 것은 생각보다 어렵지 않았지만, 전반적인 UI/UX를 개선하는 것은 생각보다 어려웠습니다. 고려해야할 부분이 많고 추가하려는 기능이 많아질수록 복잡해지는 구조가 아쉬웠습니다. 그러면서 생각못한 문제가 발생하고 이러한 문제를 수정하는데 많은 시간이 걸렸습니다. 대부분의 문제는 해결했지만 아직 남아있는 버그에 아쉬움을 느낍니다. 특히 캡쳐를 위한 작업을 전부 했지만 구현하지 못해 아쉽습니다. 다음에는 더 체계적으로 계획을 세우고 진행해야겠습니다. 팀원들의 아이디어와 피드백이 없었다면 지금의 결과물을 만들지 못했을 것입니다. 팀원들에게 감사드립니다. 모두 믿고 맏길 수 있었기에 제 파트에만 집중할 수가 있었습니다. 다시 한번 팀원들에게 감사의 말씀을 전합니다.|
 |**윤경은**|      |
 |**안혜빈**|      |
 |**정세연** |      |
-
