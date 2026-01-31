@@ -98,7 +98,31 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 <br>
 
-4️⃣ **`코드풀래용`** <br>
+4️⃣ **`코딩할2️⃣ **학습 맥락 중심 응답 생성 (RAG 기반)** <br>
+> **Retrieval-Augmented Generation(RAG) 구조를 활용하여 “검색 → 생성” 흐름의 학습 응답을 제공한다.**
+
+- Retriever를 통해 관련 문서 검색
+- 검색된 문서를 근거로 LLM이 답변 생성
+- 추측이나 일반 지식이 아닌 학습 자료 기반 응답
+
+“왜 이런 답이 나왔는지” 학습 흐름을 유지
+
+<br>
+
+3️⃣ **`퀴즈풀래용`** <br>
+> **학습한 내용을 기반으로 AI가 생성한 퀴즈를 직접 풀어볼 수 있는 기능**
+
+- 학습 자료를 기반으로 문제 생성
+- OX 퀴즈 제공
+- 사용자의 선택에 따라 즉각적인 정답 피드백 제공
+- 정답 여부뿐 아니라 개념 보충 설명까지 함께 제공
+- **북마크** 기능으로 마이페이지에서 사용자가 챗/퀴즈 북마크 확인 가능
+
+“배웠는지 확인하는 단계”를 자연스럽게 학습 흐름에 포함
+
+<br>
+
+4️⃣ **`코딩할래용`** <br>
 > **AI 코드 리뷰 & 오류 분석 기능**
 
 **사용자가 직접 작성한 코드를 입력하면, <br>
@@ -147,6 +171,44 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 ## Application의 주요 기능
 
+### 1. 로그인 기능
+<p align="center">
+        <img src="images/로그인.gif" alt="feature_importance" width="700">
+      </p>
+
+### 2. `학습할래용` 
+<p align="center">
+        <img src="images/학습할래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 3. <우측> 스튜디오 기능
+<p align="center">
+        <img src="images/스튜디오_1.gif" alt="feature_importance" width="700">
+      </p>
+<p align="center">
+        <img src="images/스튜디오_2.gif" alt="feature_importance" width="700">
+      </p>
+
+### 4. 마이페이지 - `북마크` 기능
+<p align="center">
+        <img src="images/퀴즈_마이페이지.gif" alt="feature_importance" width="700">
+      </p>
+
+### 5. `퀴즈풀래용`
+<p align="center">
+        <img src="images/퀴즈풀래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 6. `코딩할래용`
+<p align="center">
+        <img src="images/코딩할래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 7. 모바일 UI 모드
+<p align="center">
+        <img src="images/모바일.gif" alt="feature_importance" width="250">
+      </p>
+      
 <br><br>
 
 ## RAG 고도화
