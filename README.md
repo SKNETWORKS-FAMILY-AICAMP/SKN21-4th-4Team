@@ -16,11 +16,11 @@
 
 | 이름 | 담당 분야 | 상세 역할 |
 |------|-----------|-----------|
-| **김가람** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/gr-kim-94)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링|
+| **김가람** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/gr-kim-94)| **AI Core** | RAG 파이프라인 구축(`rag/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링|
 | **최자슈아주원** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/reasonableplan)| **Backend Lead** | Django 프로젝트 아키텍처 설계, Chat API(SSE 스트리밍) 구현, 메인 UI 템플릿 통합 |
 | **신지용** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/sjy361872)| **DevOps & Infra** | AWS EC2 서버 구축, Docker 컨테이너화, Nginx 리버스 프록시 설정, CI/CD 파이프라인 |
 | **윤경은** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/ykgstar37-lab)  | **Backend & Frontend** | Quiz API 구현, 에러 핸들링 미들웨어, 프론트엔드 스타일링(CSS) 및 로직(JS) 최적화 |
-| **안혜빈** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/hyebinhy)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링 |
+| **안혜빈** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/hyebinhy)| **AI Core** | RAG 파이프라인 구축(`rag/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링 |
 
 
 <br><br><br>
@@ -70,7 +70,7 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 - “RAG가 뭐야?”
 - “Retriever의 역할이 뭐야?”
-- “결정트리랑 랜덤포레스트 차이 설명해줘”
+- “앞에 두개는 어떤 연관성이 있어?”
 
 <br>
 
@@ -147,6 +147,8 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 ## Application의 주요 기능
 
+실습은 [intro.md](intro.md)를 참고해주세용
+
 ### 1. 로그인 기능
 <p align="center">
         <img src="images/로그인.gif" alt="feature_importance" width="700">
@@ -199,6 +201,8 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 ### 2. 답변에 강의 코드 추가
 
+학습 자료와 연관된 code를 연동해서 데이터 전처리를 개선함. 그 결과 답변에 강의 코드를 추가할 수 있게 됨.
+
 <div align="center">
   <img src="images/코드답변예시.png" alt="코드답변예시" width="700"/>
 </div>
@@ -239,7 +243,61 @@ BAAI/bge-reranker-v2-m3 모델 사용시 속도 저하로 인해 경량화 모�
 
 <br>
 
+<p align="center">
+  <img src="images/graph.png" alt="pymate" width="400"/>
+</p>
+
 <br><br>
+
+
+## Database Schema Analysis
+
+### A. PostgreSQL (Relational DB)
+
+```mermaid
+erDiagram
+    User ||--|| UserProfile : "has profile"
+    User ||--o{ ChatBookmark : "saves chat"
+    User ||--o{ QuizBookmark : "saves quiz"
+
+    User {
+        int id PK
+        string username
+        string email
+    }
+
+    UserProfile {
+        int id PK
+        int user_id FK "1:1 Relation"
+        string nickname
+    }
+
+    ChatBookmark {
+        int id PK
+        int user_id FK
+        text query "User Question"
+        text answer "AI Response"
+        datetime created_at
+    }
+
+    QuizBookmark {
+        int id PK
+        int user_id FK
+        string quiz_id "Qdrant Point ID"
+        text question
+        text explanation
+        string answer "O/X"
+    }
+```
+
+### B. Qdrant (Vector DB)
+
+| Collection Name | Content | Source | Purpose |
+|---|---|---|---|
+| **learning_ai** | Python Lectures & Docs | `learning_ai.snapshot` | RAG context retrieval for Questions |
+| **quizzes** | Generated Quiz Bank | `quizzes.snapshot` | Retrieving similar quizzes or generating new ones |
+
+</br></br>
 
 ## 프로젝트 구조
 
