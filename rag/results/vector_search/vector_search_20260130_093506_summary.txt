@@ -1,0 +1,107 @@
+================================================================================
+벡터 검색 품질 테스트 결과 요약
+================================================================================
+
+실행 시간: 20260130_093506
+임베딩 모델: text-embedding-3-large
+컬렉션: learning_ai
+번역 사용: True
+하이브리드 검색: 활성화 (벡터 + 키워드 매칭 + BM25)
+
+프롬프트 버전:
+  파일: scripts/src/prompts.py
+  해시: unknown
+  수정 시간: None
+
+전처리 설정:
+
+평균 유사도: 0.6856
+총 질문 수: 21
+
+--------------------------------------------------------------------------------
+질문별 결과:
+--------------------------------------------------------------------------------
+
+[1] 유닛/노드/뉴런 개념 알려줘.
+    번역: None
+    최고 유사도: 0.7631
+
+[2] 레이어, 층에 대해서 알려줘.
+    번역: None
+    최고 유사도: 0.6566
+
+[3] 입력층이 뭐야?
+    번역: None
+    최고 유사도: 0.6705
+
+[4] 머신러닝이 뭐야?
+    번역: None
+    최고 유사도: 0.7308
+
+[5] 결정트리가 뭐야?
+    번역: None
+    최고 유사도: 0.6492
+
+[6] 경사하강법 개념 알려줘
+    번역: None
+    최고 유사도: 0.5802
+
+[7] 결정트리와 랜덤포레스트의 차이점이 뭐야?
+    번역: None
+    최고 유사도: 0.7553
+
+[8] xgboost 모델에 대해 설명해줘
+    번역: None
+    최고 유사도: 0.7542
+
+[9] 비지도 학습이 뭐야?
+    번역: None
+    최고 유사도: 0.6057
+
+[10] 랜덤포레스트가 뭐야?
+    번역: None
+    최고 유사도: 0.6507
+
+[11] 파이썬에서 숫자 연산하는 방법
+    번역: arithmetic operators addition subtraction multiplication division floor division modulo operator power operator
+    최고 유사도: 0.7435
+
+[12] 정수 나눗셈과 나머지 연산자 사용법
+    번역: integer division floor division // modulo operator % arithmetic operators
+    최고 유사도: 0.7542
+
+[13] 문자열 슬라이싱 하는 법
+    번역: string slicing syntax string literal brackets [] substring indexing slicing operator
+    최고 유사도: 0.6758
+
+[14] 리스트 컴프리헨션이란
+    번역: list comprehension syntax iterable for loop expression brackets []
+    최고 유사도: 0.6873
+
+[15] if elif else 조건문 사용법
+    번역: if statement elif else conditional expression control flow boolean expression comparison operators
+    최고 유사도: 0.6318
+
+[16] for문에서 range 함수 사용하는 방법
+    번역: for statement range() function iterable loop control flow sequence types
+    최고 유사도: 0.6287
+
+[17] 함수 정의하는 방법 def 키워드
+    번역: function definition def keyword parameters arguments return statement callable
+    최고 유사도: 0.6738
+
+[18] 람다 함수 사용법
+    번역: lambda expression anonymous function def keyword parameters return statement function definition
+    최고 유사도: 0.7365
+
+[19] 딕셔너리 리터럴 사용법
+    번역: dictionary display dict literal key value pairs curly braces {} dict.get()
+    최고 유사도: 0.7009
+
+[20] 모듈 임포트 하는 방법
+    번역: import statement from import module namespace standard library __init__.py package directory
+    최고 유사도: 0.6903
+
+[21] try except 예외 처리하는 방법
+    번역: try except exception handling built-in exceptions KeyError ValueError IndexError traceback
+    최고 유사도: 0.6582

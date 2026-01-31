@@ -1,0 +1,715 @@
+{
+  "metadata": {
+    "timestamp": "20260130_093506",
+    "embedding_model": "text-embedding-3-large",
+    "collection_name": "learning_ai",
+    "use_translation": true,
+    "use_hybrid": true,
+    "prompt_version": {
+      "file": "scripts/src/prompts.py",
+      "hash": "unknown",
+      "modified_time": null
+    },
+    "preprocessing_config": {
+      "file": "scripts/ingestion_rst.py",
+      "hash": "unknown"
+    },
+    "total_queries": 21,
+    "avg_top_score": 0.6855877094082146
+  },
+  "results": [
+    {
+      "query": "유닛/노드/뉴런 개념 알려줘.",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.763061236,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.763061236,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  유닛/노드/뉴런 (Unit, Node, Neuron) - 함수에 입력된 데이터에서 추출된 데이터의 특성(특징)을 말한다. - Hidden layer(은닉층)의 Unit/Node/Neron들은 추론에 도움이 되는 데이터의 주요 특성들이다. - Output layer(출력층)의 Unit/Node/Neron들은 모델의 최종 추론 결"
+        },
+        {
+          "score": 0.41174784208469056,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 13_Agent_langgraph]  랭그래프 기본 구조   노드(Node) 와 엣지(Edge)   랭그래프의 기본 구조는 **노드**(**Node)** 와 **엣지**(**Edge**) **노드**(**Node)**로 구성된다.   - **노드**(**Node**): - 그래프 상의 처리 단위 - 실제 작업을 수행하는 Python 함수들로, 각각"
+        },
+        {
+          "score": 0.4086871682716805,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  계산 그래프 (Computational Graph) - 계산 과정을 자료구조의 하나인 그래프 형태로 표현한 것 - 복잡한 계산을 순서대로 나눠서 그래프로 표현한 것. - 그래프는 노드(Node)와 엣지(Edge)로 구성됨. - **노드**: 연산을 정의 - **엣지**: 피연산자 값의 흐름을 표시 - **Deep learnin"
+        }
+      ]
+    },
+    {
+      "query": "레이어, 층에 대해서 알려줘.",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.6566450956023453,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.6566450956023453,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  레이어/층(Layer) - Node 추출 함수들을 모아놓은 함수. - 한개의 노드는 입력 데이터에서 추출한 한개의 특성이다. - 정확한 추론 결과를 위해서는 입력데이터에서 많은 특성들을 추출해야 한다. 그래서 **Node 추출하는 함수들을 묶어 하나의 입력으로 부터 여러개의 특성들을 추출하도록 한다.**"
+        },
+        {
+          "score": 0.627091096,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  - **Input Layer(입력층)** - 모델에 주입되는 입력데이터의 feature들을 말한다. - **Output Layer(출력층)** - 모델의 최종 예측결과를 Node들로 구성된 Layer - **Hidden Layer(은닉층)** - Input Layer와 Output Layer사이에 존재하는 Layer. - 정답"
+        },
+        {
+          "score": 0.5759226737941279,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 04_첫번째 딥러닝-MLP 구현]  2. **입력과 출력을 연결하는 Layer(층)으로 이뤄진 네트워크(모델)을 정의** - **Sequential 방식**: 순서대로 쌓아올린 네트워크로 이뤄진 모델을 생성하는 방식 - layer를 순서대로 쌓은 모델을 구현할때 간단히 모델을 정의할 수 있다. - layer block을 정의하는데 사용할 수 있다."
+        }
+      ]
+    },
+    {
+      "query": "입력층이 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.6704882176708584,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.6704882176708584,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  - **Input Layer(입력층)** - 모델에 주입되는 입력데이터의 feature들을 말한다. - **Output Layer(출력층)** - 모델의 최종 예측결과를 Node들로 구성된 Layer - **Hidden Layer(은닉층)** - Input Layer와 Output Layer사이에 존재하는 Layer. - 정답"
+        },
+        {
+          "score": 0.6088196550330252,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_CNN_개요]  Convolution Layer도 여러층을 쌓는다.   - 입력층(Bottom)과 가까운 Convolution 레이어의 unit들은 이미지의 엣지나 경계선등 저수준의 특성에 반응한다. - 저수준의 특성들은 일반화가 쉬운 이미지의 기초적인 특성들이다. - Layer를 거칠 수로 점점 앞 Layer 들에서 찾은 특성들을 결합하여 "
+        },
+        {
+          "score": 0.47790866,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  레이어/층(Layer) - Node 추출 함수들을 모아놓은 함수. - 한개의 노드는 입력 데이터에서 추출한 한개의 특성이다. - 정확한 추론 결과를 위해서는 입력데이터에서 많은 특성들을 추출해야 한다. 그래서 **Node 추출하는 함수들을 묶어 하나의 입력으로 부터 여러개의 특성들을 추출하도록 한다.**"
+        }
+      ]
+    },
+    {
+      "query": "머신러닝이 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.73082716,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.73082716,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 01_딥러닝 개요]  기존 프로그래밍 방식과 머신러닝 방식의 차이   - 기존 프로그래밍방식 - 알고리즘(규칙)을 **사람이** 생각한다. - 머신러닝 - 알고리즘을 데이터를 학습시켜 찾아낸다."
+        },
+        {
+          "score": 0.7268381568191126,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 01_머신러닝개요]  기존 프로그래밍 방식과 머신러닝 간의 차이"
+        },
+        {
+          "score": 0.7230497016491755,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 01_머신러닝개요]  머신러닝(Machine Learning) - 데이터 학습 기반의 인공 지능 분야 - 명시적인 규칙을 프로그래밍하지 않아도, 데이터로부터 패턴을 학습해 예측하거나 분류하는 알고리즘과 기술을 개발하는 인공지능의 한 분야"
+        }
+      ]
+    },
+    {
+      "query": "결정트리가 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.6491992054111406,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.6491992054111406,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  의사결정나무(Decision Tree )"
+        },
+        {
+          "score": 0.5917332944954129,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  Graphviz를 이용해 tree구조 시각화"
+        },
+        {
+          "score": 0.5815554553942428,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  graphviz 를 이용해 Best Model의 추론 구조 확인"
+        }
+      ]
+    },
+    {
+      "query": "경사하강법 개념 알려줘",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.5801917839999999,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.5801917839999999,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 11_최적화-경사하강법]  반복문을 이용해 gradient가 0이 되는 지점의 weight 찾기"
+        },
+        {
+          "score": 0.5639302689884736,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 11_최적화-경사하강법]  Gradient Descent (경사하강법) - 다양한 종류의 문제에서 최적의 해법을 찾을 수 있는 **일반적인 최적화 알고리즘**. - 머신러닝/딥러닝에서 사용하는 대표적인 최적화 알고리즘. - 손실함수를 최소화하는 파라미터를 찾기위해 함수의 기울기(gradient)를 따라 반복해서 이동하는 최적화 알고리즘이다. 1. "
+        },
+        {
+          "score": 0.5446480525478424,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 05_신경망 구조]  Gradient Decent (경사하강법) - ### 최적화 - 모델 네트워크가 출력한 결과와 실제값(Ground Truth)의 차이를 정의하는 함수를 **Loss function(손실함수, 비용함수)** 라고 한다. - Training 시 Loss function이 출력하는 값을 줄이기 위해 파라미터(weight, bias)"
+        }
+      ]
+    },
+    {
+      "query": "결정트리와 랜덤포레스트의 차이점이 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.7552891646557949,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.7552891646557949,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  의사결정나무(Decision Tree )"
+        },
+        {
+          "score": 0.7056913300000001,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  Feature importance"
+        },
+        {
+          "score": 0.6984736025878494,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  데이터셋 분리 및 전처리"
+        }
+      ]
+    },
+    {
+      "query": "xgboost 모델에 대해 설명해줘",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.75419539,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.75419539,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 10_앙상블_부스팅]  Scikit-learn 래퍼 XGBoost - XGBoost를 Scikit-learn프레임워크와 연동할 수 있도록 개발됨. - Scikit-learn의 Estimator들과 동일한 패턴으로 코드를 작성할 수 있다. - GridSearchCV나 Pipeline 등 Scikit-learn이 제공하는 다양한 유틸리티들을 사용할 수"
+        },
+        {
+          "score": 0.36895278,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 10_앙상블_부스팅]  GradientBoosting 학습 및 추론 프로세스"
+        },
+        {
+          "score": 0.349706556,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 10_앙상블_부스팅]  GradientBoostingClassifier 모델 생성, 학습, 평가"
+        }
+      ]
+    },
+    {
+      "query": "비지도 학습이 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.6057489220000001,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.6057489220000001,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 01_머신러닝개요]  비지도학습 (Unsupervised Learning) - **정답이 없이 데이터의 특징만 학습하여 데이터간의 관계를 찾는 학습방법** - ### 군집(Clustering) - 비슷한 유형의 데이터 그룹을 찾는다. 주로 데이터 경향성을 파악하는 비지도 학습 - ### 차원축소(Dimensionality Reduction) - 예"
+        },
+        {
+          "score": 0.47441744030778665,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 14 군집_Clustering]  군집 (Clustering) - 데이터 포인트들을 유사한 특성을 가진 그룹끼리 묶어주는 비지도 학습 기법.   적용 예 - 비슷한 데이터들 분류 - Feature를 바탕으로 비슷한 특징을 가진 데이터들을 묶어서 성향을 파악한다. - 이상치 탐지 - 모든 군집에 묶이지 않는 데이터는 이상치일 가능성이 높다 - 준지도"
+        },
+        {
+          "score": 0.24489591306117908,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 07_Text_to_Vector_word_embedding]  Word2Vec - 딥러닝 기반 word embedding 방식. 딥러닝 모델은 `입력층-은닉층-출력층` 의 단순한 구조로 되어있다. - Fully connected layer로 이뤄진 단순한 딥러닝 모델이다. - 학습이 끝나면 Fully connected layer의 weights 를"
+        }
+      ]
+    },
+    {
+      "query": "랜덤포레스트가 뭐야?",
+      "is_korean": true,
+      "translated_query": null,
+      "translation_error": null,
+      "top_score": 0.6506980874236168,
+      "top_k": 3,
+      "sources": [
+        "lecture"
+      ],
+      "lecture_count": 3,
+      "python_doc_count": 0,
+      "top_3_results": [
+        {
+          "score": 0.6506980874236168,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  Random Forest (랜덤포레스트) - Bagging 방식의 앙상블 모델 - Decision Tree를 기반으로 한다. - 다수의 Decision Tree를 사용해서 성능을 올린 앙상블 알고리즘의 하나 - N개의 Decision Tree 생성하고 입력데이터를 각각 추론하게 한 뒤 가장 많이 나온 추론결과를 최종"
+        },
+        {
+          "score": 0.6171329779722704,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  의사결정나무(Decision Tree )"
+        },
+        {
+          "score": 0.6097922670345194,
+          "source": "lecture",
+          "query_type": "original",
+          "content_preview": "[강의: 09_결정트리와 랜덤포레스트]  - **랜덤포레스트의 절차** - 객체 생성시 Decision Tree의 개수, Decision Tree에 대한 하이퍼파라미터들 등을 받아서 생성한다. - 모든 DecisionTree들은 같은 구조를 가지게 한다. - 학습시 모든 Decision Tree들이 서로 다른 데이터셋으로 학습하도록 Train dataset"
+        }
+      ]
+    },
+    {
+      "query": "파이썬에서 숫자 연산하는 방법",
+      "is_korean": true,
+      "translated_query": "arithmetic operators addition subtraction multiplication division floor division modulo operator power operator",
+      "translation_error": null,
+      "top_score": 0.7435198864469539,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.7435198864469539,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] power operator floor division [TITLE] expressions [H1] Operator precedence  | await x | Await expression | +-----------------------------------------------+---------------------------------"
+        },
+        {
+          "score": 0.6955239,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] truediv floordiv floor division and_ xor invert or_ pow power operator [TITLE] operator [H1] operator --- Standard operators as functions [H2] Mapping Operators to Functions  | Division | `"
+        },
+        {
+          "score": 0.6866073247488669,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] floor division power operator [TITLE] lexical_analysis [H1] Operators and delimiters  OP:       | assignment_operator       | bitwise_operator       | comparison_operator       | enclosing_"
+        }
+      ]
+    },
+    {
+      "query": "정수 나눗셈과 나머지 연산자 사용법",
+      "is_korean": true,
+      "translated_query": "integer division floor division // modulo operator % arithmetic operators",
+      "translation_error": null,
+      "top_score": 0.7542280779999999,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.7542280779999999,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] floor division divmod formatting __mod__ __rmod__ [TITLE] expressions [H1] Binary arithmetic operations  The floor division and modulo operators are connected by the following identity: ``x"
+        },
+        {
+          "score": 0.7408322098150135,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] __truediv__ __rtruediv__ __floordiv__ __rfloordiv__ modulo operator operand [TITLE] expressions [H1] Binary arithmetic operations  The division operation can be customized using the special"
+        },
+        {
+          "score": 0.706127905444493,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] floor division power operator [TITLE] lexical_analysis [H1] Operators and delimiters  OP:       | assignment_operator       | bitwise_operator       | comparison_operator       | enclosing_"
+        }
+      ]
+    },
+    {
+      "query": "문자열 슬라이싱 하는 법",
+      "is_korean": true,
+      "translated_query": "string slicing syntax string literal brackets [] substring indexing slicing operator",
+      "translation_error": null,
+      "top_score": 0.6757566342252819,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.6757566342252819,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] object slicing [TITLE] expressions [H1] Primaries [H2] Slicings  A slicing selects a range of items in a sequence object (e.g., a string, tuple or list). Slicings may be used as expressions"
+        },
+        {
+          "score": 0.6227657993071114,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] __getitem__ [TITLE] expressions [H1] Primaries [H2] Subscriptions  The formal syntax makes no special provision for negative indices in sequences. However, built-in sequences all provide a "
+        },
+        {
+          "score": 0.572763788676005,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] strings [TITLE] string [H1] string --- Common string operations [H2] Format String Syntax  The str.format method and the Formatter class share the same syntax for format strings (although i"
+        }
+      ]
+    },
+    {
+      "query": "리스트 컴프리헨션이란",
+      "is_korean": true,
+      "translated_query": "list comprehension syntax iterable for loop expression brackets []",
+      "translation_error": null,
+      "top_score": 0.6872900013521939,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.6872900013521939,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[TITLE] expressions [H1] Atoms [H2] Displays for lists, sets and dictionaries  For constructing a list, a set or a dictionary Python provides special syntax called \"displays\", each of them in two flav"
+        },
+        {
+          "score": 0.661365387194699,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] range [TITLE] expressions [H1] Atoms [H2] Displays for lists, sets and dictionaries  However, aside from the iterable expression in the leftmost for clause, the comprehension is executed in"
+        },
+        {
+          "score": 0.6277491343831536,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] items list [TITLE] stdtypes [H1] Sequence Types --- list, tuple, range [H2] Lists  Lists are mutable sequences, typically used to store collections of homogeneous items (where the precise d"
+        }
+      ]
+    },
+    {
+      "query": "if elif else 조건문 사용법",
+      "is_korean": true,
+      "translated_query": "if statement elif else conditional expression control flow boolean expression comparison operators",
+      "translation_error": null,
+      "top_score": 0.6317703363636364,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.6317703363636364,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[API] A conditional expression (sometimes called a \"ternary operator\") [KEYWORDS] expression [TITLE] expressions [H1] Conditional expressions  A conditional expression (sometimes called a \"ternary ope"
+        },
+        {
+          "score": 0.5836956544871597,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] true executed [TITLE] compound_stmts [H1] The if statement  The if statement is used for conditional execution:  It selects exactly one of the suites by evaluating the expressions one by on"
+        },
+        {
+          "score": 0.5768243304667717,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[TITLE] expressions [H1] Operator precedence  | not x | Boolean NOT | +-----------------------------------------------+-------------------------------------+ | and | Boolean AND | +-------------------"
+        }
+      ]
+    },
+    {
+      "query": "for문에서 range 함수 사용하는 방법",
+      "is_korean": true,
+      "translated_query": "for statement range() function iterable loop control flow sequence types",
+      "translation_error": null,
+      "top_score": 0.6286598780000001,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.6286598780000001,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] range integers [TITLE] stdtypes [H1] Sequence Types --- list, tuple, range [H2] Ranges  The range type represents an immutable sequence of numbers and is commonly used for looping a specifi"
+        },
+        {
+          "score": 0.601255128963931,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] range [TITLE] compound_stmts [H1] The for statement  The for-loop makes assignments to the variables in the target list. This overwrites all previous assignments to those variables includin"
+        },
+        {
+          "score": 0.5618142054480793,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[TITLE] compound_stmts [H1] The for statement  The for statement is used to iterate over the elements of a sequence (such as a string, tuple or list) or other iterable object:  The python-grammar:star"
+        }
+      ]
+    },
+    {
+      "query": "함수 정의하는 방법 def 키워드",
+      "is_korean": true,
+      "translated_query": "function definition def keyword parameters arguments return statement callable",
+      "translation_error": null,
+      "top_score": 0.6738402485556476,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.6738402485556476,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] power operator [TITLE] compound_stmts [H1] Function definitions  Function call semantics are described in more detail in section calls. A function call always assigns values to all paramete"
+        },
+        {
+          "score": 0.6390057241190865,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] power operator [TITLE] compound_stmts [H1] Function definitions  **Programmer's note:** Functions are first-class objects. A \"``def``\" statement executed inside a function definition define"
+        },
+        {
+          "score": 0.6320525666666668,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[API] A call calls a callable object (e.g., a function) [KEYWORDS] object __call__ [TITLE] expressions [H1] Primaries [H2] Calls  A call calls a callable object (e.g., a function) with a possibly empt"
+        }
+      ]
+    },
+    {
+      "query": "람다 함수 사용법",
+      "is_korean": true,
+      "translated_query": "lambda expression anonymous function def keyword parameters return statement function definition",
+      "translation_error": null,
+      "top_score": 0.736450189720058,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.736450189720058,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[API] Lambda expressions (sometimes called lambda forms) [KEYWORDS] expressions [TITLE] expressions [H1] Lambdas  Lambda expressions (sometimes called lambda forms) are used to create anonymous functi"
+        },
+        {
+          "score": 0.6998153908513758,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] functions [TITLE] compound_stmts [H1] Function definitions  Parameters of the form \"``*identifier``\" may have an annotation    \"``: *expression``\". See 646.  It is also possible to create a"
+        },
+        {
+          "score": 0.6458865115698451,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] power operator [TITLE] compound_stmts [H1] Function definitions  **Programmer's note:** Functions are first-class objects. A \"``def``\" statement executed inside a function definition define"
+        }
+      ]
+    },
+    {
+      "query": "딕셔너리 리터럴 사용법",
+      "is_korean": true,
+      "translated_query": "dictionary display dict literal key value pairs curly braces {} dict.get()",
+      "translation_error": null,
+      "top_score": 0.70092292,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.70092292,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[API] A dictionary display is a possibly empty series of dict items (key/value pairs) [KEYWORDS] items power operator [TITLE] expressions [H1] Atoms [H2] Dictionary displays  A dictionary display is a"
+        },
+        {
+          "score": 0.5986942009499315,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] copy get items keys [TITLE] stdtypes [H1] Mapping Types --- dict  Remove all items from the dictionary.  method copy()        Return a shallow copy of the dictionary.        Create a new di"
+        },
+        {
+          "score": 0.5937231757890531,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] range power operator dict [TITLE] stdtypes [H1] Mapping Types --- dict  Return a new dictionary initialized from an optional positional argument    and a possibly empty set of keyword argum"
+        }
+      ]
+    },
+    {
+      "query": "모듈 임포트 하는 방법",
+      "is_korean": true,
+      "translated_query": "import statement from import module namespace standard library __init__.py package directory",
+      "translation_error": null,
+      "top_score": 0.690346842144979,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.690346842144979,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[TITLE] simple_stmts [H1] The import statement  If the requested module is retrieved successfully, it will be made available in the local namespace in one of three ways:  * If the module name is follo"
+        },
+        {
+          "score": 0.6842374236363635,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[TITLE] simple_stmts [H1] The import statement  When specifying what module to import you do not have to specify the absolute name of the module. When a module or package is contained within another p"
+        },
+        {
+          "score": 0.6724924100381529,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[API] The basic import statement (no from clause) [KEYWORDS] statement clauses [TITLE] simple_stmts [H1] The import statement  The basic import statement (no from clause) is executed in two steps:  #."
+        }
+      ]
+    },
+    {
+      "query": "try except 예외 처리하는 방법",
+      "is_korean": true,
+      "translated_query": "try except exception handling built-in exceptions KeyError ValueError IndexError traceback",
+      "translation_error": null,
+      "top_score": 0.65821262,
+      "top_k": 3,
+      "sources": [
+        "python_doc"
+      ],
+      "lecture_count": 0,
+      "python_doc_count": 3,
+      "top_3_results": [
+        {
+          "score": 0.65821262,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] information [TITLE] exceptions [H1] Built-in Exceptions  In Python, all exceptions must be instances of a class that derives from BaseException. In a try statement with an except clause tha"
+        },
+        {
+          "score": 0.6424502979185098,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] ExceptionGroup ValueError TypeError OSError type nested Traceback eg [TITLE] compound_stmts [H1] The try statement [H2] except* clause  >>> try:    ...     raise ExceptionGroup(\"eg\",    ..."
+        },
+        {
+          "score": 0.6343218763651614,
+          "source": "python_doc",
+          "query_type": "translated",
+          "content_preview": "[KEYWORDS] mapping key [TITLE] exceptions [H1] Built-in Exceptions [H2] Concrete exceptions  attribute path        The path to any file which triggered the exception.        Added the name and path at"
+        }
+      ]
+    }
+  ]
+}

@@ -201,57 +201,31 @@ BAAI/bge-reranker-v2-m3 모델 사용시 속도 저하로 인해 경량화 모�
 ```
 SKN21-4th-4Team/
 │
-├─ app.py                      # Flask 애플리케이션(레거시)
-├─ main.py                     # RAG 워크플로우 메인 진입점
-├─ init_setting.py             # Qdrant 벡터 DB 초기화
-├─ utils.py                    # 공용 유틸 함수
-├─ update_notebook.py          # 노트북 업데이트 스크립트
-├─ requirements.txt            # Python 의존성
-├─ pyproject.toml              # 프로젝트 메타데이터
-├─ README.md                   # 프로젝트 안내
-├─ intro.md                    # 개발환경/소개 문서
-├─ evaluation.ipynb            # 평가 노트북
-├─ evaluation_advanced.ipynb   # 고급 평가 노트북
-│
-├─ deploy/                     # 배포 관련 파일
-│  ├─ Dockerfile
-│  ├─ docker-compose.yml
-│  ├─ nginx.conf
-│  ├─ deploy.sh
-│  └─ ...
-│
-├─ django_app/                 # Django 프로젝트
+├─ app/                 # Django 프로젝트 (Web Application)
 │  ├─ manage.py                # Django 관리 스크립트
-│  ├─ config/                  # 설정 모듈
-│  │  ├─ settings.py
-│  │  ├─ urls.py
-│  │  ├─ wsgi.py
-│  │  └─ asgi.py
-│  ├─ backend/                 # API 앱 모음
-│  │  ├─ accounts/             # 사용자/인증
-│  │  ├─ chat/                 # 대화 API
-│  │  ├─ code/                 # 코드 관련 API
-│  │  └─ quiz/                 # 퀴즈 API
-│  ├─ frontend/                # 정적/템플릿
-│  │  ├─ static/               # css/js/images
-│  │  └─ templates/            # HTML 템플릿
-│  └─ templates/               # 공용 템플릿
-├─ src/                        # 핵심 로직 모듈
-│  ├─ agent/                   # 에이전트 워크플로우/노드/툴
-│  ├─ ingestion/               # 문서 수집/전처리
-│  ├─ retrievals/              # 검색/리랭킹
-│  ├─ schema/                  # 상태/스키마
-│  ├─ utils/                   # 유틸 모음
-│  ├─ prompts.py               # 프롬프트
-│  └─ quiz_service.py          # 퀴즈 서비스 로직
-├─ scripts/                    # 실행 스크립트
-│  ├─ build_vector_db.py
-│  ├─ evaluate_chunking.py
-│  └─ ...
-├─ notebooks/                  # 전처리 노트북
-├─ docs/                       # 문서/설계 자료
-├─ images/                     # 이미지 리소스
-└─ templates/                  # 공용 템플릿     
+│  ├─ config/                  # 설정 모듈 (settings, urls, etc.)
+│  ├─ backend/                 # API 앱 모음 (accounts, chat, code, quiz)
+│  └─ frontend/                # 정적/템플릿 (static, templates)
+│
+├─ rag/                        # RAG 엔진 및 파이프라인
+│  ├─ main.py                  # RAG 메인 진입점
+│  ├─ init_setting.py          # Qdrant DB 초기화
+│  └─ src/                     # 핵심 로직 (Agent, Retrieval, Ingestion)
+│     ├─ agent/                # LangGraph 워크플로우 및 노드
+│     ├─ ingestion/            # 데이터 전처리 및 임베딩
+│     ├─ retrievals/           # 검색 및 리랭킹 로직
+│     ├─ prompts.py            # 프롬프트 모음
+│     └─ quiz_service.py       # 퀴즈 생성 로직
+│
+├─ pymate_deploy/              # 배포 설정 (Docker, Nginx, Shell Scripts)
+├─ docs/                       # 프로젝트 문서
+├─ data/                       # 데이터셋 (Git 제외)
+│
+├─ requirements.txt            # 전체 프로젝트 의존성
+├─ pyproject.toml              # 프로젝트 설정
+├─ intro.md                    # 소개 문서
+├─ README.md                   # 메인 README
+└─ .env                        # 환경 변수 (Git 제외)
 ```
 
 원본 데이터(`/data/raw/`)의 경우, 최종 git에서 제거
@@ -299,10 +273,6 @@ SKN21-4th-4Team/
 ### Database
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![psycopg2](https://img.shields.io/badge/psycopg2--binary-4B8BBE?style=for-the-badge&logo=postgresql&logoColor=white)
-
-
-### Legacy / Reference
-![Flask](https://img.shields.io/badge/Flask_(Legacy)-000000?style=for-the-badge&logo=flask&logoColor=white)
 
 
 ## 회고

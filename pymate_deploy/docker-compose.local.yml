@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Nginx
+  nginx:
+    image: nginx:latest
+    container_name: nginx_local
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ../media:/app/media:ro
+    env_file:
+      - ../.env.local
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - DJANGO_DEBUG=True
+    depends_on:
+      - django
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # MYSQL
+  # PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: postgres_local
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # Qdrant 벡터 데이터베이스
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant_local
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # Django 개발 서버 (Hot-reload 지원)
+  django:
+    build:
+      context: ../
+      dockerfile: pymate_deploy/Dockerfile
+    container_name: django_local
+    ports:
+      - "8000:8000"
+    volumes:
+      # 전체 소스 코드 마운트 (Hot-reload용)
+      - ../:/app
+    env_file:
+      - ../.env.local
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - DJANGO_DEBUG=True
+    depends_on:
+      - qdrant
+      - postgres
+    restart: unless-stopped
+    networks:
+      - app_network
+    # 개발 서버 실행 (Gunicorn 대신 runserver)
+    command: python app/manage.py runserver 0.0.0.0:8000
+
+volumes:
+  qdrant_storage:
+  postgres_data:
+
+
+networks:
+  app_network:
+    driver: bridge
