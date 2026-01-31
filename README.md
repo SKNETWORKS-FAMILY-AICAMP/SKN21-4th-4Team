@@ -21,7 +21,7 @@
 | **신지용** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/sjy361872)| **DevOps & Infra** | AWS EC2 서버 구축, Docker 컨테이너화, Nginx 리버스 프록시 설정, CI/CD 파이프라인 |
 | **윤경은** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/ykgstar37-lab)  | **Backend & Frontend** | Quiz API 구현, 에러 핸들링 미들웨어, 프론트엔드 스타일링(CSS) 및 로직(JS) 최적화 |
 | **안혜빈** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/hyebinhy)| **AI Core** | RAG 파이프라인 구축(`src/`), 데이터 전처리, 벡터 DB(Qdrant) 연동, 프롬프트 엔지니어링 |
-| **정세연** <br> [![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/wjdtpdus25)|  |  |
+
 
 <br><br><br>
 
@@ -319,6 +319,6 @@ SKN21-4th-4Team/
 |**김가람**|      |
 |**신지용**|      |
 |**최자슈아주원**|기존 Flask형식의 3차 프로젝트의  Djoano 변환과 UI/UX 개선을 담당했습니다.  Django로 변환시키는 것은 생각보다 어렵지 않았지만, 전반적인 UI/UX를 개선하는 것은 생각보다 어려웠습니다. 고려해야할 부분이 많고 추가하려는 기능이 많아질수록 복잡해지는 구조가 아쉬웠습니다. 그러면서 생각못한 문제가 발생하고 이러한 문제를 수정하는데 많은 시간이 걸렸습니다. 대부분의 문제는 해결했지만 아직 남아있는 버그에 아쉬움을 느낍니다. 특히 캡쳐를 위한 작업을 전부 했지만 구현하지 못해 아쉽습니다. 다음에는 더 체계적으로 계획을 세우고 진행해야겠습니다. 팀원들의 아이디어와 피드백이 없었다면 지금의 결과물을 만들지 못했을 것입니다. 팀원들에게 감사드립니다. 모두 믿고 맏길 수 있었기에 제 파트에만 집중할 수가 있었습니다. 다시 한번 팀원들에게 감사의 말씀을 전합니다.|
-|**윤경은**|      |
+|**윤경은**|이번 프로젝트에서는 3차 프로젝트에서 구축한 LLM 기반 RAG 시스템을 웹 서비스 형태로 확장, 배포하는 과정에 참여 했습니다. 특히 CSS와 JavaScript 파일을 분리하고 Nginx–Gunicorn–Django로 이어지는 서버 흐름을 구성하며 서비스 환경에서의 요청 처리 구조를 이해할 수 있었습니다. 로컬 환경과 배포 환경의 차이로 인해 발생하는 설정 이슈들을 막을 수가 있다는 점을 알게 되었고, 오히려 기능 구현보다 환경 설정 등 구조 이해가 서비스 안정성에 중요할 수 있다는 점을 체감했습니다. 시스템 전체가 어떤 구성과 흐름 속에서 안정적으로 동작하게 되는지 소프트웨어 관점의 중요성을 배울 수 있었던 의미 있는 시간이었습니다.|
 |**안혜빈**|      |
-|**정세연** |      |
+
