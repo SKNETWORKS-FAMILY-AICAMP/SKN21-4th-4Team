@@ -243,9 +243,22 @@ BAAI/bge-reranker-v2-m3 모델 사용시 속도 저하로 인해 경량화 모�
 
 <br>
 
-<p align="center">
-  <img src="images/graph.png" alt="pymate" width="400"/>
-</p>
+### RAG Workflow Flowchart
+```mermaid
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px'}}}%%
+graph TD
+    START((Start)) --> Search[Search Node]
+    Search --> Rerank[Rerank Node]
+    Rerank --> Context[Build Context]
+    
+    Context -- High Relevance > 0.5 --> Analyst[Analyst Node]
+    Context -- Med Relevance 0.3~0.5 --> Web[Web Search]
+    Context -- Low Relevance < 0.3 --> NoData[No Data Node]
+    
+    Web --> Analyst
+    Analyst --> END((End))
+    NoData --> END
+```
 
 <br><br>
 
