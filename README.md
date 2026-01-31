@@ -150,41 +150,65 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 실습은 [intro.md](intro.md)를 참고해주세용
 
 ### 1. 로그인 기능
-<p align="center">
-        <img src="images/로그인.gif" alt="feature_importance" width="700">
-      </p>
+
+[로그인.gif](images/로그인.gif)
+
+
+[퀴즈_마이페이지.gif](images/퀴즈_마이페이지.gif)
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/로그인-1.png" alt="로그인-1" width="100%">
+    </td>
+    <td align="center">
+      <img src="images/퀴즈_마이페이지-259.png" alt="퀴즈_마이페이지-259" width="100%">
+    </td>
+  </tr>
+</table>
 
 ### 2. `학습할래용` 
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/학습할래용-263.png" alt="학습할래용-263" width="100%">
+    </td>
+    <td align="center">
+      <img src="images/학습할래용-267.png" alt="학습할래용-267" width="100%">
+    </td>
+  </tr>
+</table>
+
+### 3. <우측> `스튜디오` 기능 [개념 요약, 단계별 설명, 플래시카드, 퀴즈, 표로 정리, 다른 예시, 메모장]
+
+[스튜디오_1.gif](images/스튜디오_1.gif)
 <p align="center">
-        <img src="images/학습할래용.gif" alt="feature_importance" width="700">
+        <img src="images/스튜디오_1-102.png" alt="스튜디오_1-102" width="700">
       </p>
 
-### 3. <우측> `스튜디오` 기능
+[스튜디오_2.gif](images/스튜디오_2.gif)
 <p align="center">
-        <img src="images/스튜디오_1.gif" alt="feature_importance" width="700">
-      </p>
-<p align="center">
-        <img src="images/스튜디오_2.gif" alt="feature_importance" width="700">
-      </p>
-
-### 4. 마이페이지 - `북마크` 기능
-<p align="center">
-        <img src="images/퀴즈_마이페이지.gif" alt="feature_importance" width="700">
+        <img src="images/스튜디오_2-352.png" alt="스튜디오_2-352" width="700">
       </p>
 
 ### 5. `퀴즈풀래용`
+
+[퀴즈풀래용.gif](images/퀴즈풀래용.gif)
 <p align="center">
-        <img src="images/퀴즈풀래용.gif" alt="feature_importance" width="700">
+        <img src="images/퀴즈풀래용-19.png" alt="퀴즈풀래용-19" width="700">
       </p>
 
 ### 6. `코딩할래용`
+
+[코딩할래용.gif](images/코딩할래용.gif)
 <p align="center">
-        <img src="images/코딩할래용.gif" alt="feature_importance" width="700">
+        <img src="images/코딩할래용-84.png" alt="코딩할래용-84" width="700">
       </p>
 
 ### 7. 모바일 UI 모드
 <p align="center">
-        <img src="images/모바일.gif" alt="feature_importance" width="250">
+        <img src="images/모바일.gif" alt="모바일" width="250">
       </p>
       
 <br><br>
