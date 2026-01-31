@@ -98,7 +98,7 @@ RAG(Retrieval-Augmented Generation) 기반 학습 도우미 챗봇을 개발하�
 
 <br>
 
-4️⃣ **`코드풀래용`** <br>
+4️⃣ **`코딩할래용`** <br>
 > **AI 코드 리뷰 & 오류 분석 기능**
 
 **사용자가 직접 작성한 코드를 입력하면, <br>
@@ -147,6 +147,44 @@ AI 선생님이 코드 오류를 분석하고 원인과 해결 방법을 단계�
 
 ## Application의 주요 기능
 
+### 1. 로그인 기능
+<p align="center">
+        <img src="images/로그인.gif" alt="feature_importance" width="700">
+      </p>
+
+### 2. `학습할래용` 
+<p align="center">
+        <img src="images/학습할래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 3. <우측> `스튜디오` 기능
+<p align="center">
+        <img src="images/스튜디오_1.gif" alt="feature_importance" width="700">
+      </p>
+<p align="center">
+        <img src="images/스튜디오_2.gif" alt="feature_importance" width="700">
+      </p>
+
+### 4. 마이페이지 - `북마크` 기능
+<p align="center">
+        <img src="images/퀴즈_마이페이지.gif" alt="feature_importance" width="700">
+      </p>
+
+### 5. `퀴즈풀래용`
+<p align="center">
+        <img src="images/퀴즈풀래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 6. `코딩할래용`
+<p align="center">
+        <img src="images/코딩할래용.gif" alt="feature_importance" width="700">
+      </p>
+
+### 7. 모바일 UI 모드
+<p align="center">
+        <img src="images/모바일.gif" alt="feature_importance" width="250">
+      </p>
+      
 <br><br>
 
 ## RAG 고도화
